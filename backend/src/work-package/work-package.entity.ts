@@ -49,14 +49,14 @@ export class WorkPackage implements DurationEntity {
   })
   area: string;
 
-  @Column({ name: 'start_time', type: 'timestamp' })
+  @Column({ name: 'start_time', type: 'timestamptz' })
   @ApiProperty({
     example: '2024-04-16T08:00:00Z',
     description: 'The start time of the work package',
   })
   startTime: Date;
 
-  @Column({ name: 'end_time', type: 'timestamp' })
+  @Column({ name: 'end_time', type: 'timestamptz' })
   @ApiProperty({
     example: '2024-04-16T09:30:00Z',
     description: 'The end time of the work package',

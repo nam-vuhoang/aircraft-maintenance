@@ -40,8 +40,8 @@ export class WorkPackageController {
           station: 'HEL',
           status: 'OPEN',
           area: 'APRON',
-          startTime: '2024-04-16T08:00:00Z',
-          endTime: '2024-04-16T09:30:00Z',
+          startTime: '2024-04-16T08:00:00.000Z',
+          endTime: '2024-04-16T09:30:00.000Z',
         },
       },
     },
@@ -86,7 +86,7 @@ export class WorkPackageController {
   async findOne(@Param('id') id: string): Promise<WorkPackage> {
     const workPackage = await this.workPackageService.findOne(id);
     if (!workPackage) {
-      throw new NotFoundException(`Work package with ID ${id} not found`);
+      throw new NotFoundException(`WorkPackage with ID ${id} not found`);
     }
     return workPackage;
   }
@@ -107,12 +107,12 @@ export class WorkPackageController {
         summary: 'Example updated work package',
         value: {
           registration: 'ABC123',
-          name: 'Maintenance B',
+          name: 'Maintenance A',
           station: 'HEL',
-          status: 'IN_PROGRESS',
-          area: 'HANGAR',
-          startTime: '2024-04-16T10:00:00Z',
-          endTime: '2024-04-16T12:30:00Z',
+          status: 'OPEN',
+          area: 'APRON',
+          startTime: '2024-04-16T08:00:00.000Z',
+          endTime: '2024-04-16T09:30:00.000Z',
         },
       },
     },
@@ -159,12 +159,14 @@ export class WorkPackageController {
   })
   @ApiQuery({
     name: 'startTime',
+    required: false,
     description: 'Start time of the interval in ISO format',
     type: String,
     example: '2024-04-16T08:00:00Z',
   })
   @ApiQuery({
     name: 'endTime',
+    required: false,
     description: 'End time of the interval in ISO format',
     type: String,
     example: '2024-04-16T09:30:00Z',
@@ -175,12 +177,12 @@ export class WorkPackageController {
     type: [WorkPackage],
   })
   findOverlapping(
-    @Query('startTime') startTime: string,
-    @Query('endTime') endTime: string,
+    @Query('startTime') startTime?: string,
+    @Query('endTime') endTime?: string,
   ): Promise<WorkPackage[]> {
     return this.workPackageService.findOverlapping(
-      new Date(startTime),
-      new Date(endTime),
+      startTime ? new Date(startTime) : undefined,
+      endTime ? new Date(endTime) : undefined,
     );
   }
 }

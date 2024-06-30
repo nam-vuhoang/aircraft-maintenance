@@ -172,12 +172,14 @@ export class FlightController {
   @ApiOperation({ summary: 'Find flights overlapping a given time interval' })
   @ApiQuery({
     name: 'startTime',
+    required: false,
     description: 'Start time of the interval in ISO format',
     type: String,
     example: '2024-04-16T08:00:00Z',
   })
   @ApiQuery({
     name: 'endTime',
+    required: false,
     description: 'End time of the interval in ISO format',
     type: String,
     example: '2024-04-16T09:30:00Z',
@@ -188,12 +190,12 @@ export class FlightController {
     type: [Flight],
   })
   findOverlapping(
-    @Query('startTime') startTime: string,
-    @Query('endTime') endTime: string,
+    @Query('startTime') startTime?: string,
+    @Query('endTime') endTime?: string,
   ): Promise<Flight[]> {
     return this.flightService.findOverlapping(
-      new Date(startTime),
-      new Date(endTime),
+      startTime ? new Date(startTime) : undefined,
+      endTime ? new Date(endTime) : undefined,
     );
   }
 }

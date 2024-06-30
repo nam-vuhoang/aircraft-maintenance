@@ -44,15 +44,17 @@ export class WorkPackageService {
   }
 
   async findOverlapping(
-    startTime: Date,
-    endTime: Date,
+    startTime?: Date,
+    endTime?: Date,
   ): Promise<WorkPackage[]> {
-    return this.workPackageRepository
-      .createQueryBuilder('workPackage')
-      .where(
-        'workPackage.startTime < :endTime AND workPackage.endTime > :startTime',
-        { startTime, endTime },
-      )
+    const query = this.workPackageRepository
+      .createQueryBuilder('wp')
+      .where(`wp.start_time < :endTime AND wp.end_time > :startTime`, {
+        startTime: startTime || new Date(0),
+        endTime: endTime || new Date('9999-12-31'),
+      })
       .getMany();
+
+    return query;
   }
 }

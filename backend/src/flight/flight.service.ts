@@ -41,15 +41,20 @@ export class FlightService {
     }
   }
 
-  async findOverlapping(startTime: Date, endTime: Date): Promise<Flight[]> {
-    return this.flightRepository
+  async findOverlapping(startTime?: Date, endTime?: Date): Promise<Flight[]> {
+    const query = this.flightRepository
       .createQueryBuilder('f')
-      .innerJoin('flights_view', 'fv', 'f.id = fv.id')
       .where(
-        `(fv.departure_time AT TIME ZONE 'UTC') < :endTime AND (fv.arrival_time AT TIME ZONE 'UTC') > :startTime`,
-        { startTime, endTime },
+        `COALESCE(f.actual_departure_time, f.estimated_departure_time, f.scheduled_departure_time) < :endTime
+        AND COALESCE(f.actual_arrival_time, f.estimated_arrival_time, f.scheduled_arrival_time) > :startTime`,
+        {
+          startTime: startTime || new Date(0),
+          endTime: endTime || new Date('9999-12-31'),
+        },
       )
       .select('f.*')
       .getRawMany();
+
+    return query;
   }
 }

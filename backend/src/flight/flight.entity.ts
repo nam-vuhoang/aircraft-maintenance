@@ -53,14 +53,14 @@ export class Flight implements DurationEntity {
   })
   scheduledArrivalStation: string;
 
-  @Column({ name: 'scheduled_departure_time', type: 'timestamp' })
+  @Column({ name: 'scheduled_departure_time', type: 'timestamptz' })
   @ApiProperty({
     example: '2024-04-17T04:45:00.000Z',
     description: 'The scheduled departure time',
   })
   scheduledDepartureTime: Date;
 
-  @Column({ name: 'scheduled_arrival_time', type: 'timestamp' })
+  @Column({ name: 'scheduled_arrival_time', type: 'timestamptz' })
   @ApiProperty({
     example: '2024-04-17T05:55:00.000Z',
     description: 'The scheduled arrival time',
@@ -69,7 +69,7 @@ export class Flight implements DurationEntity {
 
   @Column({
     name: 'estimated_departure_time',
-    type: 'timestamp',
+    type: 'timestamptz',
     nullable: true,
   })
   @ApiProperty({
@@ -79,7 +79,11 @@ export class Flight implements DurationEntity {
   })
   estimatedDepartureTime: Date;
 
-  @Column({ name: 'estimated_arrival_time', type: 'timestamp', nullable: true })
+  @Column({
+    name: 'estimated_arrival_time',
+    type: 'timestamptz',
+    nullable: true,
+  })
   @ApiProperty({
     example: '2024-04-17T05:49:00.000Z',
     description: 'The estimated arrival time',
@@ -87,7 +91,11 @@ export class Flight implements DurationEntity {
   })
   estimatedArrivalTime: Date;
 
-  @Column({ name: 'actual_departure_time', type: 'timestamp', nullable: true })
+  @Column({
+    name: 'actual_departure_time',
+    type: 'timestamptz',
+    nullable: true,
+  })
   @ApiProperty({
     example: '2024-04-17T04:45:00.000Z',
     description: 'The actual departure time',
@@ -95,7 +103,7 @@ export class Flight implements DurationEntity {
   })
   actualDepartureTime: Date;
 
-  @Column({ name: 'actual_arrival_time', type: 'timestamp', nullable: true })
+  @Column({ name: 'actual_arrival_time', type: 'timestamptz', nullable: true })
   @ApiProperty({
     example: '2024-04-17T05:49:00.000Z',
     description: 'The actual arrival time',
