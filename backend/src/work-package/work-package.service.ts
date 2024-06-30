@@ -42,4 +42,17 @@ export class WorkPackageService {
       throw new NotFoundException(`Work package with ID ${id} not found`);
     }
   }
+
+  async findOverlapping(
+    startTime: Date,
+    endTime: Date,
+  ): Promise<WorkPackage[]> {
+    return this.workPackageRepository
+      .createQueryBuilder('workPackage')
+      .where(
+        'workPackage.startTime < :endTime AND workPackage.endTime > :startTime',
+        { startTime, endTime },
+      )
+      .getMany();
+  }
 }

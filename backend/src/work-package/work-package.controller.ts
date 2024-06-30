@@ -6,11 +6,19 @@ import {
   Body,
   Put,
   Delete,
+  Query,
   NotFoundException,
 } from '@nestjs/common';
 import { WorkPackageService } from './work-package.service';
 import { WorkPackage } from './work-package.entity';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
+} from '@nestjs/swagger';
 
 @ApiTags('work-packages')
 @Controller('work-packages')
@@ -19,18 +27,62 @@ export class WorkPackageController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new work package' })
+  @ApiBody({
+    description: 'The work package data',
+    type: WorkPackage,
+    examples: {
+      example1: {
+        summary: 'Example work package',
+        value: {
+          id: 'WP12345',
+          registration: 'ABC123',
+          name: 'Maintenance A',
+          station: 'HEL',
+          status: 'OPEN',
+          area: 'APRON',
+          startTime: '2024-04-16T08:00:00Z',
+          endTime: '2024-04-16T09:30:00Z',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'The created work package',
+    type: WorkPackage,
+  })
   create(@Body() workPackage: WorkPackage): Promise<WorkPackage> {
     return this.workPackageService.create(workPackage);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all work packages' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all work packages',
+    type: [WorkPackage],
+  })
   findAll(): Promise<WorkPackage[]> {
     return this.workPackageService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a work package by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the work package',
+    type: String,
+    example: 'WP12345',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The work package with the given ID',
+    type: WorkPackage,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Work package not found',
+  })
   async findOne(@Param('id') id: string): Promise<WorkPackage> {
     const workPackage = await this.workPackageService.findOne(id);
     if (!workPackage) {
@@ -41,6 +93,39 @@ export class WorkPackageController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a work package by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the work package to update',
+    type: String,
+    example: 'WP12345',
+  })
+  @ApiBody({
+    description: 'The updated work package data',
+    type: WorkPackage,
+    examples: {
+      example1: {
+        summary: 'Example updated work package',
+        value: {
+          registration: 'ABC123',
+          name: 'Maintenance B',
+          station: 'HEL',
+          status: 'IN_PROGRESS',
+          area: 'HANGAR',
+          startTime: '2024-04-16T10:00:00Z',
+          endTime: '2024-04-16T12:30:00Z',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The updated work package',
+    type: WorkPackage,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Work package not found',
+  })
   update(
     @Param('id') id: string,
     @Body() workPackage: WorkPackage,
@@ -50,7 +135,52 @@ export class WorkPackageController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a work package by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the work package to delete',
+    type: String,
+    example: 'WP12345',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Work package successfully deleted',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Work package not found',
+  })
   remove(@Param('id') id: string): Promise<void> {
     return this.workPackageService.remove(id);
+  }
+
+  @Get('search/overlapping')
+  @ApiOperation({
+    summary: 'Find work packages overlapping a given time interval',
+  })
+  @ApiQuery({
+    name: 'startTime',
+    description: 'Start time of the interval in ISO format',
+    type: String,
+    example: '2024-04-16T08:00:00Z',
+  })
+  @ApiQuery({
+    name: 'endTime',
+    description: 'End time of the interval in ISO format',
+    type: String,
+    example: '2024-04-16T09:30:00Z',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of work packages overlapping the given time interval',
+    type: [WorkPackage],
+  })
+  findOverlapping(
+    @Query('startTime') startTime: string,
+    @Query('endTime') endTime: string,
+  ): Promise<WorkPackage[]> {
+    return this.workPackageService.findOverlapping(
+      new Date(startTime),
+      new Date(endTime),
+    );
   }
 }
