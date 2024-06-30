@@ -5,7 +5,7 @@ import { ImportFlightDto } from './import-flight.dto';
 import { ImportWorkPackageDto } from './import-work-package.dto';
 import { Flight } from '../flight/flight.entity';
 import { WorkPackage } from '../work-package/work-package.entity';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('import')
 @Controller('import')
@@ -17,24 +17,38 @@ export class ImportController {
 
   @Post('flights')
   @ApiOperation({ summary: 'Import flights from JSON' })
+  @ApiBody({
+    type: [ImportFlightDto],
+    description: 'Array of flights to import',
+  })
   async importFlights(
     @Body() importFlightsDto: ImportFlightDto[],
-  ): Promise<void> {
+  ): Promise<{ imported: number }> {
+    let count = 0;
     for (const flightDto of importFlightsDto) {
       const flight = this.convertToFlightEntity(flightDto);
       await this.flightService.create(flight);
+      count++;
     }
+    return { imported: count };
   }
 
   @Post('work-packages')
   @ApiOperation({ summary: 'Import work packages from JSON' })
+  @ApiBody({
+    type: [ImportWorkPackageDto],
+    description: 'Array of work packages to import',
+  })
   async importWorkPackages(
     @Body() importWorkPackagesDto: ImportWorkPackageDto[],
-  ): Promise<void> {
+  ): Promise<{ imported: number }> {
+    let count = 0;
     for (const workPackageDto of importWorkPackagesDto) {
       const workPackage = this.convertToWorkPackageEntity(workPackageDto);
       await this.workPackageService.create(workPackage);
+      count++;
     }
+    return { imported: count };
   }
 
   private convertToFlightEntity(importFlightDto: ImportFlightDto): Flight {

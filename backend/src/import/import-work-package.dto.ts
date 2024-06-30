@@ -1,41 +1,60 @@
 import { IsString, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * ImportWorkPackageDto is a data transfer object (DTO) class
- * that defines the shape of the data that the client should
- * send to the server when importing a work package.
- */
 export class ImportWorkPackageDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'WP12345',
+    description: 'The unique identifier of the work package',
+  })
   @IsString()
   workPackageId: string;
 
-  @ApiProperty()
-  @IsString()
-  name: string;
-
-  @ApiProperty()
-  @IsString()
-  station: string;
-
-  @ApiProperty()
-  @IsString()
-  status: string;
-
-  @ApiProperty()
-  @IsString()
-  area: string;
-
-  @ApiProperty()
+  @ApiProperty({
+    example: 'ABC123',
+    description: 'The registration number of the work package',
+  })
   @IsString()
   registration: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Maintenance A',
+    description: 'The name of the work package',
+  })
+  @IsString()
+  name: string;
+
+  @ApiProperty({
+    example: 'HEL',
+    description: 'The station where the work package is executed',
+  })
+  @IsString()
+  station: string;
+
+  @ApiProperty({
+    example: 'OPEN',
+    description: 'The status of the work package',
+  })
+  @IsString()
+  status: string;
+
+  @ApiProperty({
+    example: 'APRON',
+    description: 'The area of the work package',
+  })
+  @IsString()
+  area: string;
+
+  @ApiProperty({
+    example: '2024-04-16T08:00:00Z',
+    description: 'The start time of the work package',
+  })
   @IsDateString()
   startDateTime: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '2024-04-16T09:30:00Z',
+    description: 'The end time of the work package',
+  })
   @IsDateString()
   endDateTime: string;
 }
