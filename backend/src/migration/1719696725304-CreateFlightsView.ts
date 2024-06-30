@@ -8,9 +8,6 @@ export class CreateFlightsView1719696725304 implements MigrationInterface {
         CREATE VIEW flights_view AS
         SELECT 
           id,
-          registration,
-          scheduled_departure_station,
-          scheduled_arrival_station,
           COALESCE(actual_departure_time, estimated_departure_time, scheduled_departure_time) AS departure_time,
           COALESCE(actual_arrival_time, estimated_arrival_time, scheduled_arrival_time) AS arrival_time
         FROM flights;
