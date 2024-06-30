@@ -4,60 +4,45 @@ import {
   Post,
   Param,
   Body,
-  Patch,
+  Put,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { WorkPackageService } from './work-package.service';
 import { WorkPackage } from './work-package.entity';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('work-packages')
 @Controller('work-packages')
 export class WorkPackageController {
   constructor(private readonly workPackageService: WorkPackageService) {}
 
+  @Post()
+  @ApiOperation({ summary: 'Create a new work package' })
+  create(@Body() workPackage: WorkPackage): Promise<WorkPackage> {
+    return this.workPackageService.create(workPackage);
+  }
+
   @Get()
   @ApiOperation({ summary: 'Get all work packages' })
-  @ApiResponse({
-    status: 200,
-    description: 'List of all work packages',
-    type: [WorkPackage],
-  })
   findAll(): Promise<WorkPackage[]> {
     return this.workPackageService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a work package by ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'The work package with the given ID',
-    type: WorkPackage,
-  })
-  findOne(@Param('id') id: number): Promise<WorkPackage> {
-    return this.workPackageService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<WorkPackage> {
+    const workPackage = await this.workPackageService.findOne(id);
+    if (!workPackage) {
+      throw new NotFoundException(`Work package with ID ${id} not found`);
+    }
+    return workPackage;
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new work package' })
-  @ApiResponse({
-    status: 201,
-    description: 'The work package has been successfully created',
-    type: WorkPackage,
-  })
-  create(@Body() workPackage: WorkPackage): Promise<WorkPackage> {
-    return this.workPackageService.create(workPackage);
-  }
-
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Update a work package by ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'The work package has been successfully updated',
-    type: WorkPackage,
-  })
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() workPackage: WorkPackage,
   ): Promise<WorkPackage> {
     return this.workPackageService.update(id, workPackage);
@@ -65,11 +50,7 @@ export class WorkPackageController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a work package by ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'The work package has been successfully deleted',
-  })
-  remove(@Param('id') id: number): Promise<void> {
+  remove(@Param('id') id: string): Promise<void> {
     return this.workPackageService.remove(id);
   }
 }

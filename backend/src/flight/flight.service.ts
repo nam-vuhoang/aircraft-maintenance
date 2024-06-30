@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Flight } from './flight.entity';
 
+/**
+ * Service for managing flights.
+ */
 @Injectable()
 export class FlightService {
   constructor(
@@ -18,7 +21,7 @@ export class FlightService {
     return this.flightRepository.find();
   }
 
-  async findOne(id: number): Promise<Flight> {
+  async findOne(id: string): Promise<Flight> {
     const flight = await this.flightRepository.findOne({ where: { id } });
     if (!flight) {
       throw new NotFoundException(`Flight with ID ${id} not found`);
@@ -26,12 +29,15 @@ export class FlightService {
     return flight;
   }
 
-  async update(id: number, flight: Flight): Promise<Flight> {
+  async update(id: string, flight: Flight): Promise<Flight> {
     await this.flightRepository.update(id, flight);
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
-    await this.flightRepository.delete(id);
+  async remove(id: string): Promise<void> {
+    const result = await this.flightRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Flight with ID ${id} not found`);
+    }
   }
 }
