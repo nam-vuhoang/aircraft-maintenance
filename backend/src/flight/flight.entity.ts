@@ -1,9 +1,16 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseDurationEntity } from '../common/base-duration.entity';
+import { DurationEntity } from '../common/duration.entity';
 
 @Entity('flights')
-export class Flight extends BaseDurationEntity {
+export class Flight implements DurationEntity {
+  @PrimaryGeneratedColumn('uuid')
+  @ApiProperty({
+    example: '007f78fb-2586-432a-a952-d19d63e18cc2',
+    description: 'The unique identifier of the flight (UUID)',
+  })
+  id: string;
+
   @Column()
   @ApiProperty({
     example: 'QO',
@@ -128,12 +135,7 @@ export class Flight extends BaseDurationEntity {
   })
   originalArrivalStand: string;
 
-  /**
-   * The departure stand of the flight based on the actual departure stand,
-   * estimated departure stand, or scheduled departure stand.
-   * @returns
-   */
-  start(): Date {
+  get start(): Date {
     return (
       this.actualDepartureTime ||
       this.estimatedDepartureTime ||
@@ -141,13 +143,7 @@ export class Flight extends BaseDurationEntity {
     );
   }
 
-  /**
-   * The arrival stand of the flight based on the actual arrival stand,
-   * estimated arrival stand, or scheduled arrival stand.
-   *
-   * @returns
-   */
-  end(): Date {
+  get end(): Date {
     return (
       this.actualArrivalTime ||
       this.estimatedArrivalTime ||

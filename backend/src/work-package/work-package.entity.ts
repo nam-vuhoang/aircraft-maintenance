@@ -1,12 +1,19 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseDurationEntity } from '../common/base-duration.entity';
+import { DurationEntity } from '../common/duration.entity';
 
 /**
  * The work package entity
  */
 @Entity('work_packages')
-export class WorkPackage extends BaseDurationEntity {
+export class WorkPackage implements DurationEntity {
+  @PrimaryColumn()
+  @ApiProperty({
+    example: 'WP12345',
+    description: 'The unique identifier of the work package',
+  })
+  id: string;
+
   @Column()
   @ApiProperty({
     example: 'ABC123',
@@ -56,11 +63,11 @@ export class WorkPackage extends BaseDurationEntity {
   })
   endTime: Date;
 
-  start(): Date {
+  get start(): Date {
     return this.startTime;
   }
 
-  end(): Date {
+  get end(): Date {
     return this.endTime;
   }
 }
