@@ -40,4 +40,16 @@ export class FlightService {
       throw new NotFoundException(`Flight with ID ${id} not found`);
     }
   }
+
+  async findOverlapping(startTime: Date, endTime: Date): Promise<Flight[]> {
+    return this.flightRepository
+      .createQueryBuilder('f')
+      .innerJoin('flights_view', 'fv', 'f.id = fv.id')
+      .where(
+        `(fv.departure_time AT TIME ZONE 'UTC') < :endTime AND (fv.arrival_time AT TIME ZONE 'UTC') > :startTime`,
+        { startTime, endTime },
+      )
+      .select('f.*')
+      .getRawMany();
+  }
 }
