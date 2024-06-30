@@ -3,6 +3,6 @@
  */
 export interface DurationEntity {
   get id(): string;
-  get start(): Date;
-  get end(): Date;
+  get startTime(): Date;
+  get endTime(): Date;
 }

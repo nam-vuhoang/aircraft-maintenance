@@ -62,12 +62,4 @@ export class WorkPackage implements DurationEntity {
     description: 'The end time of the work package',
   })
   endTime: Date;
-
-  get start(): Date {
-    return this.startTime;
-  }
-
-  get end(): Date {
-    return this.endTime;
-  }
 }

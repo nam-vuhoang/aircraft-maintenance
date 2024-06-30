@@ -135,7 +135,7 @@ export class Flight implements DurationEntity {
   })
   originalArrivalStand: string;
 
-  get start(): Date {
+  get startTime(): Date {
     return (
       this.actualDepartureTime ||
       this.estimatedDepartureTime ||
@@ -143,7 +143,7 @@ export class Flight implements DurationEntity {
     );
   }
 
-  get end(): Date {
+  get endTime(): Date {
     return (
       this.actualArrivalTime ||
       this.estimatedArrivalTime ||
