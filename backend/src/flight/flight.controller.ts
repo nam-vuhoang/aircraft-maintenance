@@ -11,10 +11,10 @@ import {
 import { FlightService } from './flight.service';
 import { Flight } from './flight.entity';
 import { FlightFilter } from './flight-filter.dto';
+import { FlightImportDto } from './flight-import.dto';
 import {
   ApiTags,
   ApiOperation,
-  ApiQuery,
   ApiResponse,
   ApiBody,
   ApiParam,
@@ -197,5 +197,51 @@ export class FlightController {
   })
   search(@Body() filter: FlightFilter): Promise<Flight[]> {
     return this.flightService.search(filter);
+  }
+
+  @Post('import')
+  @ApiOperation({ summary: 'Import flights from JSON' })
+  @ApiBody({
+    description: 'The flights import data',
+    type: [FlightImportDto],
+    examples: {
+      example1: {
+        summary: 'Example import data',
+        value: [
+          {
+            flightId: '007f78fb-2586-432a-a952-d19d63e18cc2',
+            airline: 'QO',
+            registration: 'ABA',
+            aircraftType: 'AT7',
+            flightNum: '8929',
+            schedDepTime: '2024-04-17T04:45:00.000Z',
+            schedArrTime: '2024-04-17T05:55:00.000Z',
+            actualDepTime: '2024-04-17T04:45:00.000Z',
+            actualArrTime: '2024-04-17T05:49:00.000Z',
+            estimatedDepTime: '2024-04-17T04:45:00.000Z',
+            estimatedArrTime: '2024-04-17T05:49:00.000Z',
+            schedDepStation: 'HEL',
+            schedArrStation: 'RIX',
+            depStand: 'C5',
+            origDepStand: 'A1',
+            arrStand: 'B2',
+            origArrStand: 'B2',
+          },
+        ],
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Number of imported flights',
+  })
+  async import(
+    @Body() importFlightsDto: FlightImportDto[],
+  ): Promise<{ imported: number }> {
+    for (const flightDto of importFlightsDto) {
+      const flight = flightDto.convertToFlightEntity();
+      await this.flightService.create(flight);
+    }
+    return { imported: importFlightsDto.length };
   }
 }

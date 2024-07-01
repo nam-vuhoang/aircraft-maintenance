@@ -11,10 +11,10 @@ import {
 import { WorkPackageService } from './work-package.service';
 import { WorkPackage } from './work-package.entity';
 import { WorkPackageFilter } from './work-package-filter.dto';
+import { WorkPackageImportDto } from './work-package-import.dto';
 import {
   ApiTags,
   ApiOperation,
-  ApiQuery,
   ApiResponse,
   ApiBody,
   ApiParam,
@@ -181,5 +181,23 @@ export class WorkPackageController {
   })
   search(@Body() filter: WorkPackageFilter): Promise<WorkPackage[]> {
     return this.workPackageService.search(filter);
+  }
+
+  @Post('work-packages')
+  @ApiOperation({ summary: 'Import work packages from JSON' })
+  @ApiBody({
+    type: [WorkPackageImportDto],
+    description: 'Array of work packages to import',
+  })
+  async importWorkPackages(
+    @Body() importWorkPackagesDto: WorkPackageImportDto[],
+  ): Promise<{ imported: number }> {
+    let count = 0;
+    for (const workPackageDto of importWorkPackagesDto) {
+      const workPackage = workPackageDto.convertToWorkPackageEntity();
+      await this.workPackageService.create(workPackage);
+      count++;
+    }
+    return { imported: count };
   }
 }

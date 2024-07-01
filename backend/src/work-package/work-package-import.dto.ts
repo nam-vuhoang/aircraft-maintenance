@@ -1,7 +1,8 @@
 import { IsString, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { WorkPackage } from './work-package.entity';
 
-export class ImportWorkPackageDto {
+export class WorkPackageImportDto {
   @ApiProperty({
     example: 'WP12345',
     description: 'The unique identifier of the work package',
@@ -57,4 +58,17 @@ export class ImportWorkPackageDto {
   })
   @IsDateString()
   endDateTime: string;
+
+  convertToWorkPackageEntity(): WorkPackage {
+    const workPackage = new WorkPackage();
+    workPackage.id = this.workPackageId;
+    workPackage.registration = this.registration;
+    workPackage.name = this.name;
+    workPackage.station = this.station;
+    workPackage.status = this.status;
+    workPackage.area = this.area;
+    workPackage.startTime = new Date(this.startDateTime);
+    workPackage.endTime = new Date(this.endDateTime);
+    return workPackage;
+  }
 }
