@@ -6,11 +6,11 @@ import {
   Body,
   Put,
   Delete,
-  Query,
   NotFoundException,
 } from '@nestjs/common';
 import { WorkPackageService } from './work-package.service';
 import { WorkPackage } from './work-package.entity';
+import { WorkPackageFilter } from './work-package-filter.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -153,36 +153,32 @@ export class WorkPackageController {
     return this.workPackageService.remove(id);
   }
 
-  @Get('search/overlapping')
-  @ApiOperation({
-    summary: 'Find work packages overlapping a given time interval',
-  })
-  @ApiQuery({
-    name: 'startTime',
-    required: false,
-    description: 'Start time of the interval in ISO format',
-    type: String,
-    example: '2024-04-16T08:00:00Z',
-  })
-  @ApiQuery({
-    name: 'endTime',
-    required: false,
-    description: 'End time of the interval in ISO format',
-    type: String,
-    example: '2024-04-16T09:30:00Z',
+  @Post('search')
+  @ApiOperation({ summary: 'Search work packages with optional filters' })
+  @ApiBody({
+    type: WorkPackageFilter,
+    description: 'Optional filters for searching work packages',
+    examples: {
+      example1: {
+        summary: 'Example search',
+        value: {
+          startTime: '2024-04-16T08:00:00Z',
+          endTime: '2024-04-16T09:30:00Z',
+          registrations: ['ABB', 'ABD'],
+          namePattern: 'ABB%',
+          stations: ['HEL', 'JFK'],
+          statuses: ['OPEN', 'CLOSED'],
+          areas: ['APRON', 'HANGAR'],
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
-    description: 'List of work packages overlapping the given time interval',
+    description: 'List of work packages matching the search criteria',
     type: [WorkPackage],
   })
-  findOverlapping(
-    @Query('startTime') startTime?: string,
-    @Query('endTime') endTime?: string,
-  ): Promise<WorkPackage[]> {
-    return this.workPackageService.findOverlapping(
-      startTime ? new Date(startTime) : undefined,
-      endTime ? new Date(endTime) : undefined,
-    );
+  search(@Body() filter: WorkPackageFilter): Promise<WorkPackage[]> {
+    return this.workPackageService.search(filter);
   }
 }
