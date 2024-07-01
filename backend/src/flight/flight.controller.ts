@@ -6,11 +6,11 @@ import {
   Body,
   Put,
   Delete,
-  Query,
   NotFoundException,
 } from '@nestjs/common';
 import { FlightService } from './flight.service';
 import { Flight } from './flight.entity';
+import { FlightFilter } from './flight-filter.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -168,34 +168,34 @@ export class FlightController {
     return this.flightService.remove(id);
   }
 
-  @Get('search/overlapping')
-  @ApiOperation({ summary: 'Find flights overlapping a given time interval' })
-  @ApiQuery({
-    name: 'startTime',
-    required: false,
-    description: 'Start time of the interval in ISO format',
-    type: String,
-    example: '2024-04-16T08:00:00Z',
-  })
-  @ApiQuery({
-    name: 'endTime',
-    required: false,
-    description: 'End time of the interval in ISO format',
-    type: String,
-    example: '2024-04-16T09:30:00Z',
+  @Post('search')
+  @ApiOperation({ summary: 'Search flights with optional filters' })
+  @ApiBody({
+    type: FlightFilter,
+    description: 'Optional filters for searching flights',
+    examples: {
+      example1: {
+        summary: 'Example search',
+        value: {
+          startTime: '2024-04-16T08:00:00Z',
+          endTime: '2024-04-16T09:30:00Z',
+          flightNumbers: ['8929', '8930'],
+          airlines: ['QO'],
+          registrations: ['ABA'],
+          aircraftTypes: ['AT7'],
+          departureStations: ['HEL', 'JFK'],
+          arrivalStations: ['RIX', 'LAX'],
+          limit: 10,
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
-    description: 'List of flights overlapping the given time interval',
+    description: 'List of flights matching the search criteria',
     type: [Flight],
   })
-  findOverlapping(
-    @Query('startTime') startTime?: string,
-    @Query('endTime') endTime?: string,
-  ): Promise<Flight[]> {
-    return this.flightService.findOverlapping(
-      startTime ? new Date(startTime) : undefined,
-      endTime ? new Date(endTime) : undefined,
-    );
+  search(@Body() filter: FlightFilter): Promise<Flight[]> {
+    return this.flightService.search(filter);
   }
 }

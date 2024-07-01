@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Flight } from './flight.entity';
+import { FlightFilter } from './flight-filter.dto';
 
 /**
  * Service for managing flights.
@@ -41,20 +42,76 @@ export class FlightService {
     }
   }
 
-  async findOverlapping(startTime?: Date, endTime?: Date): Promise<Flight[]> {
-    const query = this.flightRepository
-      .createQueryBuilder('f')
-      .where(
-        `COALESCE(f.actual_departure_time, f.estimated_departure_time, f.scheduled_departure_time) < :endTime
-        AND COALESCE(f.actual_arrival_time, f.estimated_arrival_time, f.scheduled_arrival_time) > :startTime`,
-        {
-          startTime: startTime || new Date(0),
-          endTime: endTime || new Date('9999-12-31'),
-        },
-      )
-      .select('f.*')
-      .getRawMany();
+  async search(filter: FlightFilter): Promise<Flight[]> {
+    const {
+      startTime,
+      endTime,
+      flightNumbers,
+      airlines,
+      registrations,
+      aircraftTypes,
+      departureStations,
+      arrivalStations,
+      limit,
+    } = filter;
+    const query = this.flightRepository.createQueryBuilder('f');
 
-    return query;
+    // Always-true condition to allow optional filtering
+    query.where('1 = 1');
+
+    if (startTime) {
+      query.andWhere(
+        `COALESCE(f.actual_departure_time, f.estimated_departure_time, f.scheduled_departure_time) > :startTime`,
+        { startTime: new Date(startTime) },
+      );
+    }
+
+    if (endTime) {
+      query.andWhere(
+        `COALESCE(f.actual_arrival_time, f.estimated_arrival_time, f.scheduled_arrival_time) < :endTime`,
+        { endTime: new Date(endTime) },
+      );
+    }
+
+    if (flightNumbers && flightNumbers.length > 0) {
+      query.andWhere('f.flight_number IN (:...flightNumbers)', {
+        flightNumbers,
+      });
+    }
+
+    if (airlines && airlines.length > 0) {
+      query.andWhere('f.airline IN (:...airlines)', { airlines });
+    }
+
+    if (registrations && registrations.length > 0) {
+      query.andWhere('f.registration IN (:...registrations)', {
+        registrations,
+      });
+    }
+
+    if (aircraftTypes && aircraftTypes.length > 0) {
+      query.andWhere('f.aircraft_type IN (:...aircraftTypes)', {
+        aircraftTypes,
+      });
+    }
+
+    if (departureStations && departureStations.length > 0) {
+      query.andWhere(
+        'f.scheduled_departure_station IN (:...departureStations)',
+        { departureStations },
+      );
+    }
+
+    if (arrivalStations && arrivalStations.length > 0) {
+      query.andWhere('f.scheduled_arrival_station IN (:...arrivalStations)', {
+        arrivalStations,
+      });
+    }
+
+    if (limit) {
+      query.limit(limit);
+    }
+
+    return query.getMany();
   }
 }
