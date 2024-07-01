@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsArray, IsDateString } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsArray,
+  IsDateString,
+  IsNumber,
+} from 'class-validator';
 
 export class WorkPackageFilter {
   @IsOptional()
@@ -32,4 +38,8 @@ export class WorkPackageFilter {
   @IsArray()
   @IsString({ each: true })
   areas?: string[];
+
+  @IsOptional()
+  @IsNumber()
+  limit?: number;
 }

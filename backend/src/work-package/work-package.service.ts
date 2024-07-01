@@ -53,6 +53,7 @@ export class WorkPackageService {
       stations,
       statuses,
       areas,
+      limit,
     } = filter;
     const query = this.workPackageRepository.createQueryBuilder('wp');
 
@@ -93,6 +94,10 @@ export class WorkPackageService {
 
     if (areas && areas.length > 0) {
       query.andWhere('wp.area IN (:...areas)', { areas });
+    }
+
+    if (limit) {
+      query.limit(limit);
     }
 
     return query.getMany();

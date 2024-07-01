@@ -169,6 +169,7 @@ export class WorkPackageController {
           stations: ['HEL', 'JFK'],
           statuses: ['OPEN', 'CLOSED'],
           areas: ['APRON', 'HANGAR'],
+          limit: 10,
         },
       },
     },
