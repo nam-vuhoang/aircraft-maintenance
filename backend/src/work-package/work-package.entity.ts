@@ -1,25 +1,19 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, Index } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { DurationEntity } from '../common/duration.entity';
+import { AircraftReservation } from '../common/aircraft-reservation.entity';
 
 /**
  * The work package entity
  */
 @Entity('work_packages')
-export class WorkPackage implements DurationEntity {
+@Index(['registration', 'station', 'status', 'area'])
+export class WorkPackage extends AircraftReservation {
   @PrimaryColumn()
   @ApiProperty({
     example: 'WP12345',
     description: 'The unique identifier of the work package',
   })
   id: string;
-
-  @Column()
-  @ApiProperty({
-    example: 'ABC123',
-    description: 'The registration number of the work package',
-  })
-  registration: string;
 
   @Column()
   @ApiProperty({
@@ -49,14 +43,14 @@ export class WorkPackage implements DurationEntity {
   })
   area: string;
 
-  @Column({ name: 'start_time', type: 'timestamptz' })
+  @Column({ name: 'start_time', type: 'timestamp with time zone' })
   @ApiProperty({
     example: '2024-04-16T08:00:00Z',
     description: 'The start time of the work package',
   })
   startTime: Date;
 
-  @Column({ name: 'end_time', type: 'timestamptz' })
+  @Column({ name: 'end_time', type: 'timestamp with time zone' })
   @ApiProperty({
     example: '2024-04-16T09:30:00Z',
     description: 'The end time of the work package',

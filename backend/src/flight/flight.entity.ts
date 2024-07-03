@@ -1,9 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { DurationEntity } from '../common/duration.entity';
+import { AircraftReservation } from '../common/aircraft-reservation.entity';
 
 @Entity('flights')
-export class Flight implements DurationEntity {
+@Index([
+  'airline',
+  'registration',
+  'aircraftType',
+  'flightNumber',
+  'scheduledDepartureStation',
+  'scheduledArrivalStation',
+])
+export class Flight extends AircraftReservation {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     example: '007f78fb-2586-432a-a952-d19d63e18cc2',
@@ -17,13 +25,6 @@ export class Flight implements DurationEntity {
     description: 'The airline code of the flight',
   })
   airline: string;
-
-  @Column()
-  @ApiProperty({
-    example: 'ABA',
-    description: 'The registration number of the flight',
-  })
-  registration: string;
 
   @Column()
   @ApiProperty({
@@ -53,14 +54,17 @@ export class Flight implements DurationEntity {
   })
   scheduledArrivalStation: string;
 
-  @Column({ name: 'scheduled_departure_time', type: 'timestamptz' })
+  @Column({
+    name: 'scheduled_departure_time',
+    type: 'timestamp with time zone',
+  })
   @ApiProperty({
     example: '2024-04-17T04:45:00.000Z',
     description: 'The scheduled departure time',
   })
   scheduledDepartureTime: Date;
 
-  @Column({ name: 'scheduled_arrival_time', type: 'timestamptz' })
+  @Column({ name: 'scheduled_arrival_time', type: 'timestamp with time zone' })
   @ApiProperty({
     example: '2024-04-17T05:55:00.000Z',
     description: 'The scheduled arrival time',
@@ -69,7 +73,7 @@ export class Flight implements DurationEntity {
 
   @Column({
     name: 'estimated_departure_time',
-    type: 'timestamptz',
+    type: 'timestamp with time zone',
     nullable: true,
   })
   @ApiProperty({
@@ -81,7 +85,7 @@ export class Flight implements DurationEntity {
 
   @Column({
     name: 'estimated_arrival_time',
-    type: 'timestamptz',
+    type: 'timestamp with time zone',
     nullable: true,
   })
   @ApiProperty({
@@ -93,7 +97,7 @@ export class Flight implements DurationEntity {
 
   @Column({
     name: 'actual_departure_time',
-    type: 'timestamptz',
+    type: 'timestamp with time zone',
     nullable: true,
   })
   @ApiProperty({
@@ -103,7 +107,11 @@ export class Flight implements DurationEntity {
   })
   actualDepartureTime: Date;
 
-  @Column({ name: 'actual_arrival_time', type: 'timestamptz', nullable: true })
+  @Column({
+    name: 'actual_arrival_time',
+    type: 'timestamp with time zone',
+    nullable: true,
+  })
   @ApiProperty({
     example: '2024-04-17T05:49:00.000Z',
     description: 'The actual arrival time',
