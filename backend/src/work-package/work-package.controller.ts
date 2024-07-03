@@ -15,6 +15,7 @@ import { WorkPackageImportDto } from './work-package-import.dto';
 import {
   ApiTags,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiBody,
   ApiParam,
@@ -164,11 +165,11 @@ export class WorkPackageController {
         value: {
           startTime: '2024-04-16T08:00:00Z',
           endTime: '2024-04-16T09:30:00Z',
-          registrations: ['ABB', 'ABD'],
-          namePattern: 'ABB%',
+          registrations: ['ABC123', 'XYZ456'],
           stations: ['HEL', 'JFK'],
           statuses: ['OPEN', 'CLOSED'],
           areas: ['APRON', 'HANGAR'],
+          namePattern: 'Maintenance%',
           limit: 10,
         },
       },
@@ -183,21 +184,56 @@ export class WorkPackageController {
     return this.workPackageService.search(filter);
   }
 
-  @Post('work-packages')
+  @Post('import')
   @ApiOperation({ summary: 'Import work packages from JSON' })
   @ApiBody({
+    description: 'The work packages import data',
     type: [WorkPackageImportDto],
-    description: 'Array of work packages to import',
+    examples: {
+      example1: {
+        summary: 'Example import data',
+        value: [
+          {
+            workPackageId: 'WP12345',
+            registration: 'ABC123',
+            name: 'Maintenance A',
+            station: 'HEL',
+            status: 'OPEN',
+            area: 'APRON',
+            startDateTime: '2024-04-16T08:00:00.000Z',
+            endDateTime: '2024-04-16T09:30:00.000Z',
+          },
+        ],
+      },
+    },
   })
-  async importWorkPackages(
+  @ApiResponse({
+    status: 201,
+    description: 'Number of imported work packages',
+  })
+  async import(
     @Body() importWorkPackagesDto: WorkPackageImportDto[],
   ): Promise<{ imported: number }> {
-    let count = 0;
     for (const workPackageDto of importWorkPackagesDto) {
       const workPackage = workPackageDto.convertToWorkPackageEntity();
       await this.workPackageService.create(workPackage);
-      count++;
     }
-    return { imported: count };
+    return { imported: importWorkPackagesDto.length };
+  }
+
+  @Get('categories/:category')
+  @ApiOperation({ summary: 'Get unique and sorted values for a category' })
+  @ApiParam({
+    name: 'category',
+    description: 'The category to retrieve unique values for',
+    enum: ['registrations', 'stations', 'statuses', 'areas'],
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Unique and sorted values for the specified category',
+    type: [String],
+  })
+  getCategoryValues(@Param('category') category: string): Promise<string[]> {
+    return this.workPackageService.getCategoryValues(category);
   }
 }

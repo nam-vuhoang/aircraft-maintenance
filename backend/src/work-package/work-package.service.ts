@@ -4,9 +4,6 @@ import { Repository } from 'typeorm';
 import { WorkPackage } from './work-package.entity';
 import { WorkPackageFilter } from './work-package-filter.dto';
 
-/**
- * Service for managing work packages.
- */
 @Injectable()
 export class WorkPackageService {
   constructor(
@@ -38,68 +35,97 @@ export class WorkPackageService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.workPackageRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`WorkPackage with ID ${id} not found`);
-    }
+    await this.workPackageRepository.delete(id);
   }
 
   async search(filter: WorkPackageFilter): Promise<WorkPackage[]> {
-    const {
-      startTime,
-      endTime,
-      registrations,
-      namePattern,
-      stations,
-      statuses,
-      areas,
-      limit,
-    } = filter;
-    const query = this.workPackageRepository.createQueryBuilder('wp');
+    const query = this.workPackageRepository.createQueryBuilder('workPackage');
 
-    // Always-true condition to allow optional filtering
-    query.where('1 = 1');
-
-    if (startTime) {
-      query.andWhere(`wp.end_time > :startTime`, {
-        startTime: new Date(startTime),
+    if (filter.startTime) {
+      query.andWhere('workPackage.startTime >= :startTime', {
+        startTime: filter.startTime,
       });
     }
 
-    if (endTime) {
-      query.andWhere(`wp.start_time < :endTime`, {
-        endTime: new Date(endTime),
+    if (filter.endTime) {
+      query.andWhere('workPackage.endTime <= :endTime', {
+        endTime: filter.endTime,
       });
     }
 
-    if (registrations && registrations.length > 0) {
-      query.andWhere('wp.registration IN (:...registrations)', {
-        registrations,
+    if (filter.registrations && filter.registrations.length > 0) {
+      query.andWhere('workPackage.registration IN (:...registrations)', {
+        registrations: filter.registrations,
       });
     }
 
-    if (namePattern) {
-      query.andWhere('wp.name LIKE :namePattern', {
-        namePattern: `%${namePattern}%`,
+    if (filter.stations && filter.stations.length > 0) {
+      query.andWhere('workPackage.station IN (:...stations)', {
+        stations: filter.stations,
       });
     }
 
-    if (stations && stations.length > 0) {
-      query.andWhere('wp.station IN (:...stations)', { stations });
+    if (filter.statuses && filter.statuses.length > 0) {
+      query.andWhere('workPackage.status IN (:...statuses)', {
+        statuses: filter.statuses,
+      });
     }
 
-    if (statuses && statuses.length > 0) {
-      query.andWhere('wp.status IN (:...statuses)', { statuses });
+    if (filter.areas && filter.areas.length > 0) {
+      query.andWhere('workPackage.area IN (:...areas)', {
+        areas: filter.areas,
+      });
     }
 
-    if (areas && areas.length > 0) {
-      query.andWhere('wp.area IN (:...areas)', { areas });
+    if (filter.namePattern) {
+      query.andWhere('workPackage.name LIKE :namePattern', {
+        namePattern: filter.namePattern,
+      });
     }
 
-    if (limit) {
-      query.limit(limit);
+    if (filter.limit) {
+      query.limit(filter.limit);
     }
 
     return query.getMany();
+  }
+
+  async getCategoryValues(category: string): Promise<string[]> {
+    let results;
+
+    switch (category) {
+      case 'registrations':
+        results = await this.workPackageRepository
+          .createQueryBuilder('workPackage')
+          .select('DISTINCT workPackage.registration', 'value')
+          .orderBy('value')
+          .getRawMany();
+        break;
+      case 'stations':
+        results = await this.workPackageRepository
+          .createQueryBuilder('workPackage')
+          .select('DISTINCT workPackage.station', 'value')
+          .orderBy('value')
+          .getRawMany();
+        break;
+      case 'statuses':
+        results = await this.workPackageRepository
+          .createQueryBuilder('workPackage')
+          .select('DISTINCT workPackage.status', 'value')
+          .orderBy('value')
+          .getRawMany();
+        break;
+      case 'areas':
+        results = await this.workPackageRepository
+          .createQueryBuilder('workPackage')
+          .select('DISTINCT workPackage.area', 'value')
+          .orderBy('value')
+          .getRawMany();
+        break;
+      default:
+        throw new NotFoundException(`Category ${category} not found`);
+    }
+
+    return results.map((result) => result.value);
   }
 }

@@ -1,9 +1,9 @@
 import {
   Controller,
   Get,
-  Post,
   Param,
   Body,
+  Post,
   Put,
   Delete,
   NotFoundException,
@@ -243,5 +243,27 @@ export class FlightController {
       await this.flightService.create(flight);
     }
     return { imported: importFlightsDto.length };
+  }
+
+  @Get('categories/:category')
+  @ApiOperation({ summary: 'Get unique and sorted values for a category' })
+  @ApiParam({
+    name: 'category',
+    description: 'The category to retrieve unique values for',
+    enum: [
+      'airlines',
+      'aircraftTypes',
+      'flightNumbers',
+      'registrations',
+      'stations',
+    ],
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Unique and sorted values for the specified category',
+    type: [String],
+  })
+  getCategoryValues(@Param('category') category: string): Promise<string[]> {
+    return this.flightService.getCategoryValues(category);
   }
 }

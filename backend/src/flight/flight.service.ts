@@ -4,9 +4,6 @@ import { Repository } from 'typeorm';
 import { Flight } from './flight.entity';
 import { FlightFilter } from './flight-filter.dto';
 
-/**
- * Service for managing flights.
- */
 @Injectable()
 export class FlightService {
   constructor(
@@ -36,82 +33,124 @@ export class FlightService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.flightRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Flight with ID ${id} not found`);
-    }
+    await this.flightRepository.delete(id);
   }
 
   async search(filter: FlightFilter): Promise<Flight[]> {
-    const {
-      startTime,
-      endTime,
-      flightNumbers,
-      airlines,
-      registrations,
-      aircraftTypes,
-      departureStations,
-      arrivalStations,
-      limit,
-    } = filter;
-    const query = this.flightRepository.createQueryBuilder('f');
+    const query = this.flightRepository.createQueryBuilder('flight');
 
-    // Always-true condition to allow optional filtering
-    query.where('1 = 1');
-
-    if (startTime) {
+    if (filter.startTime) {
       query.andWhere(
-        `COALESCE(f.actual_departure_time, f.estimated_departure_time, f.scheduled_departure_time) > :startTime`,
-        { startTime: new Date(startTime) },
+        'COALESCE(flight.actualDepartureTime, flight.estimatedDepartureTime, flight.scheduledDepartureTime) >= :startTime',
+        { startTime: filter.startTime },
       );
     }
 
-    if (endTime) {
+    if (filter.endTime) {
       query.andWhere(
-        `COALESCE(f.actual_arrival_time, f.estimated_arrival_time, f.scheduled_arrival_time) < :endTime`,
-        { endTime: new Date(endTime) },
+        'COALESCE(flight.actualArrivalTime, flight.estimatedArrivalTime, flight.scheduledArrivalTime) <= :endTime',
+        { endTime: filter.endTime },
       );
     }
 
-    if (flightNumbers && flightNumbers.length > 0) {
-      query.andWhere('f.flight_number IN (:...flightNumbers)', {
-        flightNumbers,
+    if (filter.flightNumbers && filter.flightNumbers.length > 0) {
+      query.andWhere('flight.flightNumber IN (:...flightNumbers)', {
+        flightNumbers: filter.flightNumbers,
       });
     }
 
-    if (airlines && airlines.length > 0) {
-      query.andWhere('f.airline IN (:...airlines)', { airlines });
-    }
-
-    if (registrations && registrations.length > 0) {
-      query.andWhere('f.registration IN (:...registrations)', {
-        registrations,
+    if (filter.airlines && filter.airlines.length > 0) {
+      query.andWhere('flight.airline IN (:...airlines)', {
+        airlines: filter.airlines,
       });
     }
 
-    if (aircraftTypes && aircraftTypes.length > 0) {
-      query.andWhere('f.aircraft_type IN (:...aircraftTypes)', {
-        aircraftTypes,
+    if (filter.registrations && filter.registrations.length > 0) {
+      query.andWhere('flight.registration IN (:...registrations)', {
+        registrations: filter.registrations,
       });
     }
 
-    if (departureStations && departureStations.length > 0) {
+    if (filter.aircraftTypes && filter.aircraftTypes.length > 0) {
+      query.andWhere('flight.aircraftType IN (:...aircraftTypes)', {
+        aircraftTypes: filter.aircraftTypes,
+      });
+    }
+
+    if (filter.departureStations && filter.departureStations.length > 0) {
       query.andWhere(
-        'f.scheduled_departure_station IN (:...departureStations)',
-        { departureStations },
+        'flight.scheduledDepartureStation IN (:...departureStations)',
+        { departureStations: filter.departureStations },
       );
     }
 
-    if (arrivalStations && arrivalStations.length > 0) {
-      query.andWhere('f.scheduled_arrival_station IN (:...arrivalStations)', {
-        arrivalStations,
-      });
+    if (filter.arrivalStations && filter.arrivalStations.length > 0) {
+      query.andWhere(
+        'flight.scheduledArrivalStation IN (:...arrivalStations)',
+        { arrivalStations: filter.arrivalStations },
+      );
     }
 
-    if (limit) {
-      query.limit(limit);
+    if (filter.limit) {
+      query.limit(filter.limit);
     }
 
     return query.getMany();
+  }
+
+  async getCategoryValues(category: string): Promise<string[]> {
+    let results;
+
+    switch (category) {
+      case 'registrations':
+        results = await this.flightRepository
+          .createQueryBuilder('flight')
+          .select('DISTINCT flight.registration', 'value')
+          .orderBy('value')
+          .getRawMany();
+        break;
+      case 'airlines':
+        results = await this.flightRepository
+          .createQueryBuilder('flight')
+          .select('DISTINCT flight.airline', 'value')
+          .orderBy('value')
+          .getRawMany();
+        break;
+      case 'aircraftTypes':
+        results = await this.flightRepository
+          .createQueryBuilder('flight')
+          .select('DISTINCT flight.aircraftType', 'value')
+          .orderBy('value')
+          .getRawMany();
+        break;
+      case 'flightNumbers':
+        results = await this.flightRepository
+          .createQueryBuilder('flight')
+          .select('DISTINCT flight.flightNumber', 'value')
+          .orderBy('value')
+          .getRawMany();
+        break;
+      case 'stations':
+        const departureStations = await this.flightRepository
+          .createQueryBuilder('flight')
+          .select('DISTINCT flight.scheduledDepartureStation', 'value')
+          .getRawMany();
+        const arrivalStations = await this.flightRepository
+          .createQueryBuilder('flight')
+          .select('DISTINCT flight.scheduledArrivalStation', 'value')
+          .getRawMany();
+
+        const stations = new Set([
+          ...departureStations.map((result) => result.value),
+          ...arrivalStations.map((result) => result.value),
+        ]);
+
+        results = Array.from(stations).sort();
+        return results;
+      default:
+        throw new NotFoundException(`Category ${category} not found`);
+    }
+
+    return results.map((result) => result.value);
   }
 }
