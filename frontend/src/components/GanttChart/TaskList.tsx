@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './TaskList.module.scss';
-import { TaskGroup } from '../models/TaskGroup';
+import { TaskGroup } from '../../models/TaskGroup';
 
 interface TaskListProps {
   taskGroups: TaskGroup[];

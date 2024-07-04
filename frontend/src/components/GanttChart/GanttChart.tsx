@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TaskList from './TaskList';
 import Timeline from './Timeline';
 import styles from './GanttChart.module.scss';
-import { TaskGroup } from '../models/TaskGroup';
+import { TaskGroup } from '../../models/TaskGroup';
 
 interface GanttChartProps {
   taskGroups: TaskGroup[];
