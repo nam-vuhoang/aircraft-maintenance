@@ -1,6 +1,6 @@
 import React from 'react';
 import GanttChart from './components/GanttChart/GanttChart';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Heading } from '@chakra-ui/react';
 import { TaskGroup } from './models/TaskGroup';
 
 const taskGroups: TaskGroup[] = [
@@ -24,7 +24,9 @@ const App: React.FC = () => {
   return (
     <ChakraProvider>
       <div>
-        <h1>Gantt Chart</h1>
+        <Heading as="h1" size="lg" textAlign="center" my={4}>
+          Gantt Chart
+        </Heading>
         <GanttChart taskGroups={taskGroups} />
       </div>
     </ChakraProvider>
