@@ -19,6 +19,7 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups }) => {
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         const rowHeight = 40;
+        let currentRow = 0;
 
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
         ctx.fillStyle = '#ffffff';
@@ -30,10 +31,9 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups }) => {
 
         const timeSpan = maxDate.getTime() - minDate.getTime();
 
-        let currentRow = 0;
-
         taskGroups.forEach((group) => {
           if (expandedGroups.has(group.name)) {
+            currentRow++; // add empty row
             group.tasks.forEach((task) => {
               const taskStartX = ((task.start.getTime() - minDate.getTime()) / timeSpan) * canvasWidth;
               const taskEndX = ((task.end.getTime() - minDate.getTime()) / timeSpan) * canvasWidth;
