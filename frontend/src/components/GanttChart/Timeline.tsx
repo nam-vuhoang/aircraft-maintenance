@@ -64,46 +64,28 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups }) => {
         const timeSpan = maxDate.getTime() - minDate.getTime();
 
         taskGroups.forEach((group) => {
-          if (expandedGroups.has(group.name)) {
-            currentRow++; // add empty row
-            group.tasks.forEach((task) => {
-              const taskStartX = ((task.start.getTime() - minDate.getTime()) / timeSpan) * canvasWidth;
-              const taskEndX = ((task.end.getTime() - minDate.getTime()) / timeSpan) * canvasWidth;
-              const taskWidth = taskEndX - taskStartX;
-              const taskColor = getTaskColor(task.type);
+          const isExpanded = expandedGroups.has(group.name);
+          if (isExpanded) {
+            currentRow++;
+          }
 
-              drawRoundedRectangle(ctx, taskStartX, currentRow * rowHeight, taskWidth, rowHeight - 10, 5, taskColor);
+          group.tasks.forEach((task) => {
+            const taskStartX = ((task.start.getTime() - minDate.getTime()) / timeSpan) * canvasWidth;
+            const taskEndX = ((task.end.getTime() - minDate.getTime()) / timeSpan) * canvasWidth;
+            const taskWidth = taskEndX - taskStartX;
+            const taskColor = getTaskColor(task.type);
 
-              ctx.fillStyle = '#000000';
-              ctx.fillText(task.name, taskStartX + 5, currentRow * rowHeight + 20);
+            drawRoundedRectangle(ctx, taskStartX, currentRow * rowHeight, taskWidth, rowHeight - 10, 5, taskColor);
 
+            ctx.fillStyle = '#000000';
+            ctx.fillText(task.name, taskStartX + 5, currentRow * rowHeight + 20);
+
+            if (isExpanded) {
               currentRow++;
-            });
-          } else {
-            // const groupStartX =
-            //   ((Math.min(...group.tasks.map((task) => task.start.getTime())) - minDate.getTime()) / timeSpan) *
-            //   canvasWidth;
-            // const groupEndX =
-            //   ((Math.max(...group.tasks.map((task) => task.end.getTime())) - minDate.getTime()) / timeSpan) *
-            //   canvasWidth;
-            // const groupWidth = groupEndX - groupStartX;
+            }
+          });
 
-            // drawRoundedRectangle(ctx, groupStartX, currentRow * rowHeight, groupWidth, rowHeight - 10, 5, '#007bff');
-
-            // ctx.fillStyle = '#000000';
-            // ctx.fillText(group.name, groupStartX + 5, currentRow * rowHeight + 20);
-            group.tasks.forEach((task) => {
-              const taskStartX = ((task.start.getTime() - minDate.getTime()) / timeSpan) * canvasWidth;
-              const taskEndX = ((task.end.getTime() - minDate.getTime()) / timeSpan) * canvasWidth;
-              const taskWidth = taskEndX - taskStartX;
-              const taskColor = getTaskColor(task.type);
-
-              drawRoundedRectangle(ctx, taskStartX, currentRow * rowHeight, taskWidth, rowHeight - 10, 5, taskColor);
-
-              ctx.fillStyle = '#000000';
-              ctx.fillText(task.name, taskStartX + 5, currentRow * rowHeight + 20);
-            });
-
+          if (!isExpanded) {
             currentRow++;
           }
         });
