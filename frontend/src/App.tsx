@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import GanttChart from './components/GanttChart/GanttChart';
+import { ChakraProvider } from '@chakra-ui/react';
+import { TaskGroup } from './models/TaskGroup';
 
-function App() {
-  const [count, setCount] = useState(0)
+const taskGroups: TaskGroup[] = [
+  {
+    name: 'Group 1',
+    tasks: [
+      { id: 1, name: 'Task 1', start: new Date('2024-07-01'), end: new Date('2024-07-05'), type: 1 },
+      { id: 2, name: 'Task 2', start: new Date('2024-07-03'), end: new Date('2024-07-10'), type: 2 },
+    ],
+  },
+  {
+    name: 'Group 2',
+    tasks: [
+      { id: 3, name: 'Task 3', start: new Date('2024-07-08'), end: new Date('2024-07-12'), type: 1 },
+      { id: 4, name: 'Task 4', start: new Date('2024-07-10'), end: new Date('2024-07-15'), type: 2 },
+    ],
+  },
+];
 
+const App: React.FC = () => {
   return (
-    <>
+    <ChakraProvider>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>Gantt Chart</h1>
+        <GanttChart taskGroups={taskGroups} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </ChakraProvider>
+  );
+};
 
-export default App
+export default App;
