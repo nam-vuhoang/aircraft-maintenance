@@ -1,11 +1,18 @@
 import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import './TimeScale.module.scss';
-import { format } from 'date-fns';
-import { TimeUnit, roundDown, roundUp, getTimeMarksOfInterval } from '../../utils/TimeUtils';
+import { TimeUnit, roundUp, getTimeMarksOfInterval } from '../../utils/TimeUtils';
+import moment from 'moment';
 
 export interface TimeScaleFormat {
+  /**
+   * Time unit for the scale, e.g. 'hour', 'hour-2', 'hour-3', 'hour-6', 'day', 'week', 'month'
+   */
   timeUnit: TimeUnit;
+
+  /**
+   * Date format according to moment library (see https://momentjscom.readthedocs.io/en/latest/moment/04-displaying/01-format/)
+   */
   format: string;
 }
 
@@ -13,6 +20,7 @@ interface TimeScaleProps {
   startTime: Date;
   endTime: Date;
   scaleFormats: TimeScaleFormat[];
+  unitWidth?: number;
 }
 
 interface TimeMarkBox {
@@ -21,27 +29,18 @@ interface TimeMarkBox {
   text: string;
 }
 
-const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, startTime, endTime }) => {
+const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, startTime, endTime, unitWidth = 10 }) => {
   const lowestScaleFormat = scaleFormats[scaleFormats.length - 1];
-
-  console.log('TimeScale.tsx', 'TimeScale', 'startTime-1', startTime);
-  console.log('TimeScale.tsx', 'TimeScale', 'endTime-1', endTime);
-
   endTime = roundUp(endTime, lowestScaleFormat.timeUnit);
-
-  console.log('TimeScale.tsx', 'TimeScale', 'startTime-2', startTime);
-  console.log('TimeScale.tsx', 'TimeScale', 'endTime-2', endTime);
 
   const timeMarkBoxes: TimeMarkBox[][] = scaleFormats.map((scaleFormat) => {
     const timeMarks: Date[] = getTimeMarksOfInterval(startTime, endTime, scaleFormat.timeUnit);
     return timeMarks.map((time) => ({
       time,
       count: 1,
-      text: format(time, scaleFormat.format),
+      text: moment(time).format(scaleFormat.format),
     }));
   });
-
-  console.log('TimeScale.tsx', 'TimeScale', 'timeMarkBoxes', timeMarkBoxes);
 
   for (let i = timeMarkBoxes.length - 2; i >= 0; i--) {
     const upperBoxes = timeMarkBoxes[i];
@@ -70,7 +69,7 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, startTime, endTime 
               justifyContent="center"
               borderRight="1px solid #e2e8f0"
               paddingY="5px"
-              width={`${timeUnitBox.count * 10}px`}
+              width={`${timeUnitBox.count * unitWidth}px`}
             >
               <Text title={timeUnitBox.time.toLocaleDateString() + ',' + timeUnitBox.count.toString()}>
                 {timeUnitBox.text}
