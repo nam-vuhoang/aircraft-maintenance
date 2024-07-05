@@ -27,7 +27,6 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, startTime, endTime 
   console.log('TimeScale.tsx', 'TimeScale', 'startTime-1', startTime);
   console.log('TimeScale.tsx', 'TimeScale', 'endTime-1', endTime);
 
-  startTime = roundDown(startTime, lowestScaleFormat.timeUnit);
   endTime = roundUp(endTime, lowestScaleFormat.timeUnit);
 
   console.log('TimeScale.tsx', 'TimeScale', 'startTime-2', startTime);
@@ -42,13 +41,17 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, startTime, endTime 
     }));
   });
 
+  console.log('TimeScale.tsx', 'TimeScale', 'timeMarkBoxes', timeMarkBoxes);
+
   for (let i = timeMarkBoxes.length - 2; i >= 0; i--) {
     const upperBoxes = timeMarkBoxes[i];
     const lowerBoxes = timeMarkBoxes[i + 1];
     let k = lowerBoxes.length - 1;
     for (let j = upperBoxes.length - 1; j >= 0; j--) {
-      for (k--; k >= 0 && upperBoxes[j].time <= lowerBoxes[k].time; k--) {
+      upperBoxes[j].count = 0;
+      while (k >= 0 && upperBoxes[j].time <= lowerBoxes[k].time) {
         upperBoxes[j].count += lowerBoxes[k].count;
+        k--;
       }
     }
   }
@@ -56,7 +59,7 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, startTime, endTime 
   return (
     <Box className="time-scale" width="100%">
       {timeMarkBoxes.map((timeUnitBoxRow, i) => (
-        <Box key={i} display="flex">
+        <Box key={i} display="flex" width="100%">
           {timeUnitBoxRow.map((timeUnitBox, j) => (
             <Box
               key={j}
