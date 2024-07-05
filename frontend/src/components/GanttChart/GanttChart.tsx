@@ -51,46 +51,67 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
   const timeSpan = maxDate.getTime() - minDate.getTime();
 
   const generateHeaders = () => {
-    const headers: { top: string[]; bottom: string[] } = { top: [], bottom: [] };
+    const headers: { top: { value: string; span: number }[]; bottom: string[] } = { top: [], bottom: [] };
 
     if (zoomLevel === 'hours') {
       let lastDay = '';
+      let daySpan = 0;
       for (let d = new Date(minDate); d <= maxDate; d.setHours(d.getHours() + 1)) {
         const dayLabel = d.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
         const hourLabel = d.getHours().toString().padStart(2, '0');
         if (dayLabel !== lastDay) {
-          headers.top.push(dayLabel);
+          if (daySpan > 0) {
+            headers.top.push({ value: lastDay, span: daySpan });
+          }
           lastDay = dayLabel;
+          daySpan = 1;
         } else {
-          headers.top.push('');
+          daySpan++;
         }
         headers.bottom.push(hourLabel);
       }
+      if (daySpan > 0) {
+        headers.top.push({ value: lastDay, span: daySpan });
+      }
     } else if (zoomLevel === 'days') {
       let lastWeek = '';
+      let weekSpan = 0;
       for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
         const weekLabel = `#${getWeekNumber(d)}`;
         const dayLabel = d.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
         if (weekLabel !== lastWeek) {
-          headers.top.push(weekLabel);
+          if (weekSpan > 0) {
+            headers.top.push({ value: lastWeek, span: weekSpan });
+          }
           lastWeek = weekLabel;
+          weekSpan = 1;
         } else {
-          headers.top.push('');
+          weekSpan++;
         }
         headers.bottom.push(dayLabel);
       }
+      if (weekSpan > 0) {
+        headers.top.push({ value: lastWeek, span: weekSpan });
+      }
     } else if (zoomLevel === 'months') {
       let lastMonth = '';
+      let monthSpan = 0;
       for (let d = new Date(minDate); d <= maxDate; d.setMonth(d.getMonth() + 1)) {
         const monthLabel = d.toLocaleDateString('en-US', { month: 'long' });
         const weekLabel = `#${getWeekNumber(d)}`;
         if (monthLabel !== lastMonth) {
-          headers.top.push(monthLabel);
+          if (monthSpan > 0) {
+            headers.top.push({ value: lastMonth, span: monthSpan });
+          }
           lastMonth = monthLabel;
+          monthSpan = 1;
         } else {
-          headers.top.push('');
+          monthSpan++;
         }
         headers.bottom.push(weekLabel);
+      }
+      if (monthSpan > 0) {
+        headers.top.push({ value: lastMonth, span: monthSpan });
       }
     }
 
@@ -135,8 +156,9 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
                       ? styles.sunday
                       : ''
                   }`}
+                  style={{ flex: header.span }}
                 >
-                  {header}
+                  {header.value}
                 </div>
               ))}
             </div>
