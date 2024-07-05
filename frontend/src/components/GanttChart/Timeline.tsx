@@ -17,7 +17,7 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups, zoomLev
   const minDate = new Date(Math.min(...allTasks.map((task) => task.start.getTime())));
   const maxDate = new Date(Math.max(...allTasks.map((task) => task.end.getTime())));
   const timeSpan = maxDate.getTime() - minDate.getTime();
-  
+
   return (
     <div className={styles.timeline}>
       {taskGroups.map((group) => {
@@ -58,6 +58,7 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups, zoomLev
                       width: `${taskWidth}%`,
                       backgroundColor: taskColor,
                     }}
+                    title={`${task.name}: ${task.start.toLocaleString()} - ${task.end.toLocaleString()}`}
                   >
                     {task.name}
                   </div>
