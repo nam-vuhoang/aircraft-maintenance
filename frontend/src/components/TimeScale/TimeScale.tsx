@@ -17,8 +17,8 @@ export interface TimeScaleFormat {
 }
 
 interface TimeScaleProps {
-  startTime: Date;
-  endTime: Date;
+  minTime: Date;
+  maxTime: Date;
   scaleFormats: TimeScaleFormat[];
   unitWidth?: number;
 }
@@ -29,12 +29,12 @@ interface TimeMarkBox {
   text: string;
 }
 
-const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, startTime, endTime, unitWidth = 10 }) => {
+const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, unitWidth = 10 }) => {
   const lowestScaleFormat = scaleFormats[scaleFormats.length - 1];
-  endTime = roundUp(endTime, lowestScaleFormat.timeUnit);
+  maxTime = roundUp(maxTime, lowestScaleFormat.timeUnit);
 
   const timeMarkBoxes: TimeMarkBox[][] = scaleFormats.map((scaleFormat) => {
-    const timeMarks: Date[] = getTimeMarksOfInterval(startTime, endTime, scaleFormat.timeUnit);
+    const timeMarks: Date[] = getTimeMarksOfInterval(minTime, maxTime, scaleFormat.timeUnit);
     return timeMarks.map((time) => ({
       time,
       count: 1,
