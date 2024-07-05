@@ -1,0 +1,14 @@
+.time-scale {
+  width: 100%;
+
+  .top-header,
+  .bottom-header {
+    display: flex;
+    width: 100%;
+  }
+
+  .time-unit {
+    border: 1px solid #ccc;
+    padding: 4px;
+  }
+}
