@@ -1,14 +1,17 @@
 .time-scale {
-  width: 100%;
+  // width: 100%;
 
-  .top-header,
-  .bottom-header {
+  .time-unit-row {
     display: flex;
-    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-bottom: 10px; // Optional: Add some spacing between rows
   }
 
   .time-unit {
     border: 1px solid #ccc;
     padding: 4px;
+    display: inline-block;
+    vertical-align: top;
   }
 }

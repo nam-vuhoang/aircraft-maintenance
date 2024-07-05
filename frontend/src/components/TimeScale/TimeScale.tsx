@@ -20,16 +20,16 @@ interface TimeScaleProps {
   minTime: Date;
   maxTime: Date;
   scaleFormats: TimeScaleFormat[];
-  unitWidth?: number;
+  unitWidth?: number; // Width of each time unit box
 }
 
 interface TimeMarkBox {
   time: Date;
-  count: number;
+  weight: number;
   text: string;
 }
 
-const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, unitWidth = 10 }) => {
+const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, unitWidth = 25 }) => {
   const lowestScaleFormat = scaleFormats[scaleFormats.length - 1];
   maxTime = roundUp(maxTime, lowestScaleFormat.timeUnit);
 
@@ -37,7 +37,7 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, u
     const timeMarks: Date[] = getTimeMarksOfInterval(minTime, maxTime, scaleFormat.timeUnit);
     return timeMarks.map((time) => ({
       time,
-      count: 1,
+      weight: 1,
       text: moment(time).format(scaleFormat.format),
     }));
   });
@@ -47,9 +47,9 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, u
     const lowerBoxes = timeMarkBoxes[i + 1];
     let k = lowerBoxes.length - 1;
     for (let j = upperBoxes.length - 1; j >= 0; j--) {
-      upperBoxes[j].count = 0;
+      upperBoxes[j].weight = 0;
       while (k >= 0 && upperBoxes[j].time <= lowerBoxes[k].time) {
-        upperBoxes[j].count += lowerBoxes[k].count;
+        upperBoxes[j].weight += lowerBoxes[k].weight;
         k--;
       }
     }
@@ -58,20 +58,26 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, u
   return (
     <Box className="time-scale" width="100%">
       {timeMarkBoxes.map((timeUnitBoxRow, i) => (
-        <Box key={i} display="flex" width="100%">
+        <Box
+          key={i}
+          className="time-unit-row"
+          display="flex"
+          overflowX="auto"
+          width={`${timeMarkBoxes[timeMarkBoxes.length - 1].length * unitWidth}px`}
+        >
           {timeUnitBoxRow.map((timeUnitBox, j) => (
             <Box
               key={j}
-              flexGrow={timeUnitBox.count}
-              display="flex"
+              className="time-unit"
+              display="inline-flex"
               flexDirection="column"
               alignItems="center"
               justifyContent="center"
               borderRight="1px solid #e2e8f0"
               paddingY="5px"
-              width={`${timeUnitBox.count * unitWidth}px`}
+              width={`${unitWidth * timeUnitBox.weight}px`} // Width based on weight
             >
-              <Text title={timeUnitBox.time.toLocaleDateString() + ',' + timeUnitBox.count.toString()}>
+              <Text title={`${timeUnitBox.time.toLocaleString()} (weight: ${timeUnitBox.weight.toString()})`}>
                 {timeUnitBox.text}
               </Text>
             </Box>
