@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import './TimeScale.module.scss';
 import { TimeUnit, roundUp, getTimeMarksOfInterval } from '../../utils/TimeUtils';
@@ -20,7 +20,7 @@ interface TimeScaleProps {
   minTime: Date;
   maxTime: Date;
   scaleFormats: TimeScaleFormat[];
-  unitWidth?: number; // Width of each time unit box
+  unitWidth?: number; // Minimum width of each time unit box
 }
 
 interface TimeMarkBox {
@@ -30,6 +30,24 @@ interface TimeMarkBox {
 }
 
 const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, unitWidth = 25 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(unitWidth);
+
+  useEffect(() => {
+    const updateContainerWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    updateContainerWidth();
+    window.addEventListener('resize', updateContainerWidth);
+
+    return () => {
+      window.removeEventListener('resize', updateContainerWidth);
+    };
+  }, []);
+
   const lowestScaleFormat = scaleFormats[scaleFormats.length - 1];
   maxTime = roundUp(maxTime, lowestScaleFormat.timeUnit);
 
@@ -55,16 +73,12 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, u
     }
   }
 
+  unitWidth = Math.max(unitWidth, containerWidth / timeMarkBoxes[timeMarkBoxes.length - 1].length);
+
   return (
-    <Box className="time-scale" width="100%">
+    <Box className="time-scale" ref={containerRef} width="100%" overflowX="auto">
       {timeMarkBoxes.map((timeUnitBoxRow, i) => (
-        <Box
-          key={i}
-          className="time-unit-row"
-          display="flex"
-          overflowX="auto"
-          width={`${timeMarkBoxes[timeMarkBoxes.length - 1].length * unitWidth}px`}
-        >
+        <Box key={i} className="time-unit-row" display="flex">
           {timeUnitBoxRow.map((timeUnitBox, j) => (
             <Box
               key={j}
@@ -75,7 +89,7 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, u
               justifyContent="center"
               borderRight="1px solid #e2e8f0"
               paddingY="5px"
-              width={`${unitWidth * timeUnitBox.weight}px`} // Width based on weight
+              width={`${containerWidth * timeUnitBox.weight}px`} // Width based on weight and calculated box width
             >
               <Text title={`${timeUnitBox.time.toLocaleString()} (weight: ${timeUnitBox.weight.toString()})`}>
                 {timeUnitBox.text}
