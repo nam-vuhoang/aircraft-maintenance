@@ -73,12 +73,13 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, u
     }
   }
 
-  unitWidth = Math.max(unitWidth, containerWidth / timeMarkBoxes[timeMarkBoxes.length - 1].length);
+  const unitCount = timeMarkBoxes[timeMarkBoxes.length - 1].length;
+  unitWidth = Math.round(Math.max(unitWidth, containerWidth / unitCount));
 
   return (
-    <Box className="time-scale" ref={containerRef} width="100%" overflowX="auto">
+    <Box className="time-scale" ref={containerRef} width="100%">
       {timeMarkBoxes.map((timeUnitBoxRow, i) => (
-        <Box key={i} className="time-unit-row" display="flex">
+        <Box key={i} className="time-unit-row" display="flex" width={`${unitWidth * unitCount}px`}>
           {timeUnitBoxRow.map((timeUnitBox, j) => (
             <Box
               key={j}
@@ -89,9 +90,14 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, u
               justifyContent="center"
               borderRight="1px solid #e2e8f0"
               paddingY="5px"
-              width={`${containerWidth * timeUnitBox.weight}px`} // Width based on weight and calculated box width
+              width={`${unitWidth * timeUnitBox.weight}px`} // Width based on weight and calculated box width
             >
-              <Text title={`${timeUnitBox.time.toLocaleString()} (weight: ${timeUnitBox.weight.toString()})`}>
+              <Text
+                whiteSpace='nowrap'
+                title={`${timeUnitBox.time.toLocaleString()}\n{weight: ${timeUnitBox.weight.toString()}), width: ${
+                  unitWidth * timeUnitBox.weight
+                }px}`}
+              >
                 {timeUnitBox.text}
               </Text>
             </Box>
