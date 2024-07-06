@@ -1,18 +1,21 @@
-.time-ruler {
+.timeRuler {
   // width: 100%;
 
-  .time-scale {
+  .timeScale {
     display: flex;
-    overflow-x: auto;
     white-space: nowrap;
-    margin-bottom: 10px; // Optional: Add some spacing between rows
-    height: 25px;
+    vertical-align: middle;
+    height: 35px;
   }
-  
-  .time-unit {
-    border: 1px solid #ccc;
+
+  .timeUnit {
+    border: 1px solid #ddd;
     padding: 4px;
-    display: inline-block;
-    vertical-align: top;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .sunday {
+    color: red;
   }
 }

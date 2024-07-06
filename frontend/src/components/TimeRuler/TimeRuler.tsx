@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import './TimeRuler.module.scss';
+import styles from './TimeRuler.module.scss'; // Import styles as a module
 import { TimeUnit, roundUp, getTimeMarksOfInterval } from '../../utils/TimeUtils';
 import moment from 'moment';
 
@@ -85,13 +85,15 @@ const TimeRuler: React.FC<TimeRulerProps> = ({ scaleFormats, minTime, maxTime, u
   unitWidth = Math.round(Math.max(unitWidth, containerWidth / unitCount));
 
   return (
-    <Box className="time-ruler" ref={containerRef} width="100%">
+    <Box className={styles.timeRuler} ref={containerRef} width="100%">
       {timeScales.map((timeScale, i) => (
-        <Box key={i} className="time-scale" display="flex" width={`${unitWidth * unitCount}px`}>
+        <Box key={i} className={styles.timeScale} display="flex" width={`${unitWidth * unitCount}px`}>
           {timeScale.boxes.map((timeBox, j) => (
             <Box
               key={j}
-              className="time-unit"
+              className={`${styles.timeUnit} ${
+                timeScale.unit === 'day' && moment(timeBox.time).day() === 0 ? styles.sunday : ''
+              }`}
               display="inline-flex"
               flexDirection="column"
               alignItems="center"
