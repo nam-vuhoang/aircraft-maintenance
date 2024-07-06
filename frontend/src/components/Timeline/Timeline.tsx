@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Timeline.module.scss';
-import { TaskGroup } from '../../models/TaskGroup';
+import { TaskGroup } from '../../models/TaskGroup.entity';
 
 interface TimelineProps {
   taskGroups: TaskGroup[];
@@ -24,8 +24,8 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups, minTime
             {isExpanded && <div className={styles.emptyRow}></div>}
             {group.tasks.map((task) => {
               // Calculate taskStartX and taskWidth in terms of pixels
-              const taskStartX = (task.start.getTime() - minTime.getTime()) * millisecondWidth;
-              const taskWidth = (task.end.getTime() - task.start.getTime()) * millisecondWidth;
+              const taskStartX = (task.startTime.getTime() - minTime.getTime()) * millisecondWidth;
+              const taskWidth = (task.endTime.getTime() - task.startTime.getTime()) * millisecondWidth;
               const taskColor = getTaskColor(task.type);
               return (
                 <React.Fragment key={task.id}>
@@ -36,7 +36,7 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups, minTime
                       width: `${taskWidth}px`,
                       backgroundColor: taskColor,
                     }}
-                    title={`${task.name}: ${task.start.toLocaleString()} - ${task.end.toLocaleString()}`}
+                    title={`${task.name}: ${task.startTime.toLocaleString()} - ${task.endTime.toLocaleString()}`}
                   >
                     {task.name}
                   </div>

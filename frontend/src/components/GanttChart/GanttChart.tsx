@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import TaskList from '../TaskList/TaskList';
 import styles from './GanttChart.module.scss';
-import { TaskGroup } from '../../models/TaskGroup';
+import { TaskGroup } from '../../models/TaskGroup.entity';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import TimeRuler from '../TimeRuler/TimeRuler';
@@ -65,8 +65,8 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
         const lowestUnitDuration = getMillisecondsInTimeUnit(lowestUnit);
 
         const allTasks = taskGroups.flatMap((group) => group.tasks);
-        const minTime = new Date(Math.min(...allTasks.map((task) => task.start.getTime())));
-        const maxTime = new Date(Math.max(...allTasks.map((task) => task.end.getTime())));
+        const minTime = new Date(Math.min(...allTasks.map((task) => task.startTime.getTime())));
+        const maxTime = new Date(Math.max(...allTasks.map((task) => task.endTime.getTime())));
         const roundedMinTime = roundDown(minTime, lowestUnit);
         const roundedMaxTime = roundUp(maxTime, lowestUnit);
         const totalDuration = roundedMaxTime.getTime() - roundedMinTime.getTime();
