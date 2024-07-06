@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import TaskList from './TaskList';
-import Timeline from './Timeline';
 import styles from './GanttChart.module.scss';
 import { TaskGroup } from '../../models/TaskGroup';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import { TimeScaleFormat } from '../TimeRuler/TimeRuler';
+import TimeRuler from '../TimeRuler/TimeRuler';
+import { TimeUnit } from '../../utils/TimeUtils';
 
 interface GanttChartProps {
   taskGroups: TaskGroup[];
@@ -13,59 +13,40 @@ interface GanttChartProps {
 
 interface ZoomLevel {
   name: string;
-  description: string;
-  scaleFormats: TimeScaleFormat[];
+  units: TimeUnit[];
 }
 
 const zoomLevels: ZoomLevel[] = [
   {
-    name: 'Hours',
-    description: 'Days + Hours',
-    scaleFormats: [
-      { unit: 'day', format: 'DD MMM' },
-      { unit: 'hour', format: 'HH' },
-    ],
+    name: 'Days + Hours',
+    units: ['day', 'hour'],
   },
   {
-    name: 'Hours-3',
-    description: 'Days + 3 Hours',
-    scaleFormats: [
-      { unit: 'day', format: 'DD MMM' },
-      { unit: 'hour', format: 'HH' },
-    ],
+    name: 'Days + 3 Hours',
+    units: ['day', 'hour-3'],
   },
   {
-    name: 'Hours-6',
-    description: 'Days + 6 Hours',
-    scaleFormats: [
-      { unit: 'day', format: 'DD MMM' },
-      { unit: 'hour-3', format: 'HH' },
-    ],
+    name: 'Days + 6 Hours',
+    units: ['day', 'hour-6'],
   },
   {
-    name: 'Days',
-    description: 'Weeks + Days',
-    scaleFormats: [
-      { unit: 'week', format: '[Week ]w' },
-      { unit: 'day', format: 'DD' },
-    ],
+    name: 'Weeks + Days',
+    units: ['week', 'day'],
   },
   {
-    name: 'Weeks',
-    description: 'Months + Weeks',
-    scaleFormats: [
-      { unit: 'month', format: 'MMMM yyyy' },
-      { unit: 'week', format: '[W]w' },
-    ],
+    name: 'Weeks + Days + Hours',
+    units: ['week', 'day', 'hour-3'],
+  },
+  {
+    name: 'Months + Weeks + Days',
+    units: ['month', 'week', 'day'],
   },
 ];
-
-const defaultZoomLevel = 'Days';
 
 const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [leftPanelWidth, setLeftPanelWidth] = useState<number>(300);
-  const [zoomLevelName, setZoomLevelName] = useState<string>(defaultZoomLevel);
+  const [zoomLevelName, setZoomLevelName] = useState<string>(zoomLevels[3].name);
 
   const handleTaskGroupToggle = (groupName: string) => {
     setExpandedGroups((prevState) => {
@@ -90,8 +71,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
   const allTasks = taskGroups.flatMap((group) => group.tasks);
   const minTime = new Date(Math.min(...allTasks.map((task) => task.start.getTime())));
   const maxTime = new Date(Math.max(...allTasks.map((task) => task.end.getTime())));
-  const timeRulers = zoomLevels.find((level) => level.name === zoomLevelName)?.scaleFormats || [];
-  const timeUnit = timeRulers[timeRulers.length - 1].unit;
+  const timeUnits = zoomLevels.find((level) => level.name === zoomLevelName)?.units || [];
 
   return (
     <div className={styles.ganttChart}>
@@ -100,7 +80,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
         <select id="zoom" value={zoomLevelName} onChange={handleZoomChange}>
           {zoomLevels.map((level, index) => (
             <option key={index} value={level.name}>
-              {level.description}
+              {level.name}
             </option>
           ))}
         </select>
@@ -127,7 +107,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
           </>
         </ResizableBox>
         <div className={styles.rightPanel}>
-          <TimeRuler minTime={minTime} maxTime={maxTime} scaleFormats={timeRulers} />
+          <TimeRuler minTime={minTime} maxTime={maxTime} units={timeUnits} />
           {/* <Timeline taskGroups={taskGroups} expandedGroups={expandedGroups} timeUnit={timeUnit} /> */}
         </div>
       </div>

@@ -1,10 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import styles from './TimeRuler.module.scss'; // Import styles as a module
-import { TimeUnit, roundUp, getTimeMarksOfInterval } from '../../utils/TimeUtils';
+import { roundUp, getTimeMarksOfInterval, TimeUnit } from '../../utils/TimeUtils';
 import moment from 'moment';
 
-export interface TimeScaleFormat {
+interface TimeRulerProps {
+  minTime: Date;
+  maxTime: Date;
+  units: TimeUnit[];
+  minUnitWidth?: number; // Minimum width of each time unit box
+}
+
+/**
+ * Time scale format for the time ruler.
+ */
+interface TimeScaleFormat {
   /**
    * Time unit for the scale, e.g. 'hour', 'hour-2', 'hour-3', 'hour-6', 'day', 'week', 'month'
    */
@@ -26,12 +36,29 @@ export interface TimeScaleFormat {
   shortFormat: string;
 }
 
-interface TimeRulerProps {
-  minTime: Date;
-  maxTime: Date;
-  scaleFormats: TimeScaleFormat[];
-  unitWidth?: number; // Minimum width of each time unit box
-}
+/**
+ * Gets the default time scale format for the given time unit.
+ * @param unit
+ * @returns
+ */
+const getDefaultTimeScaleFormat = (unit: TimeUnit): TimeScaleFormat => {
+  switch (unit) {
+    case 'hour':
+    case 'hour-1':
+    case 'hour-2':
+    case 'hour-3':
+    case 'hour-6':
+      return { unit, shortFormat: 'HH' };
+    case 'day':
+      return { unit, fullFormat: 'DD MMM', fullFormatWeightLimit: 2, shortFormat: 'DD' };
+    case 'week':
+      return { unit, fullFormat: '[Week ]w', fullFormatWeightLimit: 3, shortFormat: '[W]w' };
+    case 'month':
+      return { unit, fullFormat: 'MMMM yyyy', fullFormatWeightLimit: 4, shortFormat: 'MMM' };
+    default:
+      throw new Error(`Unsupported time unit: ${unit}`);
+  }
+};
 
 type TimeScale = {
   scaleFormat: TimeScaleFormat;
@@ -41,9 +68,9 @@ type TimeScale = {
   }[];
 };
 
-const TimeRuler: React.FC<TimeRulerProps> = ({ scaleFormats, minTime, maxTime, unitWidth = 25 }) => {
+const TimeRuler: React.FC<TimeRulerProps> = ({ units, minTime, maxTime, minUnitWidth = 25 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState<number>(unitWidth);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
 
   useEffect(() => {
     const updateContainerWidth = () => {
@@ -60,6 +87,7 @@ const TimeRuler: React.FC<TimeRulerProps> = ({ scaleFormats, minTime, maxTime, u
     };
   }, []);
 
+  const scaleFormats = units.map((unit) => getDefaultTimeScaleFormat(unit));
   const lowestScaleFormat = scaleFormats[scaleFormats.length - 1];
   maxTime = roundUp(maxTime, lowestScaleFormat.unit);
 
@@ -90,7 +118,7 @@ const TimeRuler: React.FC<TimeRulerProps> = ({ scaleFormats, minTime, maxTime, u
     }
   }
 
-  unitWidth = Math.round(Math.max(unitWidth, containerWidth / unitCount));
+  const unitWidth = Math.round(Math.max(minUnitWidth, containerWidth / unitCount));
 
   return (
     <Box className={styles.timeRuler} ref={containerRef} width="100%">
