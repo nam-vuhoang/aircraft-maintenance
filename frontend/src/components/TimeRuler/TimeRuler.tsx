@@ -1,56 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import styles from './TimeRuler.module.scss'; // Import styles as a module
-import { roundUp, getTimeMarksOfInterval, TimeUnit, roundDown, getMillisecondsInTimeUnit } from '../../utils/TimeUtils';
+import styles from './TimeRuler.module.scss';
+import { getMillisecondsInTimeUnit, getTimeMarksOfInterval, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
 import moment from 'moment';
-import { getMilliseconds } from 'date-fns';
 
 interface TimeRulerProps {
   minTime: Date;
   maxTime: Date;
   units: TimeUnit[];
-  minUnitWidth?: number; // Minimum width of each time unit box
-
-  onStateChange?: (state: TimeRulerState) => void;
-}
-
-export interface TimeRulerState {
-  minTime: Date;
-  maxTime: Date;
-  units: TimeUnit[];
   millisecondWidth: number;
 }
-
-/**
- * Time scale format for the time ruler.
- */
 interface TimeScaleFormat {
-  /**
-   * Time unit for the scale, e.g. 'hour', 'hour-2', 'hour-3', 'hour-6', 'day', 'week', 'month'
-   */
   unit: TimeUnit;
-
-  /**
-   * Date format according to moment library (see https://momentjscom.readthedocs.io/en/latest/moment/04-displaying/01-format/)
-   */
   fullFormat?: string;
-
-  /**
-   * The minimum width of the time unit box, defined in number of single time units.
-   */
   fullFormatWeightLimit?: number;
-
-  /**
-   * Date format according to moment library (see https://momentjscom.readthedocs.io/en/latest/moment/04-displaying/01-format/)
-   */
   shortFormat: string;
 }
 
-/**
- * Gets the default time scale format for the given time unit.
- * @param unit
- * @returns
- */
 const getDefaultTimeScaleFormat = (unit: TimeUnit): TimeScaleFormat => {
   switch (unit) {
     case 'hour':
@@ -78,70 +44,46 @@ type TimeScale = {
   }[];
 };
 
-const TimeRuler: React.FC<TimeRulerProps> = ({ units, minTime, maxTime, minUnitWidth = 25, onStateChange }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState<number>(0);
+const TimeRuler: React.FC<TimeRulerProps> = ({ minTime, maxTime, units, millisecondWidth }) => {
+  const lowestUnit = units[units.length - 1];
+  minTime = roundDown(minTime, lowestUnit); // double check if this is necessary
+  maxTime = roundUp(maxTime, lowestUnit); // double check if this is necessary
 
-  useEffect(() => {
-    const updateContainerWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    };
-
-    updateContainerWidth();
-    window.addEventListener('resize', updateContainerWidth);
-
-    return () => {
-      window.removeEventListener('resize', updateContainerWidth);
-    };
-  }, []);
-
-  const scaleFormats = units.map((unit) => getDefaultTimeScaleFormat(unit));
-  const lowestUnit = scaleFormats[scaleFormats.length - 1].unit;
-  minTime = roundDown(minTime, lowestUnit);
-  maxTime = roundUp(maxTime, lowestUnit);
-
-  const timeScales: TimeScale[] = scaleFormats.map((scaleFormat) => {
-    const timeMarks: Date[] = getTimeMarksOfInterval(minTime, maxTime, scaleFormat.unit);
+  const timeScales: TimeScale[] = units.map((unit, unitIndex) => {
+    const timeMarks: Date[] = getTimeMarksOfInterval(minTime, maxTime, unit);
     return {
-      scaleFormat,
+      scaleFormat: getDefaultTimeScaleFormat(unit),
       boxes: timeMarks.map((time) => ({
         time,
-        weight: 1,
+        weight: unitIndex === units.length - 1 ? 1 : 0,
       })),
     };
   });
 
-  const unitScale = timeScales[timeScales.length - 1];
-  const unitBoxes = unitScale.boxes;
-  const unitCount = unitBoxes.length;
+  const lowestUnitScale = timeScales[timeScales.length - 1];
 
   for (let i = timeScales.length - 2; i >= 0; i--) {
     const upperBoxes = timeScales[i].boxes;
-    let unitIndex = unitCount - 1;
+    let unitIndex = lowestUnitScale.boxes.length - 1;
     for (let j = upperBoxes.length - 1; j >= 0; j--) {
-      upperBoxes[j].weight = 0; // reset weight
-      while (unitIndex >= 0 && upperBoxes[j].time <= unitBoxes[unitIndex].time) {
-        upperBoxes[j].weight += unitBoxes[unitIndex].weight;
+      while (unitIndex >= 0 && upperBoxes[j].time <= lowestUnitScale.boxes[unitIndex].time) {
+        upperBoxes[j].weight++;
         unitIndex--;
       }
     }
   }
 
-  const unitWidth = Math.round(Math.max(minUnitWidth, containerWidth / unitCount));
-  // onStateChange &&
-  //   onStateChange({
-  //     minTime,
-  //     maxTime,
-  //     units,
-  //     millisecondWidth: unitWidth * getMillisecondsInTimeUnit(lowestUnit),
-  //   });
+  const unitWidth = millisecondWidth * getMillisecondsInTimeUnit(lowestUnit);
 
   return (
-    <Box className={styles.timeRuler} ref={containerRef} width="100%">
+    <Box className={styles.timeRuler} width="100%">
       {timeScales.map((timeScale, i) => (
-        <Box key={i} className={styles.timeScale} display="flex" width={`${unitWidth * unitCount}px`}>
+        <Box
+          key={i}
+          className={styles.timeScale}
+          display="flex"
+          width={`${unitWidth * lowestUnitScale.boxes.length}px`}
+        >
           {timeScale.boxes.map((timeBox, j) => (
             <Box
               key={j}
