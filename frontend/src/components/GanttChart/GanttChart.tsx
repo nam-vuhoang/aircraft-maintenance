@@ -99,7 +99,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
     });
   };
 
-  const handleResize = (_event: any, { size }: { size: { width: number; height: number } }) => {
+  const handleResizeLeftPanel = (_event: unknown, { size }: { size: { width: number; height: number } }) => {
     setLeftPanelWidth(size.width);
   };
 
@@ -124,13 +124,13 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
           width={leftPanelWidth}
           height={Infinity}
           resizeHandles={['e']}
-          onResize={handleResize}
+          onResize={handleResizeLeftPanel}
           minConstraints={[100, Infinity]}
           maxConstraints={[600, Infinity]}
           className={styles.leftPanel}
         >
           <>
-            <div className={styles.leftHeader}>
+            <div className={styles.leftHeader} style={{ height: units.length * 35 }}>
               <div>Name</div>
             </div>
             <TaskList
