@@ -1,0 +1,24 @@
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+
+$gantt-chart-header-height: 35px;
+$gantt-chart-row-height: 35px;
+$gantt-chart-task-bar-height: 25px;
+$gantt-chart-task-bar-margin-top: 5px;
+
+$gantt-chart-task-bar-color-1: rgba(0, 123, 255, 0.5);
+$gantt-chart-task-bar-color-2: rgba(255, 87, 51, 0.5);
+
+:export {
+  primaryColor: $primary-color;
+  secondaryColor: $secondary-color;
+
+  ganttChartHeaderHeight: $gantt-chart-header-height;
+  ganttChartRowHeight: $gantt-chart-row-height;
+
+  ganttChartTaskBarHeight: $gantt-chart-task-bar-height;
+  ganttChartTaskBarMarginTop: $gantt-chart-task-bar-margin-top;
+  
+  ganttChartTaskBarColor1: $gantt-chart-task-bar-color-1;
+  ganttChartTaskBarColor2: $gantt-chart-task-bar-color-2;
+}

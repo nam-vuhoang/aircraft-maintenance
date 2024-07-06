@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import TaskList from './TaskList';
+import TaskList from '../TaskList/TaskList';
 import styles from './GanttChart.module.scss';
 import { TaskGroup } from '../../models/TaskGroup';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import TimeRuler from '../TimeRuler/TimeRuler';
 import { getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
-import Timeline from './Timeline';
+import Timeline from '../Timeline/Timeline';
 
 interface GanttChartProps {
   taskGroups: TaskGroup[];
@@ -130,7 +130,10 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
           className={styles.leftPanel}
         >
           <>
-            <div className={styles.leftHeader} style={{ height: units.length * 35 }}>
+            <div
+              className={styles.leftHeader}
+              style={{ height: `${parseInt(styles.ganttChartHeaderHeight) * units.length}px` }}
+            >
               <div>Name</div>
             </div>
             <TaskList

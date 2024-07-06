@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .timeRuler {
   // width: 100%;
 
@@ -5,7 +7,7 @@
     display: flex;
     white-space: nowrap;
     vertical-align: middle;
-    height: 35px;
+    height: $gantt-chart-header-height;
   }
 
   .timeUnit {
@@ -19,3 +21,4 @@
     color: red;
   }
 }
+

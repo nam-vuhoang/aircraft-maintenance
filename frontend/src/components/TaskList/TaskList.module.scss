@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .taskList {
   width: 100%;
   border-right: 1px solid #ccc;
@@ -8,7 +10,7 @@
   padding: 5px 10px;
   border-bottom: 1px solid #ddd;
   cursor: pointer;
-  height: 35px; // Ensure height consistency
+  height: $gantt-chart-row-height;
 }
 
 .taskItems {
@@ -18,5 +20,6 @@
 .taskItem {
   padding: 5px 10px;
   border-bottom: 1px solid #ddd;
-  height: 35px; // Ensure height consistency
+  height: $gantt-chart-row-height;
+  margin: 0px;
 }

@@ -11,7 +11,7 @@ interface TimelineProps {
 }
 
 const getTaskColor = (type: number) => {
-  return type === 1 ? 'rgba(0, 123, 255, 0.5)' : 'rgba(255, 87, 51, 0.5)';
+  return type % 2 === 1 ? styles.ganttChartTaskBarColor1 : styles.ganttChartTaskBarColor2;
 };
 
 const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups, minTime, millisecondWidth }) => {
