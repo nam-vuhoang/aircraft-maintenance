@@ -60,20 +60,21 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, u
     }));
   });
 
+  const unitBoxes = timeMarkBoxes[timeMarkBoxes.length - 1];
+  const unitCount = unitBoxes.length;
+
   for (let i = timeMarkBoxes.length - 2; i >= 0; i--) {
     const upperBoxes = timeMarkBoxes[i];
-    const lowerBoxes = timeMarkBoxes[i + 1];
-    let k = lowerBoxes.length - 1;
+    let k = unitCount - 1;
     for (let j = upperBoxes.length - 1; j >= 0; j--) {
-      upperBoxes[j].weight = 0;
-      while (k >= 0 && upperBoxes[j].time <= lowerBoxes[k].time) {
-        upperBoxes[j].weight += lowerBoxes[k].weight;
+      upperBoxes[j].weight = 0; // reset weight
+      while (k >= 0 && upperBoxes[j].time <= unitBoxes[k].time) {
+        upperBoxes[j].weight += unitBoxes[k].weight;
         k--;
       }
     }
   }
 
-  const unitCount = timeMarkBoxes[timeMarkBoxes.length - 1].length;
   unitWidth = Math.round(Math.max(unitWidth, containerWidth / unitCount));
 
   return (
@@ -93,7 +94,7 @@ const TimeScale: React.FC<TimeScaleProps> = ({ scaleFormats, minTime, maxTime, u
               width={`${unitWidth * timeUnitBox.weight}px`} // Width based on weight and calculated box width
             >
               <Text
-                whiteSpace='nowrap'
+                whiteSpace="nowrap"
                 title={`${timeUnitBox.time.toLocaleString()}\n{weight: ${timeUnitBox.weight.toString()}), width: ${
                   unitWidth * timeUnitBox.weight
                 }px}`}
