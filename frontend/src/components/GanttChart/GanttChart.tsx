@@ -5,7 +5,7 @@ import styles from './GanttChart.module.scss';
 import { TaskGroup } from '../../models/TaskGroup';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import { TimeScaleFormat } from '../TimeScale/TimeScale';
+import { TimeScaleFormat } from '../TimeRuler/TimeRuler';
 
 interface GanttChartProps {
   taskGroups: TaskGroup[];
@@ -22,40 +22,40 @@ const zoomLevels: ZoomLevel[] = [
     name: 'Hours',
     description: 'Days + Hours',
     scaleFormats: [
-      { timeUnit: 'day', format: 'DD MMM' },
-      { timeUnit: 'hour', format: 'HH' },
+      { unit: 'day', format: 'DD MMM' },
+      { unit: 'hour', format: 'HH' },
     ],
   },
   {
     name: 'Hours-3',
     description: 'Days + 3 Hours',
     scaleFormats: [
-      { timeUnit: 'day', format: 'DD MMM' },
-      { timeUnit: 'hour', format: 'HH' },
+      { unit: 'day', format: 'DD MMM' },
+      { unit: 'hour', format: 'HH' },
     ],
   },
   {
     name: 'Hours-6',
     description: 'Days + 6 Hours',
     scaleFormats: [
-      { timeUnit: 'day', format: 'DD MMM' },
-      { timeUnit: 'hour-3', format: 'HH' },
+      { unit: 'day', format: 'DD MMM' },
+      { unit: 'hour-3', format: 'HH' },
     ],
   },
   {
     name: 'Days',
     description: 'Weeks + Days',
     scaleFormats: [
-      { timeUnit: 'week', format: '[Week ]w' },
-      { timeUnit: 'day', format: 'DD' },
+      { unit: 'week', format: '[Week ]w' },
+      { unit: 'day', format: 'DD' },
     ],
   },
   {
     name: 'Weeks',
     description: 'Months + Weeks',
     scaleFormats: [
-      { timeUnit: 'month', format: 'MMMM yyyy' },
-      { timeUnit: 'week', format: '[W]w' },
+      { unit: 'month', format: 'MMMM yyyy' },
+      { unit: 'week', format: '[W]w' },
     ],
   },
 ];
@@ -90,8 +90,8 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
   const allTasks = taskGroups.flatMap((group) => group.tasks);
   const minTime = new Date(Math.min(...allTasks.map((task) => task.start.getTime())));
   const maxTime = new Date(Math.max(...allTasks.map((task) => task.end.getTime())));
-  const timeScales = zoomLevels.find((level) => level.name === zoomLevelName)?.scaleFormats || [];
-  const timeUnit = timeScales[timeScales.length - 1].timeUnit;
+  const timeRulers = zoomLevels.find((level) => level.name === zoomLevelName)?.scaleFormats || [];
+  const timeUnit = timeRulers[timeRulers.length - 1].unit;
 
   return (
     <div className={styles.ganttChart}>
@@ -127,7 +127,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
           </>
         </ResizableBox>
         <div className={styles.rightPanel}>
-          <TimeScale minTime={minTime} maxTime={maxTime} scaleFormats={timeScales} />
+          <TimeRuler minTime={minTime} maxTime={maxTime} scaleFormats={timeRulers} />
           {/* <Timeline taskGroups={taskGroups} expandedGroups={expandedGroups} timeUnit={timeUnit} /> */}
         </div>
       </div>

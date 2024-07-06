@@ -2,7 +2,7 @@ import React from 'react';
 import GanttChart from './components/GanttChart/GanttChart';
 import { ChakraProvider } from '@chakra-ui/react';
 import { TaskGroup } from './models/TaskGroup';
-import TimeScale from './components/TimeScale/TimeScale';
+import TimeRuler from './components/TimeRuler/TimeRuler';
 
 const generateTasks = (groupId: number): { id: number; name: string; start: Date; end: Date; type: number }[] => {
   if (groupId % 10 === 0) {
@@ -70,27 +70,27 @@ const App: React.FC = () => {
       <div>
         <h1>Gantt Chart</h1>
         {/* <GanttChart taskGroups={taskGroups} /> */}
-        <TimeScale
+        <TimeRuler
           minTime={new Date(2024, 6, 2, 13, 15)}
           maxTime={new Date(2024, 6, 25, 12, 14)}
           scaleFormats={[
-            { timeUnit: 'day', format: 'DD MMM' },
-            { timeUnit: 'hour-2', format: 'HH' },
+            { unit: 'day', format: 'DD MMM' },
+            { unit: 'hour-2', format: 'HH' },
           ]}
         />
-        <TimeScale
+        <TimeRuler
           minTime={new Date(2024, 6, 2, 13, 15)}
           maxTime={new Date(2024, 7, 5, 12, 15)}
           scaleFormats={[
-            { timeUnit: 'month', format: 'MMMM yyyy' },
-            { timeUnit: 'week', format: '[Week #]w' },
-            { timeUnit: 'day', format: 'DD' },
+            { unit: 'month', format: 'MMMM yyyy' },
+            { unit: 'week', format: '[Week #]w' },
+            { unit: 'day', format: 'DD' },
           ]}
           unitWidth={20}
         />
         {/* 
-        {/* <TimeScale mode="days" startDate={new Date(2024, 6, 1)} endDate={new Date(2024, 6, 7)} />
-        <TimeScale mode="months" startDate={new Date(2024, 0, 1)} endDate={new Date(2024, 11, 31)} /> */}
+        {/* <TimeRuler mode="days" startDate={new Date(2024, 6, 1)} endDate={new Date(2024, 6, 7)} />
+        <TimeRuler mode="months" startDate={new Date(2024, 0, 1)} endDate={new Date(2024, 11, 31)} /> */}
       </div>
     </ChakraProvider>
   );
