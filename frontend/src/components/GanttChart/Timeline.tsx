@@ -1,11 +1,12 @@
 import React from 'react';
 import styles from './Timeline.module.scss';
 import { TaskGroup } from '../../models/TaskGroup';
+import { TimeUnit } from '../../utils/TimeUtils';
 
 interface TimelineProps {
   taskGroups: TaskGroup[];
   expandedGroups: Set<string>;
-  zoomLevel: 'hours' | 'days' | 'months';
+  timeUnit: TimeUnit;
 }
 
 const getTaskColor = (type: number) => {

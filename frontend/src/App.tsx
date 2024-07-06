@@ -2,7 +2,6 @@ import React from 'react';
 import GanttChart from './components/GanttChart/GanttChart';
 import { ChakraProvider } from '@chakra-ui/react';
 import { TaskGroup } from './models/TaskGroup';
-import ResizablePanel from './components/ResizablePanel';
 import TimeScale from './components/TimeScale/TimeScale';
 
 const generateTasks = (groupId: number): { id: number; name: string; start: Date; end: Date; type: number }[] => {
@@ -71,25 +70,25 @@ const App: React.FC = () => {
       <div>
         <h1>Gantt Chart</h1>
         {/* <GanttChart taskGroups={taskGroups} /> */}
-        {/* <ResizablePanel /> */}
         <TimeScale
-          startTime={new Date(2024, 6, 2, 13, 15)}
-          endTime={new Date(2024, 6, 5)}
+          minTime={new Date(2024, 6, 2, 13, 15)}
+          maxTime={new Date(2024, 6, 25, 12, 14)}
           scaleFormats={[
             { timeUnit: 'day', format: 'DD MMM' },
             { timeUnit: 'hour-2', format: 'HH' },
           ]}
         />
         <TimeScale
-          startTime={new Date(2024, 6, 2, 13, 15)}
-          endTime={new Date(2024, 7, 5, 12, 15)}
+          minTime={new Date(2024, 6, 2, 13, 15)}
+          maxTime={new Date(2024, 7, 5, 12, 15)}
           scaleFormats={[
+            { timeUnit: 'month', format: 'MMMM yyyy' },
             { timeUnit: 'week', format: '[Week #]w' },
             { timeUnit: 'day', format: 'DD' },
           ]}
-
           unitWidth={20}
         />
+        {/* 
         {/* <TimeScale mode="days" startDate={new Date(2024, 6, 1)} endDate={new Date(2024, 6, 7)} />
         <TimeScale mode="months" startDate={new Date(2024, 0, 1)} endDate={new Date(2024, 11, 31)} /> */}
       </div>
