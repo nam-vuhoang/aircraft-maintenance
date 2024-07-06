@@ -1,4 +1,4 @@
-import { Task } from './Task';
+import { Task } from './Task.entity';
 
 export interface TaskGroup {
   name: string;
