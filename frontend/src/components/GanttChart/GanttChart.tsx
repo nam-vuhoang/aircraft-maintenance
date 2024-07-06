@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import TaskList from './TaskList';
 import styles from './GanttChart.module.scss';
 import { TaskGroup } from '../../models/TaskGroup';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import TimeRuler from '../TimeRuler/TimeRuler';
+import TimeRuler, { TimeRulerState } from '../TimeRuler/TimeRuler';
 import { TimeUnit } from '../../utils/TimeUtils';
+import Timeline from './Timeline';
 
+// Type definition for TimeRulerState
 interface GanttChartProps {
   taskGroups: TaskGroup[];
 }
@@ -47,6 +49,25 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [leftPanelWidth, setLeftPanelWidth] = useState<number>(300);
   const [zoomLevelName, setZoomLevelName] = useState<string>(zoomLevels[3].name);
+  const [timeRulerState, setTimeRulerState] = useState<TimeRulerState>({
+    minTime: new Date(),
+    maxTime: new Date(),
+    units: [],
+    millisecondWidth: 0,
+  });
+
+  // Added useEffect to set initial minTime and maxTime based on taskGroups
+  useEffect(() => {
+    const allTasks = taskGroups.flatMap((group) => group.tasks);
+    const minTime = new Date(Math.min(...allTasks.map((task) => task.start.getTime())));
+    const maxTime = new Date(Math.max(...allTasks.map((task) => task.end.getTime())));
+
+    setTimeRulerState((prevState) => ({
+      ...prevState,
+      minTime,
+      maxTime,
+    }));
+  }, [taskGroups]);
 
   const handleTaskGroupToggle = (groupName: string) => {
     setExpandedGroups((prevState) => {
@@ -68,10 +89,21 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
     setZoomLevelName(event.target.value);
   };
 
-  const allTasks = taskGroups.flatMap((group) => group.tasks);
-  const minTime = new Date(Math.min(...allTasks.map((task) => task.start.getTime())));
-  const maxTime = new Date(Math.max(...allTasks.map((task) => task.end.getTime())));
   const timeUnits = zoomLevels.find((level) => level.name === zoomLevelName)?.units || [];
+
+  // Using useCallback to memoize the function to prevent unnecessary re-renders
+  const handleStateChange = useCallback((state: TimeRulerState) => {
+    setTimeRulerState((prevState) => {
+      if (
+        prevState.minTime.getTime() !== state.minTime.getTime() ||
+        prevState.maxTime.getTime() !== state.maxTime.getTime() ||
+        prevState.millisecondWidth !== state.millisecondWidth
+      ) {
+        return state;
+      }
+      return prevState;
+    });
+  }, []);
 
   return (
     <div className={styles.ganttChart}>
@@ -107,8 +139,13 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
           </>
         </ResizableBox>
         <div className={styles.rightPanel}>
-          <TimeRuler minTime={minTime} maxTime={maxTime} units={timeUnits} />
-          {/* <Timeline taskGroups={taskGroups} expandedGroups={expandedGroups} timeUnit={timeUnit} /> */}
+          <TimeRuler
+            minTime={timeRulerState.minTime}
+            maxTime={timeRulerState.maxTime}
+            units={timeUnits}
+            onStateChange={handleStateChange}
+          />
+          {/* <Timeline taskGroups={taskGroups} expandedGroups={expandedGroups} timeRulerState={timeRulerState} /> */}
         </div>
       </div>
     </div>

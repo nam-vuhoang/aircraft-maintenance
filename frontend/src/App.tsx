@@ -80,12 +80,14 @@ const App: React.FC = () => {
           minTime={new Date(2024, 6, 2, 22, 15)}
           maxTime={new Date(2024, 6, 25, 12, 14)}
           units={['day', 'hour-3']}
+          onStateChange={(state) => console.log(state)}
         />
         <TimeRuler
           minTime={new Date(2024, 5, 30, 13, 15)}
           maxTime={new Date(2024, 7, 5, 12, 15)}
           units={['month', 'week', 'day']}
           minUnitWidth={30}
+          onStateChange={(state) => console.log(state)}
         /> */}
         {/* 
         {/* <TimeRuler mode="days" startDate={new Date(2024, 6, 1)} endDate={new Date(2024, 6, 7)} />

@@ -26,7 +26,7 @@ import {
   export const DAY = HOUR * 24;
   export const WEEK = DAY * 7;
   
-  export const getTimeUnitInMilliseconds = (unit: TimeUnit): number => {
+  export const getMillisecondsInTimeUnit = (unit: TimeUnit): number => {
     switch (unit) {
       case 'hour':
       case 'hour-1':
@@ -77,7 +77,7 @@ import {
     if (roundedDown.getTime() === time.getTime()) {
       return time;
     }
-    return new Date(roundedDown.getTime() + getTimeUnitInMilliseconds(unit));
+    return new Date(roundedDown.getTime() + getMillisecondsInTimeUnit(unit));
   };
   
   export const getTimeMarksOfInterval = (startTime: Date, endTime: Date, unit: TimeUnit): Date[] => {

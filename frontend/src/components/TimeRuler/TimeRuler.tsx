@@ -1,14 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import styles from './TimeRuler.module.scss'; // Import styles as a module
-import { roundUp, getTimeMarksOfInterval, TimeUnit } from '../../utils/TimeUtils';
+import { roundUp, getTimeMarksOfInterval, TimeUnit, roundDown, getMillisecondsInTimeUnit } from '../../utils/TimeUtils';
 import moment from 'moment';
+import { getMilliseconds } from 'date-fns';
 
 interface TimeRulerProps {
   minTime: Date;
   maxTime: Date;
   units: TimeUnit[];
   minUnitWidth?: number; // Minimum width of each time unit box
+
+  onStateChange?: (state: TimeRulerState) => void;
+}
+
+export interface TimeRulerState {
+  minTime: Date;
+  maxTime: Date;
+  units: TimeUnit[];
+  millisecondWidth: number;
 }
 
 /**
@@ -68,7 +78,7 @@ type TimeScale = {
   }[];
 };
 
-const TimeRuler: React.FC<TimeRulerProps> = ({ units, minTime, maxTime, minUnitWidth = 25 }) => {
+const TimeRuler: React.FC<TimeRulerProps> = ({ units, minTime, maxTime, minUnitWidth = 25, onStateChange }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
@@ -88,8 +98,9 @@ const TimeRuler: React.FC<TimeRulerProps> = ({ units, minTime, maxTime, minUnitW
   }, []);
 
   const scaleFormats = units.map((unit) => getDefaultTimeScaleFormat(unit));
-  const lowestScaleFormat = scaleFormats[scaleFormats.length - 1];
-  maxTime = roundUp(maxTime, lowestScaleFormat.unit);
+  const lowestUnit = scaleFormats[scaleFormats.length - 1].unit;
+  minTime = roundDown(minTime, lowestUnit);
+  maxTime = roundUp(maxTime, lowestUnit);
 
   const timeScales: TimeScale[] = scaleFormats.map((scaleFormat) => {
     const timeMarks: Date[] = getTimeMarksOfInterval(minTime, maxTime, scaleFormat.unit);
@@ -119,6 +130,13 @@ const TimeRuler: React.FC<TimeRulerProps> = ({ units, minTime, maxTime, minUnitW
   }
 
   const unitWidth = Math.round(Math.max(minUnitWidth, containerWidth / unitCount));
+  // onStateChange &&
+  //   onStateChange({
+  //     minTime,
+  //     maxTime,
+  //     units,
+  //     millisecondWidth: unitWidth * getMillisecondsInTimeUnit(lowestUnit),
+  //   });
 
   return (
     <Box className={styles.timeRuler} ref={containerRef} width="100%">
