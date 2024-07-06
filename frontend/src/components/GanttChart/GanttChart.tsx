@@ -6,6 +6,7 @@ import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import TimeRuler from '../TimeRuler/TimeRuler';
 import { getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
+import Timeline from './Timeline';
 
 interface GanttChartProps {
   taskGroups: TaskGroup[];
@@ -141,7 +142,14 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
         </ResizableBox>
         <div className={styles.rightPanel} ref={rightPanelRef}>
           <TimeRuler minTime={minTime} maxTime={maxTime} units={units} millisecondWidth={millisecondWidth} />
-          {/* <Timeline taskGroups={taskGroups} expandedGroups={expandedGroups} timeRulerState={timeRulerState} /> */}
+          <Timeline
+            taskGroups={taskGroups}
+            expandedGroups={expandedGroups}
+            minTime={minTime}
+            maxTime={maxTime}
+            units={units}
+            millisecondWidth={millisecondWidth}
+          />
         </div>
       </div>
     </div>
