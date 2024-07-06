@@ -1,0 +1,5 @@
+@import '../../styles/shared.scss';
+
+.flightListContainer {
+  @extend .listContainer;
+}

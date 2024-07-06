@@ -1,10 +1,11 @@
 import React from 'react';
 import GanttChart from './components/GanttChart/GanttChart';
 import { ChakraProvider } from '@chakra-ui/react';
-import { TaskGroup } from './models/TaskGroup';
+import { TaskGroup } from './models/TaskGroup.entity';
 import TimeRuler from './components/TimeRuler/TimeRuler';
 import ColorfulTable from './components/ColorfulTable/ColorfulTable';
 import { getDefaultTimeScaleFormat } from './components/TimeRuler';
+import FlightList from './components/FlightList/FlightList';
 
 const generateTasks = (groupId: number): { id: number; name: string; start: Date; end: Date; type: number }[] => {
   if (groupId % 10 === 0) {
@@ -75,7 +76,7 @@ const App: React.FC = () => {
           <ColorfulTable />
         </div> */}
         <h1>Gantt Chart</h1>
-        <GanttChart taskGroups={taskGroups} />
+        {/* <GanttChart taskGroups={taskGroups} /> */}
         {/* <TimeRuler
           minTime={new Date(2024, 6, 2, 22, 15)}
           maxTime={new Date(2024, 6, 25, 12, 14)}
@@ -92,6 +93,7 @@ const App: React.FC = () => {
         {/* 
         {/* <TimeRuler mode="days" startDate={new Date(2024, 6, 1)} endDate={new Date(2024, 6, 7)} />
         <TimeRuler mode="months" startDate={new Date(2024, 0, 1)} endDate={new Date(2024, 11, 31)} /> */}
+        <FlightList />
       </div>
     </ChakraProvider>
   );
