@@ -3,6 +3,7 @@ import GanttChart from './components/GanttChart/GanttChart';
 import { ChakraProvider } from '@chakra-ui/react';
 import { TaskGroup } from './models/TaskGroup';
 import TimeRuler from './components/TimeRuler/TimeRuler';
+import ColorfulTable from './components/ColorfulTable/ColorfulTable';
 
 const generateTasks = (groupId: number): { id: number; name: string; start: Date; end: Date; type: number }[] => {
   if (groupId % 10 === 0) {
@@ -68,23 +69,27 @@ const App: React.FC = () => {
   return (
     <ChakraProvider>
       <div>
+        <div>
+          <h1>Colorful Table Example</h1>
+          <ColorfulTable />
+        </div>
         <h1>Gantt Chart</h1>
         {/* <GanttChart taskGroups={taskGroups} /> */}
         <TimeRuler
-          minTime={new Date(2024, 6, 2, 13, 15)}
+          minTime={new Date(2024, 6, 2, 22, 15)}
           maxTime={new Date(2024, 6, 25, 12, 14)}
           scaleFormats={[
-            { unit: 'day', format: 'DD MMM' },
-            { unit: 'hour-2', format: 'HH' },
+            { unit: 'day', fullFormat: 'DD MMM', fullFormatWeightLimit: 2, shortFormat: 'DD' },
+            { unit: 'hour-2', shortFormat: 'HH' },
           ]}
         />
         <TimeRuler
-          minTime={new Date(2024, 6, 2, 13, 15)}
+          minTime={new Date(2024, 5, 30, 13, 15)}
           maxTime={new Date(2024, 7, 5, 12, 15)}
           scaleFormats={[
-            { unit: 'month', format: 'MMMM yyyy' },
-            { unit: 'week', format: '[Week #]w' },
-            { unit: 'day', format: 'DD' },
+            { unit: 'month', fullFormat: 'MMMM yyyy', fullFormatWeightLimit: 4, shortFormat: 'MMM'},
+            { unit: 'week', fullFormat: '[Week ]w', fullFormatWeightLimit: 3, shortFormat: '[W]w'},
+            { unit: 'day', shortFormat: 'DD'},
           ]}
           unitWidth={20}
         />

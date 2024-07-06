@@ -13,7 +13,17 @@ export interface TimeScaleFormat {
   /**
    * Date format according to moment library (see https://momentjscom.readthedocs.io/en/latest/moment/04-displaying/01-format/)
    */
-  format: string;
+  fullFormat?: string;
+
+  /**
+   * The minimum width of the time unit box, defined in number of single time units.
+   */
+  fullFormatWeightLimit?: number;
+
+  /**
+   * Date format according to moment library (see https://momentjscom.readthedocs.io/en/latest/moment/04-displaying/01-format/)
+   */
+  shortFormat: string;
 }
 
 interface TimeRulerProps {
@@ -24,11 +34,10 @@ interface TimeRulerProps {
 }
 
 type TimeScale = {
-  unit: TimeUnit;
+  scaleFormat: TimeScaleFormat;
   boxes: {
     time: Date;
     weight: number;
-    text: string;
   }[];
 };
 
@@ -57,11 +66,10 @@ const TimeRuler: React.FC<TimeRulerProps> = ({ scaleFormats, minTime, maxTime, u
   const timeScales: TimeScale[] = scaleFormats.map((scaleFormat) => {
     const timeMarks: Date[] = getTimeMarksOfInterval(minTime, maxTime, scaleFormat.unit);
     return {
-      unit: scaleFormat.unit,
+      scaleFormat,
       boxes: timeMarks.map((time) => ({
         time,
         weight: 1,
-        text: moment(time).format(scaleFormat.format),
       })),
     };
   });
@@ -92,7 +100,7 @@ const TimeRuler: React.FC<TimeRulerProps> = ({ scaleFormats, minTime, maxTime, u
             <Box
               key={j}
               className={`${styles.timeUnit} ${
-                timeScale.unit === 'day' && moment(timeBox.time).day() === 0 ? styles.sunday : ''
+                timeScale.scaleFormat.unit === 'day' && moment(timeBox.time).day() === 0 ? styles.sunday : ''
               }`}
               display="inline-flex"
               flexDirection="column"
@@ -103,7 +111,12 @@ const TimeRuler: React.FC<TimeRulerProps> = ({ scaleFormats, minTime, maxTime, u
               width={`${unitWidth * timeBox.weight}px`} // Width based on weight and calculated box width
             >
               <Text whiteSpace="nowrap" title={timeBox.time.toLocaleString()}>
-                {timeBox.text}
+                {moment(timeBox.time).format(
+                  (timeScale.scaleFormat.fullFormatWeightLimit &&
+                    timeBox.weight >= timeScale.scaleFormat.fullFormatWeightLimit &&
+                    timeScale.scaleFormat.fullFormat) ||
+                    timeScale.scaleFormat.shortFormat
+                )}
               </Text>
             </Box>
           ))}
