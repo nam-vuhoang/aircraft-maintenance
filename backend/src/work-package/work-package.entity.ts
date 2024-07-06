@@ -1,13 +1,13 @@
 import { Entity, Column, PrimaryColumn, Index } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { AircraftReservation } from '../common/aircraft-reservation.entity';
+import { AircraftTask } from '../aircraft/aircraft-task.entity';
 
 /**
  * The work package entity
  */
 @Entity('work_packages')
 @Index(['registration', 'station', 'status', 'area'])
-export class WorkPackage extends AircraftReservation {
+export class WorkPackage extends AircraftTask {
   @PrimaryColumn()
   @ApiProperty({
     example: 'WP12345',

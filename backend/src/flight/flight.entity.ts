@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { AircraftReservation } from '../common/aircraft-reservation.entity';
+import { AircraftTask } from '../aircraft/aircraft-task.entity';
 
 @Entity('flights')
 @Index([
@@ -11,7 +11,7 @@ import { AircraftReservation } from '../common/aircraft-reservation.entity';
   'scheduledDepartureStation',
   'scheduledArrivalStation',
 ])
-export class Flight extends AircraftReservation {
+export class Flight extends AircraftTask {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     example: '007f78fb-2586-432a-a952-d19d63e18cc2',

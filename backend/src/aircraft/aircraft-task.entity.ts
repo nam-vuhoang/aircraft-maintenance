@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column } from 'typeorm';
 
-export abstract class AircraftReservation {
+export abstract class AircraftTask {
   @Column()
   @ApiProperty({
     example: 'ABC123',
