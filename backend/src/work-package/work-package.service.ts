@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WorkPackage } from './work-package.entity';
@@ -6,39 +6,58 @@ import { WorkPackageFilter } from './work-package-filter.dto';
 
 @Injectable()
 export class WorkPackageService {
+  private readonly logger = new Logger(WorkPackageService.name);
+
   constructor(
     @InjectRepository(WorkPackage)
     private readonly workPackageRepository: Repository<WorkPackage>,
   ) {}
 
-  create(workPackage: WorkPackage): Promise<WorkPackage> {
-    return this.workPackageRepository.save(workPackage);
+  async create(workPackage: WorkPackage): Promise<WorkPackage> {
+    this.logger.log(
+      `Creating a new work package: ${JSON.stringify(workPackage)}`,
+    );
+    const createdWorkPackage =
+      await this.workPackageRepository.save(workPackage);
+    this.logger.log(`Work package created with ID: ${createdWorkPackage.id}`);
+    return createdWorkPackage;
   }
 
-  findAll(): Promise<WorkPackage[]> {
+  async findAll(): Promise<WorkPackage[]> {
+    this.logger.log('Fetching all work packages');
     return this.workPackageRepository.find();
   }
 
   async findOne(id: string): Promise<WorkPackage> {
+    this.logger.log(`Fetching work package with ID: ${id}`);
     const workPackage = await this.workPackageRepository.findOne({
       where: { id },
     });
     if (!workPackage) {
-      throw new NotFoundException(`WorkPackage with ID ${id} not found`);
+      this.logger.warn(`Work package with ID ${id} not found`);
+      throw new NotFoundException(`Work package with ID ${id} not found`);
     }
     return workPackage;
   }
 
   async update(id: string, workPackage: WorkPackage): Promise<WorkPackage> {
+    this.logger.log(`Updating work package with ID: ${id}`);
     await this.workPackageRepository.update(id, workPackage);
-    return this.findOne(id);
+    const updatedWorkPackage = await this.findOne(id);
+    this.logger.log(`Work package with ID: ${id} updated`);
+    return updatedWorkPackage;
   }
 
   async remove(id: string): Promise<void> {
+    this.logger.log(`Deleting work package with ID: ${id}`);
     await this.workPackageRepository.delete(id);
+    this.logger.log(`Work package with ID: ${id} deleted`);
   }
 
   async search(filter: WorkPackageFilter): Promise<WorkPackage[]> {
+    this.logger.log(
+      `Searching work packages with filter: ${JSON.stringify(filter)}`,
+    );
     const query = this.workPackageRepository.createQueryBuilder('workPackage');
 
     if (filter.startTime) {
@@ -87,10 +106,13 @@ export class WorkPackageService {
       query.limit(filter.limit);
     }
 
-    return query.getMany();
+    const results = await query.getMany();
+    this.logger.log(`Found ${results.length} work packages`);
+    return results;
   }
 
   async getCategoryValues(category: string): Promise<string[]> {
+    this.logger.log(`Getting category values for category: ${category}`);
     let results;
 
     switch (category) {
@@ -123,9 +145,11 @@ export class WorkPackageService {
           .getRawMany();
         break;
       default:
+        this.logger.warn(`Category ${category} not found`);
         throw new NotFoundException(`Category ${category} not found`);
     }
 
+    this.logger.log(`Found ${results.length} values for category ${category}`);
     return results.map((result) => result.value);
   }
 }

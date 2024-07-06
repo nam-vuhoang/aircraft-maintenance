@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { FlightService } from './flight.service';
 import { Flight } from './flight.entity';
@@ -23,6 +24,8 @@ import {
 @ApiTags('flights')
 @Controller('flights')
 export class FlightController {
+  private readonly logger = new Logger(FlightController.name);
+
   constructor(private readonly flightService: FlightService) {}
 
   @Post()
@@ -61,6 +64,7 @@ export class FlightController {
     type: Flight,
   })
   create(@Body() flight: Flight): Promise<Flight> {
+    this.logger.log(`Creating a new flight: ${JSON.stringify(flight)}`);
     return this.flightService.create(flight);
   }
 
@@ -72,6 +76,7 @@ export class FlightController {
     type: [Flight],
   })
   findAll(): Promise<Flight[]> {
+    this.logger.log('Fetching all flights');
     return this.flightService.findAll();
   }
 
@@ -93,8 +98,10 @@ export class FlightController {
     description: 'Flight not found',
   })
   async findOne(@Param('id') id: string): Promise<Flight> {
+    this.logger.log(`Fetching flight with ID: ${id}`);
     const flight = await this.flightService.findOne(id);
     if (!flight) {
+      this.logger.warn(`Flight with ID ${id} not found`);
       throw new NotFoundException(`Flight with ID ${id} not found`);
     }
     return flight;
@@ -145,6 +152,7 @@ export class FlightController {
     description: 'Flight not found',
   })
   update(@Param('id') id: string, @Body() flight: Flight): Promise<Flight> {
+    this.logger.log(`Updating flight with ID: ${id}`);
     return this.flightService.update(id, flight);
   }
 
@@ -165,6 +173,7 @@ export class FlightController {
     description: 'Flight not found',
   })
   remove(@Param('id') id: string): Promise<void> {
+    this.logger.log(`Deleting flight with ID: ${id}`);
     return this.flightService.remove(id);
   }
 
@@ -196,6 +205,7 @@ export class FlightController {
     type: [Flight],
   })
   search(@Body() filter: FlightFilter): Promise<Flight[]> {
+    this.logger.log(`Searching flights with filter: ${JSON.stringify(filter)}`);
     return this.flightService.search(filter);
   }
 
@@ -238,10 +248,12 @@ export class FlightController {
   async import(
     @Body() importFlightsDto: FlightImportDto[],
   ): Promise<{ imported: number }> {
+    this.logger.log(`Importing flights: ${JSON.stringify(importFlightsDto)}`);
     for (const flightDto of importFlightsDto) {
       const flight = flightDto.convertToFlightEntity();
       await this.flightService.create(flight);
     }
+    this.logger.log(`Imported ${importFlightsDto.length} flights`);
     return { imported: importFlightsDto.length };
   }
 
@@ -264,6 +276,7 @@ export class FlightController {
     type: [String],
   })
   getCategoryValues(@Param('category') category: string): Promise<string[]> {
+    this.logger.log(`Getting category values for category: ${category}`);
     return this.flightService.getCategoryValues(category);
   }
 }

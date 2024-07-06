@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { WorkPackageService } from './work-package.service';
 import { WorkPackage } from './work-package.entity';
@@ -15,7 +16,6 @@ import { WorkPackageImportDto } from './work-package-import.dto';
 import {
   ApiTags,
   ApiOperation,
-  ApiQuery,
   ApiResponse,
   ApiBody,
   ApiParam,
@@ -24,6 +24,8 @@ import {
 @ApiTags('work-packages')
 @Controller('work-packages')
 export class WorkPackageController {
+  private readonly logger = new Logger(WorkPackageController.name);
+
   constructor(private readonly workPackageService: WorkPackageService) {}
 
   @Post()
@@ -53,6 +55,9 @@ export class WorkPackageController {
     type: WorkPackage,
   })
   create(@Body() workPackage: WorkPackage): Promise<WorkPackage> {
+    this.logger.log(
+      `Creating a new work package: ${JSON.stringify(workPackage)}`,
+    );
     return this.workPackageService.create(workPackage);
   }
 
@@ -64,6 +69,7 @@ export class WorkPackageController {
     type: [WorkPackage],
   })
   findAll(): Promise<WorkPackage[]> {
+    this.logger.log('Fetching all work packages');
     return this.workPackageService.findAll();
   }
 
@@ -85,8 +91,10 @@ export class WorkPackageController {
     description: 'Work package not found',
   })
   async findOne(@Param('id') id: string): Promise<WorkPackage> {
+    this.logger.log(`Fetching work package with ID: ${id}`);
     const workPackage = await this.workPackageService.findOne(id);
     if (!workPackage) {
+      this.logger.warn(`Work package with ID ${id} not found`);
       throw new NotFoundException(`WorkPackage with ID ${id} not found`);
     }
     return workPackage;
@@ -131,6 +139,7 @@ export class WorkPackageController {
     @Param('id') id: string,
     @Body() workPackage: WorkPackage,
   ): Promise<WorkPackage> {
+    this.logger.log(`Updating work package with ID: ${id}`);
     return this.workPackageService.update(id, workPackage);
   }
 
@@ -151,6 +160,7 @@ export class WorkPackageController {
     description: 'Work package not found',
   })
   remove(@Param('id') id: string): Promise<void> {
+    this.logger.log(`Deleting work package with ID: ${id}`);
     return this.workPackageService.remove(id);
   }
 
@@ -181,6 +191,9 @@ export class WorkPackageController {
     type: [WorkPackage],
   })
   search(@Body() filter: WorkPackageFilter): Promise<WorkPackage[]> {
+    this.logger.log(
+      `Searching work packages with filter: ${JSON.stringify(filter)}`,
+    );
     return this.workPackageService.search(filter);
   }
 
@@ -214,10 +227,14 @@ export class WorkPackageController {
   async import(
     @Body() importWorkPackagesDto: WorkPackageImportDto[],
   ): Promise<{ imported: number }> {
+    this.logger.log(
+      `Importing work packages: ${JSON.stringify(importWorkPackagesDto)}`,
+    );
     for (const workPackageDto of importWorkPackagesDto) {
       const workPackage = workPackageDto.convertToWorkPackageEntity();
       await this.workPackageService.create(workPackage);
     }
+    this.logger.log(`Imported ${importWorkPackagesDto.length} work packages`);
     return { imported: importWorkPackagesDto.length };
   }
 
@@ -234,6 +251,7 @@ export class WorkPackageController {
     type: [String],
   })
   getCategoryValues(@Param('category') category: string): Promise<string[]> {
+    this.logger.log(`Getting category values for category: ${category}`);
     return this.workPackageService.getCategoryValues(category);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Flight } from './flight.entity';
@@ -6,37 +6,51 @@ import { FlightFilter } from './flight-filter.dto';
 
 @Injectable()
 export class FlightService {
+  private readonly logger = new Logger(FlightService.name);
+
   constructor(
     @InjectRepository(Flight)
     private readonly flightRepository: Repository<Flight>,
   ) {}
 
-  create(flight: Flight): Promise<Flight> {
-    return this.flightRepository.save(flight);
+  async create(flight: Flight): Promise<Flight> {
+    this.logger.log(`Creating a new flight: ${JSON.stringify(flight)}`);
+    const createdFlight = await this.flightRepository.save(flight);
+    this.logger.log(`Flight created with ID: ${createdFlight.id}`);
+    return createdFlight;
   }
 
-  findAll(): Promise<Flight[]> {
+  async findAll(): Promise<Flight[]> {
+    this.logger.log('Fetching all flights');
     return this.flightRepository.find();
   }
 
   async findOne(id: string): Promise<Flight> {
+    this.logger.log(`Fetching flight with ID: ${id}`);
     const flight = await this.flightRepository.findOne({ where: { id } });
     if (!flight) {
+      this.logger.warn(`Flight with ID ${id} not found`);
       throw new NotFoundException(`Flight with ID ${id} not found`);
     }
     return flight;
   }
 
   async update(id: string, flight: Flight): Promise<Flight> {
+    this.logger.log(`Updating flight with ID: ${id}`);
     await this.flightRepository.update(id, flight);
-    return this.findOne(id);
+    const updatedFlight = await this.findOne(id);
+    this.logger.log(`Flight with ID: ${id} updated`);
+    return updatedFlight;
   }
 
   async remove(id: string): Promise<void> {
+    this.logger.log(`Deleting flight with ID: ${id}`);
     await this.flightRepository.delete(id);
+    this.logger.log(`Flight with ID: ${id} deleted`);
   }
 
   async search(filter: FlightFilter): Promise<Flight[]> {
+    this.logger.log(`Searching flights with filter: ${JSON.stringify(filter)}`);
     const query = this.flightRepository.createQueryBuilder('flight');
 
     if (filter.startTime) {
@@ -95,10 +109,13 @@ export class FlightService {
       query.limit(filter.limit);
     }
 
-    return query.getMany();
+    const results = await query.getMany();
+    this.logger.log(`Found ${results.length} flights`);
+    return results;
   }
 
   async getCategoryValues(category: string): Promise<string[]> {
+    this.logger.log(`Getting category values for category: ${category}`);
     let results;
 
     switch (category) {
@@ -148,9 +165,11 @@ export class FlightService {
         results = Array.from(stations).sort();
         return results;
       default:
+        this.logger.warn(`Category ${category} not found`);
         throw new NotFoundException(`Category ${category} not found`);
     }
 
+    this.logger.log(`Found ${results.length} values for category ${category}`);
     return results.map((result) => result.value);
   }
 }
