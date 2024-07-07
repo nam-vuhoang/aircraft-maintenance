@@ -20,7 +20,9 @@ import {
   FormControl,
   FormLabel,
   Flex,
+  Checkbox,
 } from '@chakra-ui/react';
+import { set } from 'date-fns';
 
 export interface GanttChartTypeInfo {
   typeIndex: number;
@@ -94,6 +96,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
   const [units, setUnits] = useState<TimeUnit[]>([]); // This is the time units to be displayed in the time ruler
   const [millisecondWidth, setMillisecondWidth] = useState<number>(0); // This is the width of 1 millisecond in pixels
   const [lowestUnitWidth, setLowestUnitWidth] = useState<number>(defaultLowestUnitWidth); // This is the width of the lowest unit in pixels
+  const [autoResize, setAutoResize] = useState<boolean>(true);
 
   const rightPanelRef = useRef<HTMLDivElement>(null);
 
@@ -114,7 +117,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
         const totalDuration = roundedMaxTime.getTime() - roundedMinTime.getTime();
 
         const newLowestUnitWidth = Math.round((containerWidth * lowestUnitDuration) / totalDuration);
-        if (lowestUnitWidth < newLowestUnitWidth) {
+        if (lowestUnitWidth < newLowestUnitWidth && autoResize) {
           setLowestUnitWidth(newLowestUnitWidth);
         }
 
@@ -131,7 +134,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [lowestUnitWidth, taskGroups, zoomLevelName]);
+  }, [taskGroups, zoomLevelName, lowestUnitWidth, autoResize]);
 
   const handleTaskGroupToggle = (groupName: string) => {
     setExpandedGroups((prevState) => {
@@ -150,13 +153,21 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
   };
 
   const handleZoomChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setLowestUnitWidth(defaultLowestUnitWidth); // Reset the lowest unit width when changing zoom level
     setZoomLevelName(event.target.value);
+    setAutoResize(true);
+    setLowestUnitWidth(defaultLowestUnitWidth); // Reset the lowest unit width when changing zoom level
   };
 
   const handleLowestUnitWidthChange = (valueString: string) => {
     const value = Math.round(parseInt(valueString, 10) / 5) * 5; // Round to the nearest multiple of 5
     setLowestUnitWidth(value);
+  };
+
+  const handleAutoResizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAutoResize(event.target.checked);
+    if (event.target.checked) {
+      setLowestUnitWidth(defaultLowestUnitWidth);
+    }
   };
 
   return (
@@ -180,6 +191,9 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
               <FormLabel htmlFor="lowest-unit-width" fontWeight="bold" whiteSpace="nowrap" mb="0">
                 Unit Width:
               </FormLabel>
+              <Checkbox isChecked={autoResize} onChange={handleAutoResizeChange} mr="2">
+                Auto
+              </Checkbox>
               <NumberInput
                 id="lowest-unit-width"
                 value={lowestUnitWidth}
@@ -187,6 +201,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
                 step={5}
                 min={20}
                 ml="2"
+                isDisabled={autoResize}
               >
                 <NumberInputField />
                 <NumberInputStepper>
