@@ -69,7 +69,7 @@ const TaskList: React.FC<TaskListProps> = ({
                 const taskTypeInfo = taskTypeInfos?.find((info) => info.typeIndex === task.typeIndex);
                 return (
                   <Box key={task.id} className={styles.taskItem} color={taskTypeInfo?.textColor}>
-                    {taskTypeInfo?.icon} {task.name}
+                    <InlineIcon>{taskTypeInfo?.icon}</InlineIcon> {task.name}
                   </Box>
                 );
               })}

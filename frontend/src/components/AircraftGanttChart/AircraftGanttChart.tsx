@@ -2,10 +2,8 @@ import React from 'react';
 import { Flight, sortTaskGroups, Task, TaskGroup, WorkPackage } from '../../models';
 import GanttChart from '../GanttChart/GanttChart';
 import { FaPlane } from 'react-icons/fa';
-import { GiAirplaneDeparture } from 'react-icons/gi';
-import { MdBuild } from 'react-icons/md';
+import { MdBuild, MdFlightTakeoff } from 'react-icons/md';
 import styles from './AircraftGanttChart.module.scss';
-import InlineIcon from '../InlineIcon/InlineIcon';
 
 interface AircraftGanttChartProps {
   flights: Flight[];
@@ -105,7 +103,7 @@ const AircraftGanttChart: React.FC<AircraftGanttChartProps> = ({ flights, workPa
           caption: 'Flights',
           barColor: styles.ganttChartTaskBarColor1,
           textColor: styles.ganttChartTaskTextColor1,
-          icon: <GiAirplaneDeparture />,
+          icon: <MdFlightTakeoff />,
         },
         {
           typeIndex: WorkPackageTypeIndex,
