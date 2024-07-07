@@ -8,6 +8,7 @@ import {
   Delete,
   NotFoundException,
   Logger,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { FlightService } from './flight.service';
 import { Flight } from './flight.entity';
@@ -246,13 +247,13 @@ export class FlightController {
     description: 'Number of imported flights',
   })
   async import(
-    @Body() importFlightsDto: FlightImportDto[],
+    @Body(new ParseArrayPipe({ items: FlightImportDto }))
+    importFlightsDto: FlightImportDto[],
   ): Promise<{ imported: number }> {
-    this.logger.log(`Importing flights: ${JSON.stringify(importFlightsDto)}`);
-    for (const flightDto of importFlightsDto) {
-      const flight = flightDto.convertToFlightEntity();
-      await this.flightService.create(flight);
-    }
+    this.logger.log(`Importing ${importFlightsDto.length} flights`);
+    await this.flightService.createAll(
+      importFlightsDto.map((f) => f.convertToFlightEntity()),
+    );
     this.logger.log(`Imported ${importFlightsDto.length} flights`);
     return { imported: importFlightsDto.length };
   }

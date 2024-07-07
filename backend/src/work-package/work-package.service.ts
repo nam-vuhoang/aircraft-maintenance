@@ -23,6 +23,16 @@ export class WorkPackageService {
     return createdWorkPackage;
   }
 
+  async createAll(workPackages: WorkPackage[]): Promise<WorkPackage[]> {
+    this.logger.log(
+      `Creating multiple work packages: ${JSON.stringify(workPackages)}`,
+    );
+    const createdWorkPackages =
+      await this.workPackageRepository.save(workPackages);
+    this.logger.log(`Created ${createdWorkPackages.length} work packages`);
+    return createdWorkPackages;
+  }
+
   async findAll(): Promise<WorkPackage[]> {
     this.logger.log('Fetching all work packages');
     return this.workPackageRepository.find();

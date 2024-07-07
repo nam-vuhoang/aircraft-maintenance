@@ -8,6 +8,7 @@ import {
   Delete,
   NotFoundException,
   Logger,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { WorkPackageService } from './work-package.service';
 import { WorkPackage } from './work-package.entity';
@@ -225,15 +226,13 @@ export class WorkPackageController {
     description: 'Number of imported work packages',
   })
   async import(
-    @Body() importWorkPackagesDto: WorkPackageImportDto[],
+    @Body(new ParseArrayPipe({ items: WorkPackageImportDto }))
+    importWorkPackagesDto: WorkPackageImportDto[],
   ): Promise<{ imported: number }> {
-    this.logger.log(
-      `Importing work packages: ${JSON.stringify(importWorkPackagesDto)}`,
+    this.logger.log(`Importing ${importWorkPackagesDto.length} work packages`);
+    await this.workPackageService.createAll(
+      importWorkPackagesDto.map((dto) => dto.convertToWorkPackageEntity()),
     );
-    for (const workPackageDto of importWorkPackagesDto) {
-      const workPackage = workPackageDto.convertToWorkPackageEntity();
-      await this.workPackageService.create(workPackage);
-    }
     this.logger.log(`Imported ${importWorkPackagesDto.length} work packages`);
     return { imported: importWorkPackagesDto.length };
   }
