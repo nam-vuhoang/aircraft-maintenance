@@ -8,6 +8,7 @@ import TimeRuler from '../TimeRuler/TimeRuler';
 import { getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
 import Timeline from '../Timeline/Timeline';
 import { Box } from '@chakra-ui/react';
+import InlineIcon from '../InlineIcon/InlineIcon';
 
 export interface GanttChartTypeInfo {
   typeIndex: number;
@@ -60,7 +61,7 @@ const zoomLevels: ZoomLevel[] = [
 
 const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, taskGroupIcon, taskTypeInfos }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-  const [leftPanelWidth, setLeftPanelWidth] = useState<number>(300);
+  const [leftPanelWidth, setLeftPanelWidth] = useState<number>(250);
   const [zoomLevelName, setZoomLevelName] = useState<string>(zoomLevels[3].name);
   const [minTime, setMinTime] = useState<Date>(new Date());
   const [maxTime, setMaxTime] = useState<Date>(new Date());
@@ -139,7 +140,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
           height={Infinity}
           resizeHandles={['e']}
           onResize={handleResizeLeftPanel}
-          minConstraints={[100, Infinity]}
+          minConstraints={[200, Infinity]}
           maxConstraints={[600, Infinity]}
           className={styles.leftPanel}
         >
@@ -148,10 +149,10 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
               className={styles.leftHeader}
               style={{ height: `${parseInt(styles.ganttChartHeaderHeight) * units.length}px` }}
             >
-              <Box display="flex" alignItems="center">
-                {taskGroupIcon}&nbsp;
+              <div>
+                {taskGroupIcon && <InlineIcon>{taskGroupIcon}</InlineIcon>}
                 <span>{taskGroupCaption || 'Name'}</span>
-              </Box>
+              </div>
             </div>
             <TaskList
               taskGroups={taskGroups}
@@ -170,7 +171,6 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
             expandedGroups={expandedGroups}
             minTime={minTime}
             maxTime={maxTime}
-            units={units}
             millisecondWidth={millisecondWidth}
           />
         </div>

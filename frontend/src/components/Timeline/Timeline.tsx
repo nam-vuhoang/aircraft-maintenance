@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from './Timeline.module.scss';
 import { TaskGroup } from '../../models/TaskGroup.entity';
-import logger from '../../logger';
 
 interface TimelineProps {
   taskGroups: TaskGroup[];

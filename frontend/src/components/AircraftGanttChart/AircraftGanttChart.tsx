@@ -112,11 +112,7 @@ const AircraftGanttChart: React.FC<AircraftGanttChartProps> = ({ flights, workPa
           caption: 'Work Packages',
           barColor: styles.ganttChartTaskBarColor2,
           textColor: styles.ganttChartTaskTextColor2,
-          icon: (
-            <InlineIcon>
-              <MdBuild />
-            </InlineIcon>
-          ),
+          icon: <MdBuild />,
         },
       ]}
     />
