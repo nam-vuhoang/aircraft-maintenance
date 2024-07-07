@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import TaskList from '../TaskList/TaskList';
 import styles from './GanttChart.module.scss';
 import { TaskGroup } from '../../models/TaskGroup.entity';
@@ -8,8 +8,21 @@ import TimeRuler from '../TimeRuler/TimeRuler';
 import { getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
 import Timeline from '../Timeline/Timeline';
 
+
+export interface GanttChartTypeInfo {
+  typeIndex: number;
+  caption: ReactNode;
+  icon?: ReactNode;
+  color?: string;
+}
+
 interface GanttChartProps {
   taskGroups: TaskGroup[];
+
+  taskGroupIcon?: ReactNode;
+  taskGroupCaption?: ReactNode;
+
+  taskTypeInfos?: GanttChartTypeInfo[];
 }
 
 interface ZoomLevel {
@@ -44,7 +57,7 @@ const zoomLevels: ZoomLevel[] = [
   },
 ];
 
-const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
+const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, taskGroupIcon, taskTypeInfos }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [leftPanelWidth, setLeftPanelWidth] = useState<number>(300);
   const [zoomLevelName, setZoomLevelName] = useState<string>(zoomLevels[3].name);
@@ -140,6 +153,9 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups }) => {
               taskGroups={taskGroups}
               onTaskGroupToggle={handleTaskGroupToggle}
               expandedGroups={expandedGroups}
+              taskGroupCaption={taskGroupCaption}
+              taskGroupIcon={taskGroupIcon}
+              taskTypeInfos={taskTypeInfos}
             />
           </>
         </ResizableBox>

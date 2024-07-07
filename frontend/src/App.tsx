@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import GanttChart from './components/GanttChart/GanttChart';
 import { ChakraProvider } from '@chakra-ui/react';
-import { sortTaskGroups, TaskGroup } from './models/TaskGroup.entity';
-import TimeRuler from './components/TimeRuler/TimeRuler';
-import ColorfulTable from './components/ColorfulTable/ColorfulTable';
-import { getDefaultTimeScaleFormat } from './components/TimeRuler';
-import FlightList from './components/FlightList/FlightList';
-import WorkPackageService from './services/WorkPackage.service';
-import { addWorkPackagesToTaskGroups } from './models/WorkPackage.entity';
-import FlightService from './services/Flight.service';
-import { addFlightsToTaskGroups } from './models';
+import AircraftGanttChart from './components/AircraftGanttChart/AircraftGanttChart';
+import { Flight, WorkPackage } from './models';
+import { FlightService, WorkPackageService } from './services';
 
 // const generateTasks = (
 //   groupId: number
@@ -74,7 +67,8 @@ import { addFlightsToTaskGroups } from './models';
 // ];
 
 const App: React.FC = () => {
-  const [taskGroups, setTaskGroups] = useState<TaskGroup[]>([]);
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [workPackages, setWorkPackages] = useState<WorkPackage[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,11 +77,8 @@ const App: React.FC = () => {
         WorkPackageService.getAllWorkPackages(),
       ]);
 
-      const taskGroups: TaskGroup[] = [];
-      addFlightsToTaskGroups(flights, taskGroups);
-      addWorkPackagesToTaskGroups(workPackages, taskGroups);
-      sortTaskGroups(taskGroups);
-      setTaskGroups(taskGroups);
+      setFlights(flights);
+      setWorkPackages(workPackages);
     };
 
     fetchData();
@@ -101,7 +92,7 @@ const App: React.FC = () => {
           <ColorfulTable />
         </div> */}
         <h1>Gantt Chart</h1>
-        <GanttChart taskGroups={taskGroups} />
+        <AircraftGanttChart flights={flights} workPackages={workPackages} />
         {/* <TimeRuler
           minTime={new Date(2024, 6, 2, 22, 15)}
           maxTime={new Date(2024, 6, 25, 12, 14)}
