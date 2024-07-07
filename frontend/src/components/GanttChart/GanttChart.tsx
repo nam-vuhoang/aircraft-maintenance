@@ -8,6 +8,19 @@ import TimeRuler from '../TimeRuler/TimeRuler';
 import { getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
 import Timeline from '../Timeline/Timeline';
 import InlineIcon from '../InlineIcon/InlineIcon';
+import {
+  ChakraProvider,
+  Box,
+  Select,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  FormControl,
+  FormLabel,
+  Flex,
+} from '@chakra-ui/react';
 
 export interface GanttChartTypeInfo {
   typeIndex: number;
@@ -68,6 +81,8 @@ const zoomLevels: ZoomLevel[] = [
   },
 ];
 
+const defaultLowestUnitWidth = 25; // This is the default width of the lowest unit in pixels
+
 const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, taskGroupIcon, taskTypeInfos }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [leftPanelWidth, setLeftPanelWidth] = useState<number>(250);
@@ -76,8 +91,9 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
   );
   const [minTime, setMinTime] = useState<Date>(new Date());
   const [maxTime, setMaxTime] = useState<Date>(new Date());
-  const [units, setUnits] = useState<TimeUnit[]>([]);
-  const [millisecondWidth, setMillisecondWidth] = useState<number>(0);
+  const [units, setUnits] = useState<TimeUnit[]>([]); // This is the time units to be displayed in the time ruler
+  const [millisecondWidth, setMillisecondWidth] = useState<number>(0); // This is the width of 1 millisecond in pixels
+  const [lowestUnitWidth, setLowestUnitWidth] = useState<number>(defaultLowestUnitWidth); // This is the width of the lowest unit in pixels
 
   const rightPanelRef = useRef<HTMLDivElement>(null);
 
@@ -97,7 +113,11 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
         const roundedMaxTime = roundUp(maxTime, lowestUnit);
         const totalDuration = roundedMaxTime.getTime() - roundedMinTime.getTime();
 
-        const lowestUnitWidth = Math.max(25, Math.round((containerWidth * lowestUnitDuration) / totalDuration));
+        const newLowestUnitWidth = Math.round((containerWidth * lowestUnitDuration) / totalDuration);
+        if (lowestUnitWidth < newLowestUnitWidth) {
+          setLowestUnitWidth(newLowestUnitWidth);
+        }
+
         setMinTime(roundedMinTime);
         setMaxTime(roundedMaxTime);
         setUnits(units);
@@ -111,7 +131,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [taskGroups, zoomLevelName]);
+  }, [lowestUnitWidth, taskGroups, zoomLevelName]);
 
   const handleTaskGroupToggle = (groupName: string) => {
     setExpandedGroups((prevState) => {
@@ -130,63 +150,96 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
   };
 
   const handleZoomChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setLowestUnitWidth(defaultLowestUnitWidth); // Reset the lowest unit width when changing zoom level
     setZoomLevelName(event.target.value);
   };
 
+  const handleLowestUnitWidthChange = (valueString: string) => {
+    const value = Math.round(parseInt(valueString, 10) / 5) * 5; // Round to the nearest multiple of 5
+    setLowestUnitWidth(value);
+  };
+
   return (
-    <div className={styles.ganttChart}>
-      <div className={styles.zoomControl}>
-        <label htmlFor="zoom">Zoom: </label>
-        <select id="zoom" value={zoomLevelName} onChange={handleZoomChange}>
-          {zoomLevels.map((level, index) => (
-            <option key={index} value={level.name}>
-              {level.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className={styles.mainContainer}>
-        <ResizableBox
-          width={leftPanelWidth}
-          height={Infinity}
-          resizeHandles={['e']}
-          onResize={handleResizeLeftPanel}
-          minConstraints={[200, Infinity]}
-          maxConstraints={[600, Infinity]}
-          className={styles.leftPanel}
-        >
-          <>
-            <div
-              className={styles.leftHeader}
-              style={{ height: `${parseInt(styles.ganttChartHeaderHeight) * units.length}px` }}
-            >
-              <div>
-                {taskGroupIcon && <InlineIcon>{taskGroupIcon}</InlineIcon>}
-                <span>{taskGroupCaption || 'Name'}</span>
+    <ChakraProvider>
+      <div className={styles.ganttChart}>
+        <div className={styles.zoomControl}>
+          <FormControl as={Flex} alignItems="center" justifyContent="flex-end">
+            <Box display="flex" alignItems="center">
+              <FormLabel htmlFor="zoom" fontWeight="bold" whiteSpace="nowrap" mb="0">
+                Zoom:
+              </FormLabel>
+              <Select id="zoom" value={zoomLevelName} onChange={handleZoomChange} ml="2" mr="4" width="auto">
+                {zoomLevels.map((level, index) => (
+                  <option key={index} value={level.name}>
+                    {level.name}
+                  </option>
+                ))}
+              </Select>
+            </Box>
+            <Box display="flex" alignItems="center">
+              <FormLabel htmlFor="lowest-unit-width" fontWeight="bold" whiteSpace="nowrap" mb="0">
+                Unit Width:
+              </FormLabel>
+              <NumberInput
+                id="lowest-unit-width"
+                value={lowestUnitWidth}
+                onChange={handleLowestUnitWidthChange}
+                step={5}
+                min={20}
+                ml="2"
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </Box>
+          </FormControl>
+        </div>
+        <div className={styles.mainContainer}>
+          <ResizableBox
+            width={leftPanelWidth}
+            height={Infinity}
+            resizeHandles={['e']}
+            onResize={handleResizeLeftPanel}
+            minConstraints={[200, Infinity]}
+            maxConstraints={[600, Infinity]}
+            className={styles.leftPanel}
+          >
+            <>
+              <div
+                className={styles.leftHeader}
+                style={{ height: `${parseInt(styles.ganttChartHeaderHeight) * units.length}px` }}
+              >
+                <div>
+                  {taskGroupIcon && <InlineIcon>{taskGroupIcon}</InlineIcon>}
+                  <span>{taskGroupCaption || 'Name'}</span>
+                </div>
               </div>
-            </div>
-            <TaskList
+              <TaskList
+                taskGroups={taskGroups}
+                onTaskGroupToggle={handleTaskGroupToggle}
+                expandedGroups={expandedGroups}
+                taskGroupCaption={taskGroupCaption}
+                taskGroupIcon={taskGroupIcon}
+                taskTypeInfos={taskTypeInfos}
+              />
+            </>
+          </ResizableBox>
+          <div className={styles.rightPanel} ref={rightPanelRef}>
+            <TimeRuler minTime={minTime} maxTime={maxTime} units={units} millisecondWidth={millisecondWidth} />
+            <Timeline
               taskGroups={taskGroups}
-              onTaskGroupToggle={handleTaskGroupToggle}
               expandedGroups={expandedGroups}
-              taskGroupCaption={taskGroupCaption}
-              taskGroupIcon={taskGroupIcon}
-              taskTypeInfos={taskTypeInfos}
+              minTime={minTime}
+              maxTime={maxTime}
+              millisecondWidth={millisecondWidth}
             />
-          </>
-        </ResizableBox>
-        <div className={styles.rightPanel} ref={rightPanelRef}>
-          <TimeRuler minTime={minTime} maxTime={maxTime} units={units} millisecondWidth={millisecondWidth} />
-          <Timeline
-            taskGroups={taskGroups}
-            expandedGroups={expandedGroups}
-            minTime={minTime}
-            maxTime={maxTime}
-            millisecondWidth={millisecondWidth}
-          />
+          </div>
         </div>
       </div>
-    </div>
+    </ChakraProvider>
   );
 };
 
