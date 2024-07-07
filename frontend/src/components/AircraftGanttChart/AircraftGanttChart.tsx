@@ -1,6 +1,11 @@
 import React from 'react';
 import { Flight, sortTaskGroups, Task, TaskGroup, WorkPackage } from '../../models';
 import GanttChart from '../GanttChart/GanttChart';
+import { FaPlane } from 'react-icons/fa';
+import { GiAirplaneDeparture } from 'react-icons/gi';
+import { MdBuild } from 'react-icons/md';
+import styles from './AircraftGanttChart.module.scss';
+import InlineIcon from '../InlineIcon/InlineIcon';
 
 interface AircraftGanttChartProps {
   flights: Flight[];
@@ -89,7 +94,33 @@ const AircraftGanttChart: React.FC<AircraftGanttChartProps> = ({ flights, workPa
   addFlightsToTaskGroups(flights, taskGroups);
   addWorkPackagesToTaskGroups(workPackages, taskGroups);
   sortTaskGroups(taskGroups);
-  return <GanttChart taskGroups={taskGroups} />;
+  return (
+    <GanttChart
+      taskGroups={taskGroups}
+      taskGroupCaption="Aircrafts"
+      taskGroupIcon={<FaPlane />}
+      taskTypeInfos={[
+        {
+          typeIndex: FlightTypeIndex,
+          caption: 'Flights',
+          barColor: styles.ganttChartTaskBarColor1,
+          textColor: styles.ganttChartTaskTextColor1,
+          icon: <GiAirplaneDeparture />,
+        },
+        {
+          typeIndex: WorkPackageTypeIndex,
+          caption: 'Work Packages',
+          barColor: styles.ganttChartTaskBarColor2,
+          textColor: styles.ganttChartTaskTextColor2,
+          icon: (
+            <InlineIcon>
+              <MdBuild />
+            </InlineIcon>
+          ),
+        },
+      ]}
+    />
+  );
 };
 
 export default AircraftGanttChart;

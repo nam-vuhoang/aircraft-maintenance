@@ -3,6 +3,10 @@ import { ChakraProvider } from '@chakra-ui/react';
 import AircraftGanttChart from './components/AircraftGanttChart/AircraftGanttChart';
 import { Flight, WorkPackage } from './models';
 import { FlightService, WorkPackageService } from './services';
+// import { AiOutlineAirplane } from 'react-icons/ai';
+import { FaPlane } from 'react-icons/fa';
+import { GiAirplaneArrival, GiAirplaneDeparture } from 'react-icons/gi';
+import { MdBuild } from 'react-icons/md';
 
 // const generateTasks = (
 //   groupId: number

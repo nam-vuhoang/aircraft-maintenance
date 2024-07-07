@@ -7,13 +7,14 @@ import 'react-resizable/css/styles.css';
 import TimeRuler from '../TimeRuler/TimeRuler';
 import { getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
 import Timeline from '../Timeline/Timeline';
-
+import { Box } from '@chakra-ui/react';
 
 export interface GanttChartTypeInfo {
   typeIndex: number;
   caption: ReactNode;
   icon?: ReactNode;
-  color?: string;
+  barColor?: string;
+  textColor?: string;
 }
 
 interface GanttChartProps {
@@ -147,7 +148,10 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
               className={styles.leftHeader}
               style={{ height: `${parseInt(styles.ganttChartHeaderHeight) * units.length}px` }}
             >
-              <div>Name</div>
+              <Box display="flex" alignItems="center">
+                {taskGroupIcon}&nbsp;
+                <span>{taskGroupCaption || 'Name'}</span>
+              </Box>
             </div>
             <TaskList
               taskGroups={taskGroups}
