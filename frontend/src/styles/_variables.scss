@@ -9,10 +9,10 @@ $gantt-chart-row-height: 35px;
 $gantt-chart-task-bar-height: 25px;
 $gantt-chart-task-bar-margin-top: 5px;
 
-$gantt-chart-task-text-color-1: rgba(255, 87, 51);
-$gantt-chart-task-text-color-2: rgba(0, 123, 255);
-$gantt-chart-task-bar-color-1: rgba(255, 87, 51, 0.5);
-$gantt-chart-task-bar-color-2: rgba(0, 123, 255, 0.5);
+$gantt-chart-task-text-color-1: rgba(0, 123, 255);
+$gantt-chart-task-text-color-2: rgba(255, 87, 51);
+$gantt-chart-task-bar-color-1: rgba(0, 123, 255, 0.5);
+$gantt-chart-task-bar-color-2: rgba(255, 87, 51, 0.5);
 
 :export {
   ganttChartHeaderHeight: $gantt-chart-header-height;
