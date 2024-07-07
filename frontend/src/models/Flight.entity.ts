@@ -1,4 +1,5 @@
 import { Task } from './Task.entity';
+import { TaskGroup } from './TaskGroup.entity';
 
 export interface Flight {
   id: string;
@@ -20,10 +21,26 @@ export interface Flight {
   originalArrivalStand?: string;
 }
 
-export const mapFlightToTask = (flight: Flight): Task => ({
+export const mapFlightToAircraftTask = (flight: Flight): Task => ({
   ...flight,
   type: 1,
   startTime: flight.actualDepartureTime || flight.estimatedDepartureTime || flight.scheduledDepartureTime,
   endTime: flight.actualArrivalTime || flight.estimatedArrivalTime || flight.scheduledArrivalTime,
   name: flight.flightNumber,
 });
+
+export const addFlightsToAircraftTaskGroups = (flights: Flight[], taskGroups: TaskGroup[]) => {
+  flights.forEach((flight) => {
+    const groupName = flight.registration;
+    const task = mapFlightToAircraftTask(flight);
+    const taskGroup = taskGroups.find((group) => group.name === groupName);
+    if (taskGroup) {
+      taskGroup.tasks.push(task);
+    } else {
+      taskGroups.push({
+        name: groupName,
+        tasks: [task],
+      });
+    }
+  });
+};
