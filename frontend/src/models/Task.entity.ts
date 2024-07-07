@@ -10,25 +10,3 @@ export interface Task {
   startName?: string;
   endName?: string;
 }
-
-/**
- * Compare two tasks by their start time, end time, and name.
- * @param a 
- * @param b 
- * @returns 
- */
-export const compareTasks = (a: Task, b: Task): number => {
-  if (a.startTime < b.startTime) {
-    return -1;
-  } else if (a.startTime > b.startTime) {
-    return 1;
-  } else {
-    if (a.endTime < b.endTime) {
-      return -1;
-    } else if (a.endTime > b.endTime) {
-      return 1;
-    } else {
-      return a.name.localeCompare(b.name);
-    }
-  }
-};

@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './Timeline.module.scss';
 import { TaskGroup } from '../../models/TaskGroup.entity';
+import logger from '../../logger';
 
 interface TimelineProps {
   taskGroups: TaskGroup[];
@@ -26,7 +27,7 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups, minTime
               // Calculate taskStartX and taskWidth in terms of pixels
               const taskStartX = (task.startTime.getTime() - minTime.getTime()) * millisecondWidth;
               const taskWidth = (task.endTime.getTime() - task.startTime.getTime()) * millisecondWidth;
-              const taskColor = getTaskColor(task.type);
+              const taskColor = getTaskColor(task.typeIndex);
               return (
                 <React.Fragment key={task.id}>
                   <div

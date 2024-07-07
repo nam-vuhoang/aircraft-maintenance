@@ -1,6 +1,6 @@
 import React from 'react';
-import GanttChart from './GanttChart';
-import { Flight, sortTaskGroups, TaskGroup, WorkPackage } from '../../models';
+import { Flight, sortTaskGroups, Task, TaskGroup, WorkPackage } from '../../models';
+import GanttChart from '../GanttChart/GanttChart';
 
 interface AircraftGanttChartProps {
   flights: Flight[];
