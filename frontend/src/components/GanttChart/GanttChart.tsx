@@ -7,7 +7,6 @@ import 'react-resizable/css/styles.css';
 import TimeRuler from '../TimeRuler/TimeRuler';
 import { getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
 import Timeline from '../Timeline/Timeline';
-import { Box } from '@chakra-ui/react';
 import InlineIcon from '../InlineIcon/InlineIcon';
 
 export interface GanttChartTypeInfo {
@@ -30,6 +29,7 @@ interface GanttChartProps {
 interface ZoomLevel {
   name: string;
   units: TimeUnit[];
+  isDefault?: boolean;
 }
 
 const zoomLevels: ZoomLevel[] = [
@@ -51,18 +51,29 @@ const zoomLevels: ZoomLevel[] = [
   },
   {
     name: 'Weeks + Days + Hours',
+    units: ['week', 'day', 'hour'],
+    isDefault: true,
+  },
+  {
+    name: 'Weeks + Days + 3 Hours',
     units: ['week', 'day', 'hour-3'],
   },
   {
     name: 'Months + Weeks + Days',
     units: ['month', 'week', 'day'],
   },
+  {
+    name: 'Months + Days + 3 Hours',
+    units: ['month', 'day', 'hour-3'],
+  },
 ];
 
 const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, taskGroupIcon, taskTypeInfos }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [leftPanelWidth, setLeftPanelWidth] = useState<number>(250);
-  const [zoomLevelName, setZoomLevelName] = useState<string>(zoomLevels[3].name);
+  const [zoomLevelName, setZoomLevelName] = useState<string>(
+    zoomLevels.find((level) => level.isDefault)?.name || zoomLevels[0].name
+  );
   const [minTime, setMinTime] = useState<Date>(new Date());
   const [maxTime, setMaxTime] = useState<Date>(new Date());
   const [units, setUnits] = useState<TimeUnit[]>([]);
