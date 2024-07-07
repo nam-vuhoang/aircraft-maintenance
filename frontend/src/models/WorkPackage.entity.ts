@@ -1,8 +1,14 @@
 import { Task } from './Task.entity';
 import { TaskGroup } from './TaskGroup.entity';
 
-export const WorkPackageType = 1;
+/**
+ * Index of the work package type, used to differ colors in GanttCharts.
+ */
+export const WorkPackageTypeIndex = 1;
 
+/**
+ * Work package entity.
+ */
 export interface WorkPackage {
   id: string;
   registration: string;
@@ -14,15 +20,25 @@ export interface WorkPackage {
   endTime: Date;
 }
 
-export const mapWorkPackageToAircraftTask = (workPackage: WorkPackage): Task => ({
+/**
+ * Convert a work package to a task.
+ * @param workPackage
+ * @returns
+ */
+export const convertWorkPackageToTask = (workPackage: WorkPackage): Task => ({
   ...workPackage,
-  type: WorkPackageType,
+  typeIndex: WorkPackageTypeIndex,
 });
 
-export const addWorkPackagesToAircraftTaskGroups = (workPackages: WorkPackage[], taskGroups: TaskGroup[]) => {
+/**
+ * Add work packages to task groups.
+ * @param workPackages
+ * @param taskGroups
+ */
+export const addWorkPackagesToTaskGroups = (workPackages: WorkPackage[], taskGroups: TaskGroup[]) => {
   workPackages.forEach((workPackage) => {
     const groupName = workPackage.registration;
-    const task = mapWorkPackageToAircraftTask(workPackage);
+    const task = convertWorkPackageToTask(workPackage);
     const taskGroup = taskGroups.find((group) => group.name === groupName);
     if (taskGroup) {
       taskGroup.tasks.push(task);

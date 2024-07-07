@@ -1,5 +1,8 @@
 import { WorkPackage } from '.';
 
+/**
+ * WorkPackage DTO (Data Transfer Object) interface, used for retrieving flight data from the server.
+ */
 export interface WorkPackageDto {
   id: string;
   registration: string;

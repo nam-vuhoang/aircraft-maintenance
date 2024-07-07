@@ -1,5 +1,8 @@
-import { Flight } from "./Flight.entity";
+import { Flight } from './Flight.entity';
 
+/**
+ * Flight DTO (Data Transfer Object) interface, used for retrieving flight data from the server.
+ */
 export interface FlightDto {
   id: string;
   airline: string;
