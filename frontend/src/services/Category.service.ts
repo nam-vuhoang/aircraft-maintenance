@@ -6,13 +6,21 @@ import logger from '../logger';
 //   maxAge: 5 * 60 * 1000, // 5 minutes
 // });
 
+const baseURL = import.meta.env.VITE_API_BASE_URL as string;
+
 class CategoryService {
   private axiosInstance: AxiosInstance;
 
   constructor() {
+    if (!baseURL) {
+      throw new Error('API base URL is not defined');
+    }
     this.axiosInstance = axios.create({
       // adapter: cache.adapter,
-      baseURL: import.meta.env.VITE_API_BASE_URL as string,
+      baseURL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   }
 

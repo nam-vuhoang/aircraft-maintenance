@@ -3,12 +3,18 @@ import logger from '../logger';
 import { WorkPackage, WorkPackageFilter } from '../models';
 import { WorkPackageDto, convertWorkPackgeDtoToWorkPackage } from './WorkPackage.dto';
 
+const baseURL = import.meta.env.VITE_API_BASE_URL as string;
+
 class WorkPackageService {
   private axiosInstance: AxiosInstance;
 
   constructor() {
+    if (!baseURL) {
+      throw new Error('API base URL is not defined');
+    }
+
     this.axiosInstance = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL as string,
+      baseURL,
       headers: {
         'Content-Type': 'application/json',
       },
