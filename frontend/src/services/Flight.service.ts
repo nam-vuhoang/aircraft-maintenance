@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
-import { Flight } from '../models/Flight.entity';
-import { FlightFilter } from '../models/FlightFilter.dto';
 import logger from '../logger';
+import { Flight, FlightFilter, FlightDto, convertFlightDtoToFlight } from '../models';
 
 class FlightService {
   private axiosInstance: AxiosInstance;
@@ -9,14 +8,17 @@ class FlightService {
   constructor() {
     this.axiosInstance = axios.create({
       baseURL: import.meta.env.VITE_API_BASE_URL as string,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   }
 
   async getAllFlights(): Promise<Flight[]> {
     try {
       logger.debug('Fetching all flights');
-      const response = await this.axiosInstance.get<Flight[]>('/flights');
-      return response.data;
+      const response = await this.axiosInstance.get<FlightDto[]>('/flights');
+      return response.data.map(convertFlightDtoToFlight);
     } catch (error) {
       logger.error('Error fetching all flights:', error);
       throw error;
@@ -26,8 +28,8 @@ class FlightService {
   async getFlightById(id: string): Promise<Flight> {
     try {
       logger.debug(`Fetching flight with ID: ${id}`);
-      const response = await this.axiosInstance.get<Flight>(`/flights/${id}`);
-      return response.data;
+      const response = await this.axiosInstance.get<FlightDto>(`/flights/${id}`);
+      return convertFlightDtoToFlight(response.data);
     } catch (error) {
       logger.error(`Error fetching flight with ID ${id}:`, error);
       throw error;
@@ -37,8 +39,8 @@ class FlightService {
   async createFlight(flight: Flight): Promise<Flight> {
     try {
       logger.debug('Creating new flight:', flight);
-      const response = await this.axiosInstance.post<Flight>('/flights', flight);
-      return response.data;
+      const response = await this.axiosInstance.post<FlightDto>('/flights', flight);
+      return convertFlightDtoToFlight(response.data);
     } catch (error) {
       logger.error('Error creating new flight:', error);
       throw error;
@@ -48,8 +50,8 @@ class FlightService {
   async updateFlight(id: string, flight: Flight): Promise<Flight> {
     try {
       logger.debug(`Updating flight with ID ${id}:`, flight);
-      const response = await this.axiosInstance.put<Flight>(`/flights/${id}`, flight);
-      return response.data;
+      const response = await this.axiosInstance.put<FlightDto>(`/flights/${id}`, flight);
+      return convertFlightDtoToFlight(response.data);
     } catch (error) {
       logger.error(`Error updating flight with ID ${id}:`, error);
       throw error;
@@ -69,8 +71,8 @@ class FlightService {
   async searchFlights(filter: FlightFilter): Promise<Flight[]> {
     try {
       logger.debug('Searching flights with filter:', filter);
-      const response = await this.axiosInstance.post<Flight[]>('/flights/search', filter);
-      return response.data;
+      const response = await this.axiosInstance.post<FlightDto[]>('/flights/search', filter);
+      return response.data.map(convertFlightDtoToFlight);
     } catch (error) {
       logger.error('Error searching flights with filter:', error);
       throw error;

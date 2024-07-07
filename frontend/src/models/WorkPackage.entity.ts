@@ -1,6 +1,8 @@
 import { Task } from './Task.entity';
 import { TaskGroup } from './TaskGroup.entity';
 
+export const WorkPackageType = 1;
+
 export interface WorkPackage {
   id: string;
   registration: string;
@@ -14,7 +16,7 @@ export interface WorkPackage {
 
 export const mapWorkPackageToAircraftTask = (workPackage: WorkPackage): Task => ({
   ...workPackage,
-  type: 1,
+  type: WorkPackageType,
 });
 
 export const addWorkPackagesToAircraftTaskGroups = (workPackages: WorkPackage[], taskGroups: TaskGroup[]) => {
