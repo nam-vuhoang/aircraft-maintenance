@@ -250,6 +250,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
               minTime={minTime}
               maxTime={maxTime}
               millisecondWidth={millisecondWidth}
+              taskTypeInfos={taskTypeInfos}
             />
           </div>
         </div>

@@ -1,6 +1,9 @@
 import React from 'react';
 import styles from './Timeline.module.scss';
 import { TaskGroup } from '../../models/TaskGroup.entity';
+import InlineIcon from '../InlineIcon/InlineIcon';
+import { GanttChartTypeInfo } from '../GanttChart/GanttChart';
+import { Box } from '@chakra-ui/react';
 
 interface TimelineProps {
   taskGroups: TaskGroup[];
@@ -8,13 +11,20 @@ interface TimelineProps {
   minTime: Date;
   maxTime: Date;
   millisecondWidth: number;
+  taskTypeInfos?: GanttChartTypeInfo[];
 }
 
-const getTaskColor = (type: number) => {
+const getDefaultTaskColor = (type: number) => {
   return type % 2 === 1 ? styles.ganttChartTaskBarColor1 : styles.ganttChartTaskBarColor2;
 };
 
-const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups, minTime, millisecondWidth }) => {
+const Timeline: React.FC<TimelineProps> = ({
+  taskGroups,
+  expandedGroups,
+  minTime,
+  millisecondWidth,
+  taskTypeInfos,
+}) => {
   return (
     <div className={styles.timeline}>
       {taskGroups.map((group) => {
@@ -26,7 +36,10 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups, minTime
               // Calculate taskStartX and taskWidth in terms of pixels
               const taskStartX = (task.startTime.getTime() - minTime.getTime()) * millisecondWidth;
               const taskWidth = (task.endTime.getTime() - task.startTime.getTime()) * millisecondWidth;
-              const taskColor = getTaskColor(task.typeIndex);
+
+              const taskTypeInfo = taskTypeInfos?.find((info) => info.typeIndex === task.typeIndex);
+              const taskColor = taskTypeInfo?.barColor || getDefaultTaskColor(task.typeIndex);
+
               return (
                 <React.Fragment key={task.id}>
                   <div
@@ -38,7 +51,10 @@ const Timeline: React.FC<TimelineProps> = ({ taskGroups, expandedGroups, minTime
                     }}
                     title={`${task.name}: ${task.startTime.toLocaleString()} - ${task.endTime.toLocaleString()}`}
                   >
-                    {task.name}
+                    <span>
+                      {<InlineIcon>{taskTypeInfo?.icon}</InlineIcon>}
+                      {task.name}
+                    </span>
                   </div>
                   {isExpanded && <div className={styles.emptyRow}></div>}
                 </React.Fragment>
