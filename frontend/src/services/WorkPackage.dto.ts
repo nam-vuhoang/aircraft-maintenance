@@ -1,4 +1,4 @@
-import { WorkPackage } from '.';
+import { WorkPackage } from '../models';
 
 /**
  * WorkPackage DTO (Data Transfer Object) interface, used for retrieving flight data from the server.

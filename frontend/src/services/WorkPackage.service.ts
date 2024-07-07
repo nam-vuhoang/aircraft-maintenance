@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import logger from '../logger';
-import { WorkPackage, WorkPackageDto, WorkPackageFilter, convertWorkPackgeDtoToWorkPackage } from '../models';
+import { WorkPackage, WorkPackageFilter } from '../models';
+import { WorkPackageDto, convertWorkPackgeDtoToWorkPackage } from './WorkPackage.dto';
 
 class WorkPackageService {
   private axiosInstance: AxiosInstance;

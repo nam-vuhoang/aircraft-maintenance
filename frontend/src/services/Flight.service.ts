@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import logger from '../logger';
-import { Flight, FlightFilter, FlightDto, convertFlightDtoToFlight } from '../models';
+import { Flight, FlightFilter } from '../models';
+import { convertFlightDtoToFlight, FlightDto } from './Flight.dto';
 
 class FlightService {
   private axiosInstance: AxiosInstance;

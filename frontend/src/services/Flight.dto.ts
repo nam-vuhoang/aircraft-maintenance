@@ -1,4 +1,4 @@
-import { Flight } from './Flight.entity';
+import { Flight } from '../models/Flight.entity';
 
 /**
  * Flight DTO (Data Transfer Object) interface, used for retrieving flight data from the server.
