@@ -21,13 +21,13 @@ export const FlightTypeIndex = 0;
  * @returns
  */
 const convertFlightToTask = (flight: Flight): Task => ({
-  ...flight,
-  typeIndex: FlightTypeIndex,
   name: flight.flightNumber,
   startTime: flight.actualDepartureTime || flight.estimatedDepartureTime || flight.scheduledDepartureTime,
   endTime: flight.actualArrivalTime || flight.estimatedArrivalTime || flight.scheduledArrivalTime,
-  startName: flight.departureStand || flight.originalDepartureStand,
-  endName: flight.arrivalStand || flight.originalArrivalStand,
+  startName: flight.scheduledDepartureStation,
+  endName: flight.scheduledArrivalStation,
+  ...flight,
+  typeIndex: FlightTypeIndex,
 });
 
 /**
@@ -100,14 +100,14 @@ const AircraftGanttChart: React.FC<AircraftGanttChartProps> = ({ flights, workPa
       taskTypeInfos={[
         {
           typeIndex: FlightTypeIndex,
-          caption: 'Flights',
+          caption: 'Flight',
           barColor: styles.ganttChartTaskBarColor1,
           textColor: styles.ganttChartTaskTextColor1,
           icon: <MdFlightTakeoff />,
         },
         {
           typeIndex: WorkPackageTypeIndex,
-          caption: 'Work Packages',
+          caption: 'Work Package',
           barColor: styles.ganttChartTaskBarColor2,
           textColor: styles.ganttChartTaskTextColor2,
           icon: <MdBuild />,
