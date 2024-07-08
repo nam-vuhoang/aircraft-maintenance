@@ -18,13 +18,13 @@ import { FaDatabase } from 'react-icons/fa';
 import { FlightImportDto } from '../models/FlightImport.dto';
 import { FlightService, WorkPackageService } from '../services';
 import { WorkPackageDto } from '../services/WorkPackage.dto';
-import { AppStatusPanel, AppStatus, InfoPanel } from '../components/utils';
+import { AppStatusPanel, AppStatus } from '../components/utils';
+import { set } from 'date-fns';
 
 const ImportPage: React.FC = () => {
   const [flightFile, setFlightFile] = useState<File | null>(null);
   const [workPackageFile, setWorkPackageFile] = useState<File | null>(null);
   const [status, setStatus] = useState<AppStatus | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (
     e: ChangeEvent<HTMLInputElement>,
@@ -39,7 +39,7 @@ const ImportPage: React.FC = () => {
       setStatus({ warning: 'Please select a file to import.' });
       return;
     }
-    setLoading(true);
+    setStatus({ info: 'Importing flights...' });
 
     const reader = new FileReader();
     reader.onload = async (e: ProgressEvent<FileReader>) => {
@@ -54,8 +54,6 @@ const ImportPage: React.FC = () => {
         } else {
           setStatus({ error: err });
         }
-      } finally {
-        setLoading(false);
       }
     };
     reader.readAsText(flightFile);
@@ -66,7 +64,7 @@ const ImportPage: React.FC = () => {
       setStatus({ warning: 'Please select a file to import.' });
       return;
     }
-    setLoading(true);
+    setStatus({ info: 'Importing work packages...' });
 
     const reader = new FileReader();
     reader.onload = async (e: ProgressEvent<FileReader>) => {
@@ -81,8 +79,6 @@ const ImportPage: React.FC = () => {
         } else {
           setStatus({ error: err });
         }
-      } finally {
-        setLoading(false);
       }
     };
     reader.readAsText(workPackageFile);
@@ -167,7 +163,6 @@ const ImportPage: React.FC = () => {
         </Tabs>
       </Box>
 
-      {loading && <InfoPanel message="Loading data..." mt={4} />}
       {status && (
         <Box mt={4}>
           <AppStatusPanel status={status} />
