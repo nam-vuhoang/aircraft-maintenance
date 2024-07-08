@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import logger from '../logger';
 import { Flight, FlightFilter } from '../models';
 import { convertFlightDtoToFlight, FlightDto } from './Flight.dto';
+import { FlightImportDto } from '../models/FlightImport.dto';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -97,11 +98,11 @@ class FlightService {
     }
   }
 
-  async importFlights(flights: Flight[]): Promise<{ imported: number }> {
+  async importFlights(flightDtos: FlightImportDto[]): Promise<number> {
     try {
-      logger.debug('Importing flights:', flights);
-      const response = await this.axiosInstance.post<{ imported: number }>('/flights/import', flights);
-      return response.data;
+      logger.debug('Importing flights:', flightDtos.length);
+      const response = await this.axiosInstance.post<{ imported: number }>('/flights/import', flightDtos);
+      return response.data.imported;
     } catch (error) {
       logger.error('Error importing flights:', error);
       throw error;

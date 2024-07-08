@@ -97,11 +97,11 @@ class WorkPackageService {
     }
   }
 
-  async importWorkPackages(workPackages: WorkPackage[]): Promise<{ imported: number }> {
+  async importWorkPackages(workPackages: WorkPackageDto[]): Promise<number> {
     try {
       logger.debug('Importing work packages:', workPackages);
       const response = await this.axiosInstance.post<{ imported: number }>('/work-packages/import', workPackages);
-      return response.data;
+      return response.data.imported;
     } catch (error) {
       logger.error('Error importing work packages:', error);
       throw error;
