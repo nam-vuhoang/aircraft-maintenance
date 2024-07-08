@@ -1,9 +1,32 @@
-import { Box, Heading, HStack, Icon } from '@chakra-ui/react';
-import React from 'react';
+import { Box, Heading, HStack, Icon, useColorModeValue } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import { FaDatabase } from 'react-icons/fa';
-import FlightList from '../components/FlightList/FlightList';
+import FlightSearchForm from '../components/FlightSearchForm/FlightSearchForm';
+import FlightTable from '../components/FlightTable';
+import { Flight, FlightFilter } from '../models';
+import { FlightService } from '../services';
 
 const FlightsPage: React.FC = () => {
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [filter, setFilter] = useState<FlightFilter>({});
+
+  useEffect(() => {
+    const fetchFlights = async () => {
+      try {
+        const response = await FlightService.searchFlights(filter);
+        setFlights(response);
+      } catch (error) {
+        console.error('Error fetching flights:', error);
+      }
+    };
+
+    fetchFlights();
+  }, [filter]);
+
+  const handleSearch = (newFilter: FlightFilter) => {
+    setFilter(newFilter);
+  };
+
   return (
     <Box p={5}>
       <HStack mb={12}>
@@ -13,8 +36,19 @@ const FlightsPage: React.FC = () => {
         </Heading>
       </HStack>
 
-      <FlightList />
+      <Box className="chakra-panel">
+        <Heading as="h1" size="lg" mb={4}>
+          Search flights
+        </Heading>
+        <FlightSearchForm onSearch={handleSearch} />
+      </Box>
 
+      <Box className="chakra-panel" mt={4}>
+        <Heading as="h1" size="lg" mb={4}>
+          Flights
+        </Heading>
+        <FlightTable flights={flights} />
+      </Box>
     </Box>
   );
 };

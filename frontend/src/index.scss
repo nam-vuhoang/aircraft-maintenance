@@ -80,3 +80,29 @@ img {
 .chakra-link-secondary {
   color: var(--chakra-colors-secondary-500);
 }
+
+.chakra-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  border: 1px solid var(--chakra-colors-gray-200);
+}
+
+.chakra-table thead {
+  background-color: var(--chakra-colors-gray-100);
+}
+
+.chakra-table tbody tr:nth-of-type(odd) {
+  background-color: var(--chakra-colors-gray-50);
+}
+
+.chakra-table tbody tr:nth-of-type(even) {
+  background-color: var(--chakra-colors-white);
+}
+
+.chakra-table th,
+.chakra-table td {
+  padding: 8px;
+  border: 1px solid var(--chakra-colors-gray-200);
+  text-align: left;
+}
