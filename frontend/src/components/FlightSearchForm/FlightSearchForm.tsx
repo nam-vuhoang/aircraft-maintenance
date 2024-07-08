@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Button } from '@chakra-ui/react';
-import { Select } from 'chakra-react-select';
+import { Box, Input, Button, VStack, HStack, useColorModeValue, FormControl, FormLabel } from '@chakra-ui/react';
 import CategoryService from '../../services/Category.service';
 import { FlightFilter } from '../../models/FlightFilter.dto';
+import MultiSelect from '../utils/MultiSelect';
 
 interface FlightSearchFormProps {
   onSearch: (filter: FlightFilter) => void;
@@ -58,7 +58,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
     }));
   };
 
-  const handleSelectChange = (name: string, value: any) => {
+  const handleSelectChange = (name: string, value: Option[]) => {
     setFormValues((prevValues) => ({
       ...prevValues,
       [name]: value,
@@ -105,74 +105,114 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
     });
   };
 
+  const panelBg = useColorModeValue('white', 'gray.800');
+  const panelBorderColor = useColorModeValue('gray.200', 'gray.700');
+
   return (
-    <form onSubmit={handleSearch}>
-      <Input
-        type="datetime-local"
-        name="startTime"
-        placeholder="Start Time"
-        value={formValues.startTime}
-        onChange={handleInputChange}
-      />
-      <Input
-        type="datetime-local"
-        name="endTime"
-        placeholder="End Time"
-        value={formValues.endTime}
-        onChange={handleInputChange}
-      />
-      <Input
-        type="text"
-        name="flightNumbers"
-        placeholder="Flight Numbers (comma separated)"
-        value={formValues.flightNumbers}
-        onChange={handleInputChange}
-      />
-      <Select
-        isMulti
-        name="airlines"
-        options={airlines}
-        placeholder="Select airlines..."
-        value={formValues.airlines}
-        onChange={(selectedOptions) => handleSelectChange('airlines', selectedOptions)}
-      />
-      <Select
-        isMulti
-        name="registrations"
-        options={registrations}
-        placeholder="Select registrations..."
-        value={formValues.registrations}
-        onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions)}
-      />
-      <Select
-        isMulti
-        name="aircraftTypes"
-        options={aircraftTypes}
-        placeholder="Select aircraft types..."
-        value={formValues.aircraftTypes}
-        onChange={(selectedOptions) => handleSelectChange('aircraftTypes', selectedOptions)}
-      />
-      <Select
-        isMulti
-        name="departureStations"
-        options={departureStations}
-        placeholder="Select departure stations..."
-        value={formValues.departureStations}
-        onChange={(selectedOptions) => handleSelectChange('departureStations', selectedOptions)}
-      />
-      <Select
-        isMulti
-        name="arrivalStations"
-        options={arrivalStations}
-        placeholder="Select arrival stations..."
-        value={formValues.arrivalStations}
-        onChange={(selectedOptions) => handleSelectChange('arrivalStations', selectedOptions)}
-      />
-      <Button type="submit">Search</Button>
-      <Button type="button" onClick={handleReset}>
-        Reset
-      </Button>
-    </form>
+    <Box
+      bg={panelBg}
+      borderColor={panelBorderColor}
+      borderWidth={1}
+      borderRadius="md"
+      p={4}
+      boxShadow="lg"
+      className="chakra-panel"
+    >
+      <form onSubmit={handleSearch}>
+        <VStack spacing={4} align="stretch">
+          <HStack spacing={4}>
+            <FormControl mb={0.5}>
+              <FormLabel>Start Time</FormLabel>
+              <Input
+                type="datetime-local"
+                name="startTime"
+                placeholder="Start Time"
+                value={formValues.startTime}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mb={0.5}>
+              <FormLabel>End Time</FormLabel>
+              <Input
+                type="datetime-local"
+                name="endTime"
+                placeholder="End Time"
+                value={formValues.endTime}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+          </HStack>
+          <FormControl mb={0.5}>
+            <FormLabel>Flight Numbers</FormLabel>
+            <Input
+              type="text"
+              name="flightNumbers"
+              placeholder="Flight Numbers (comma separated)"
+              value={formValues.flightNumbers}
+              onChange={handleInputChange}
+            />
+          </FormControl>
+          <FormControl mb={0.5}>
+            <FormLabel>Airlines</FormLabel>
+            <MultiSelect
+              name="airlines"
+              options={airlines}
+              placeholder="Select airlines..."
+              value={formValues.airlines}
+              onChange={(selectedOptions) => handleSelectChange('airlines', selectedOptions as Option[])}
+            />
+          </FormControl>
+          <FormControl mb={0.5}>
+            <FormLabel>Registrations</FormLabel>
+            <MultiSelect
+              name="registrations"
+              options={registrations}
+              placeholder="Select registrations..."
+              value={formValues.registrations}
+              onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as Option[])}
+            />
+          </FormControl>
+          <FormControl mb={0.5}>
+            <FormLabel>Aircraft Types</FormLabel>
+            <MultiSelect
+              name="aircraftTypes"
+              options={aircraftTypes}
+              placeholder="Select aircraft types..."
+              value={formValues.aircraftTypes}
+              onChange={(selectedOptions) => handleSelectChange('aircraftTypes', selectedOptions as Option[])}
+            />
+          </FormControl>
+          <FormControl mb={0.5}>
+            <FormLabel>Departure Stations</FormLabel>
+            <MultiSelect
+              name="departureStations"
+              options={departureStations}
+              placeholder="Select departure stations..."
+              value={formValues.departureStations}
+              onChange={(selectedOptions) => handleSelectChange('departureStations', selectedOptions as Option[])}
+            />
+          </FormControl>
+          <FormControl mb={0.5}>
+            <FormLabel>Arrival Stations</FormLabel>
+            <MultiSelect
+              name="arrivalStations"
+              options={arrivalStations}
+              placeholder="Select arrival stations..."
+              value={formValues.arrivalStations}
+              onChange={(selectedOptions) => handleSelectChange('arrivalStations', selectedOptions as Option[])}
+            />
+          </FormControl>
+          <HStack spacing={4}>
+            <Button type="submit" colorScheme="brand">
+              Search
+            </Button>
+            <Button type="button" onClick={handleReset}>
+              Reset
+            </Button>
+          </HStack>
+        </VStack>
+      </form>
+    </Box>
   );
 };
 
