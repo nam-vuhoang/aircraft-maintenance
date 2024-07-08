@@ -14,7 +14,7 @@ import {
   HStack,
   Icon,
 } from '@chakra-ui/react';
-import { FaFileImport } from 'react-icons/fa';
+import { FaDatabase } from 'react-icons/fa';
 import { FlightImportDto } from '../../models/FlightImport.dto';
 import { FlightService, WorkPackageService } from '../../services';
 import { WorkPackageDto } from '../../services/WorkPackage.dto';
@@ -96,8 +96,8 @@ const ImportPage: React.FC = () => {
   return (
     <Box p={5}>
       <HStack mb={12}>
-        <Icon as={FaFileImport} w={8} h={8} />
-        <Heading as="h1" size="xl">
+        <Heading className="chakra-page-heading">
+          <Icon as={FaDatabase} w={8} h={8} mr={2} />
           Import Data
         </Heading>
       </HStack>
