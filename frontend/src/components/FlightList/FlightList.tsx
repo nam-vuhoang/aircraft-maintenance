@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styles from './FlightList.module.scss';
-import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
+import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, useColorModeValue } from '@chakra-ui/react';
 import { Flight } from '../../models/Flight.entity';
 import { FlightFilter } from '../../models/FlightFilter.dto';
 import FlightService from '../../services/Flight.service';
@@ -27,12 +26,20 @@ const FlightList: React.FC = () => {
     setFilter(newFilter);
   };
 
+  const panelBg = useColorModeValue('white', 'gray.800');
+  const panelBorderColor = useColorModeValue('gray.200', 'gray.700');
+  const tableHeaderBg = useColorModeValue('gray.100', 'gray.900');
+  const tableRowOddBg = useColorModeValue('gray.50', 'gray.700');
+  const tableRowEvenBg = useColorModeValue('white', 'gray.800');
+
   return (
-    <Box className={styles.flightListContainer}>
-      <Heading as="h1">Flight List</Heading>
+    <Box bg={panelBg} borderColor={panelBorderColor} borderWidth={1} borderRadius="md" p={4} boxShadow="lg">
+      <Heading as="h2" size="lg" mb={4}>
+        Flight Search Form
+      </Heading>
       <FlightSearchForm onSearch={handleSearch} />
-      <Table className={styles.colorfulTable}>
-        <Thead>
+      <Table variant="simple" size="sm" mt={4} border="1px" borderColor={panelBorderColor}>
+        <Thead bg={tableHeaderBg}>
           <Tr>
             <Th>Airline</Th>
             <Th>Flight Number</Th>
@@ -45,8 +52,8 @@ const FlightList: React.FC = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {flights.map(flight => (
-            <Tr key={flight.id}>
+          {flights.map((flight, index) => (
+            <Tr key={flight.id} bg={index % 2 === 0 ? tableRowEvenBg : tableRowOddBg}>
               <Td>{flight.airline}</Td>
               <Td>{flight.flightNumber}</Td>
               <Td>{flight.registration}</Td>
