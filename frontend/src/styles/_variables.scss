@@ -1,5 +1,10 @@
-$primary-color: #4caf50;
-$secondary-color: #45a049;
+// src/styles/_variables.scss
+$primary-color: rgba(0, 123, 255);
+$secondary-color: rgba(255, 87, 51);
+
+$primary-color-light: rgba($primary-color, 0.5);
+$secondary-color-light: rgba($secondary-color, 0.5);
+
 $border-color: #ccc;
 $background-color: #f2f2f2;
 $hover-background-color: #f5f5f5;
@@ -9,10 +14,10 @@ $gantt-chart-row-height: 35px;
 $gantt-chart-task-bar-height: 25px;
 $gantt-chart-task-bar-margin-top: 5px;
 
-$gantt-chart-task-text-color-1: rgba(0, 123, 255);
-$gantt-chart-task-text-color-2: rgba(255, 87, 51);
-$gantt-chart-task-bar-color-1: rgba(0, 123, 255, 0.5);
-$gantt-chart-task-bar-color-2: rgba(255, 87, 51, 0.5);
+$gantt-chart-task-text-color-1: $primary-color;
+$gantt-chart-task-text-color-2: $secondary-color;
+$gantt-chart-task-bar-color-1: $primary-color-light;
+$gantt-chart-task-bar-color-2: $secondary-color-light;
 
 :export {
   ganttChartHeaderHeight: $gantt-chart-header-height;
