@@ -130,7 +130,15 @@ const ImportPage: React.FC = () => {
             <TabPanel>
               <Box bg={panelBg} borderColor={panelBorderColor} borderWidth={1} borderRadius="md" p={4}>
                 <Flex align="center" mb={4}>
-                  <Input type="file" accept=".json" onChange={(e) => handleFileChange(e, setFlightFile)} />
+                  <Input
+                    type="file"
+                    accept=".json"
+                    onChange={(e) => handleFileChange(e, setFlightFile)}
+                    display="flex"
+                    alignItems="center"
+                    p={2}
+                    h={12}
+                  />
                   <Button ml={4} onClick={handleImportFlights} colorScheme="brand">
                     Import
                   </Button>
@@ -140,7 +148,15 @@ const ImportPage: React.FC = () => {
             <TabPanel>
               <Box bg={panelBg} borderColor={panelBorderColor} borderWidth={1} borderRadius="md" p={4}>
                 <Flex align="center" mb={4}>
-                  <Input type="file" accept=".json" onChange={(e) => handleFileChange(e, setWorkPackageFile)} />
+                  <Input
+                    type="file"
+                    accept=".json"
+                    onChange={(e) => handleFileChange(e, setWorkPackageFile)}
+                    display="flex"
+                    alignItems="center"
+                    p={2}
+                    h={12}
+                  />
                   <Button ml={4} onClick={handleImportWorkPackages} colorScheme="brand">
                     Import
                   </Button>
