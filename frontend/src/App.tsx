@@ -1,10 +1,11 @@
 // src/App.tsx
 import { Box, VStack, HStack, Text, useColorModeValue } from '@chakra-ui/react';
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
-import { FaRegChartBar, FaFileImport, FaDatabase, FaChartBar } from 'react-icons/fa';
+import { Routes, Route, NavLink } from 'react-router-dom';
+import { FaDatabase } from 'react-icons/fa';
 import ImportPage from './pages/ImportPage';
 import DashboardPage from './pages/DashboardPage';
 import FlightsPage from './pages/FlightsPage';
+import { MdDashboard, MdFlightTakeoff } from 'react-icons/md';
 
 function App() {
   const activeLinkColor = useColorModeValue('brand.500', 'brand.200');
@@ -32,7 +33,7 @@ function App() {
             })}
           >
             <HStack>
-              <Box w={5} h={5} as={FaRegChartBar} bg={iconBg} borderRadius="md" />
+              <Box w={5} h={5} as={MdDashboard} bg={iconBg} borderRadius="md" />
               <Text>Dashboard</Text>
             </HStack>
           </NavLink>
@@ -43,7 +44,7 @@ function App() {
             })}
           >
             <HStack>
-              <Box w={5} h={5} as={FaChartBar} bg={iconBg} borderRadius="md" />
+              <Box w={5} h={5} as={MdFlightTakeoff} bg={iconBg} borderRadius="md" />
               <Text>Flights</Text>
             </HStack>
           </NavLink>
