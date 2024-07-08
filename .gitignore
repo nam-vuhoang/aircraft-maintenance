@@ -103,3 +103,5 @@ frontend/.vite/
 # Ignore build output directories
 dist/
 build/
+vite-chakra/
+.vscode/
