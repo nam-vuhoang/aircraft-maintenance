@@ -12,16 +12,16 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: var(--chakra-fontSizes-md);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background-color: hsl(225, 76%, 96%); /* Use your desired background color */
-  color: hsl(210, 8%, 25%);
-  line-height: 1.6;
+  font-family: var(--chakra-fonts-body);
+  background-color: var(--chakra-colors-secondaryGray-300); /* Use your desired background color */
+  color: var(--chakra-colors-gray-700);
+  line-height: var(--chakra-lineHeights-base);
   margin: 0;
   padding: 0;
   height: 100vh;
@@ -34,7 +34,7 @@ a {
 
 button {
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--chakra-fonts-body);
 }
 
 img {
@@ -43,35 +43,35 @@ img {
 }
 
 .chakra-heading {
-  color: black;
-  font-size: 34px;
+  color: var(--chakra-colors-black);
+  font-size: var(--chakra-fontSizes-4xl);
 }
 
 .chakra-sidebar {
-  background-color: white;
-  border-color: hsl(210, 32%, 88%);
-  border-radius: 8px;
-  padding: 1rem;
+  background-color: var(--chakra-colors-white);
+  border-color: var(--chakra-colors-gray-200);
+  border-radius: var(--chakra-radii-md);
+  padding: var(--chakra-space-4);
   height: 100vh; /* Ensure the sidebar takes up the full height of the screen */
   overflow-y: auto; /* Add scrollbar if content overflows */
 }
 
 .chakra-panel {
-  background-color: white;
-  border-color: hsl(210, 32%, 88%);
-  border-radius: 8px;
-  padding: 1rem;
+  background-color: var(--chakra-colors-white);
+  border-color: var(--chakra-colors-gray-200);
+  border-radius: var(--chakra-radii-md);
+  padding: var(--chakra-space-4);
   box-shadow: var(--chakra-shadows-lg); /* Add shadow similar to alert box */
 }
 
 .chakra-icon {
-  background-color: hsl(225, 76%, 96%);
+  background-color: var(--chakra-colors-secondaryGray-300);
 }
 
 .chakra-link {
-  color: hsl(217, 100%, 44%);
+  color: var(--chakra-colors-brand-500);
 }
 
 .chakra-link-secondary {
-  color: hsl(186, 100%, 50%);
+  color: var(--chakra-colors-secondary-500);
 }
