@@ -1,37 +1,32 @@
-import { Box, Heading, HStack, Icon, useColorModeValue } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import { FaDatabase } from 'react-icons/fa';
-import FlightSearchForm from '../components/FlightSearchForm/FlightSearchForm';
+import { Box, Heading, HStack, Icon } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import FlightSearchForm from '../components/FlightSearchForm';
 import FlightTable from '../components/FlightTable';
 import { Flight, FlightFilter } from '../models';
 import { FlightService } from '../services';
+import { AppStatus, AppStatusPanel } from '../components/utils';
+import { MdFlightTakeoff } from 'react-icons/md';
 
 const FlightsPage: React.FC = () => {
-  const [flights, setFlights] = useState<Flight[]>([]);
-  const [filter, setFilter] = useState<FlightFilter>({});
+  const [flights, setFlights] = useState<Flight[] | undefined>(undefined);
+  const [status, setStatus] = useState<AppStatus | null>(null);
 
-  useEffect(() => {
-    const fetchFlights = async () => {
-      try {
-        const response = await FlightService.searchFlights(filter);
-        setFlights(response);
-      } catch (error) {
-        console.error('Error fetching flights:', error);
-      }
-    };
-
-    fetchFlights();
-  }, [filter]);
-
-  const handleSearch = (newFilter: FlightFilter) => {
-    setFilter(newFilter);
+  const handleSearch = async (filter: FlightFilter) => {
+    try {
+      setStatus({ info: 'Fetching flights...' });
+      const response = await FlightService.searchFlights(filter);
+      setFlights(response);
+      setStatus(null);
+    } catch (error: any) {
+      setStatus({ error });
+    }
   };
 
   return (
     <Box p={5}>
       <HStack mb={12}>
         <Heading className="chakra-page-heading">
-          <Icon as={FaDatabase} w={8} h={8} mr={2} />
+          <Icon as={MdFlightTakeoff} w={8} h={8} mr={2} />
           Flights
         </Heading>
       </HStack>
@@ -43,12 +38,20 @@ const FlightsPage: React.FC = () => {
         <FlightSearchForm onSearch={handleSearch} />
       </Box>
 
-      <Box className="chakra-panel" mt={4}>
-        <Heading as="h1" size="lg" mb={4}>
-          Flights
-        </Heading>
-        <FlightTable flights={flights} />
-      </Box>
+      {flights && (
+        <Box className="chakra-panel" mt={4}>
+          <Heading as="h1" size="lg" mb={4}>
+            Flights
+          </Heading>
+          <FlightTable flights={flights} />
+        </Box>
+      )}
+
+      {status && (
+        <Box mt={4}>
+          <AppStatusPanel status={status} />
+        </Box>
+      )}
     </Box>
   );
 };

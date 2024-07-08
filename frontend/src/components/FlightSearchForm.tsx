@@ -9,6 +9,7 @@ import {
   FormControl,
   FormLabel,
   Select,
+  Text,
 } from '@chakra-ui/react';
 import CategoryService from '../services/Category.service';
 import { FlightFilter } from '../models/FlightFilter.dto';
@@ -227,6 +228,9 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
               <option value="all">All</option>
             </Select>
           </FormControl>
+          <Text fontSize="sm" color="red.300">
+            Warning: Pagination is currently not supported.
+          </Text>
           <HStack spacing={4}>
             <Button type="submit" colorScheme="brand">
               Search
