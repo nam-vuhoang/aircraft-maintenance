@@ -1,5 +1,20 @@
 import React, { useState, ChangeEvent } from 'react';
-import { Box, Text, Input, Button, Tabs, TabList, TabPanels, Tab, TabPanel, Flex } from '@chakra-ui/react';
+import {
+  Box,
+  Input,
+  Button,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Flex,
+  Heading,
+  useColorModeValue,
+  HStack,
+  Icon,
+} from '@chakra-ui/react';
+import { FaFileImport } from 'react-icons/fa';
 import { FlightImportDto } from '../../models/FlightImport.dto';
 import { FlightService, WorkPackageService } from '../../services';
 import { WorkPackageDto } from '../../services/WorkPackage.dto';
@@ -33,10 +48,8 @@ const ImportPage: React.FC = () => {
         const items: FlightImportDto[] = json;
         const importedCount = await FlightService.importFlights(items);
         setStatus({ success: `Successfully imported ${importedCount} flights.` });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         if (err.response?.status === 400) {
-          // Bad request
           setStatus({ error: 'Invalid data format. Please check the file and try again.' });
         } else {
           setStatus({ error: err });
@@ -62,10 +75,8 @@ const ImportPage: React.FC = () => {
         const items: WorkPackageDto[] = json;
         const importedCount = await WorkPackageService.importWorkPackages(items);
         setStatus({ success: `Successfully imported ${importedCount} work packages.` });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         if (err.response?.status === 400) {
-          // Bad request
           setStatus({ error: 'Invalid data format. Please check the file and try again.' });
         } else {
           setStatus({ error: err });
@@ -77,39 +88,75 @@ const ImportPage: React.FC = () => {
     reader.readAsText(workPackageFile);
   };
 
+  const panelBg = useColorModeValue('white', 'gray.800');
+  const panelBorderColor = useColorModeValue('gray.200', 'gray.700');
+  const activeTabColor = useColorModeValue('brand.500', 'brand.200');
+  const activeTabBg = useColorModeValue('brand.50', 'gray.700');
+
   return (
     <Box p={5}>
-      <Text fontSize="2xl" mb={4}>
-        Import Data
-      </Text>
+      <HStack mb={12}>
+        <Icon as={FaFileImport} w={8} h={8} />
+        <Heading as="h1" size="xl">
+          Import Data
+        </Heading>
+      </HStack>
 
-      <Tabs isFitted variant="enclosed">
-        <TabList mb={4}>
-          <Tab>Flights</Tab>
-          <Tab>Work Packages</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <Flex align="center" mb={4}>
-              <Input type="file" accept=".json" onChange={(e) => handleFileChange(e, setFlightFile)} />
-              <Button ml={4} onClick={handleImportFlights}>
-                Import
-              </Button>
-            </Flex>
-          </TabPanel>
-          <TabPanel>
-            <Flex align="center" mb={4}>
-              <Input type="file" accept=".json" onChange={(e) => handleFileChange(e, setWorkPackageFile)} />
-              <Button ml={4} onClick={handleImportWorkPackages}>
-                Import
-              </Button>
-            </Flex>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <Box className="chakra-panel">
+        <Tabs isFitted variant="enclosed">
+          <TabList mb={4}>
+            <Tab
+              _selected={{
+                color: activeTabColor,
+                bg: activeTabBg,
+                borderRadius: 'md',
+                fontWeight: 'bold',
+              }}
+            >
+              Flights
+            </Tab>
+            <Tab
+              _selected={{
+                color: activeTabColor,
+                bg: activeTabBg,
+                borderRadius: 'md',
+                fontWeight: 'bold',
+              }}
+            >
+              Work Packages
+            </Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <Box bg={panelBg} borderColor={panelBorderColor} borderWidth={1} borderRadius="md" p={4}>
+                <Flex align="center" mb={4}>
+                  <Input type="file" accept=".json" onChange={(e) => handleFileChange(e, setFlightFile)} />
+                  <Button ml={4} onClick={handleImportFlights} colorScheme="brand">
+                    Import
+                  </Button>
+                </Flex>
+              </Box>
+            </TabPanel>
+            <TabPanel>
+              <Box bg={panelBg} borderColor={panelBorderColor} borderWidth={1} borderRadius="md" p={4}>
+                <Flex align="center" mb={4}>
+                  <Input type="file" accept=".json" onChange={(e) => handleFileChange(e, setWorkPackageFile)} />
+                  <Button ml={4} onClick={handleImportWorkPackages} colorScheme="brand">
+                    Import
+                  </Button>
+                </Flex>
+              </Box>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Box>
 
-      {loading && <InfoPanel message="Loading data..." />}
-      {status && <AppStatusPanel status={status} />}
+      {loading && <InfoPanel message="Loading data..." mt={4} />}
+      {status && (
+        <Box mt={4}>
+          <AppStatusPanel status={status} />
+        </Box>
+      )}
     </Box>
   );
 };
