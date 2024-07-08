@@ -19,12 +19,11 @@ const WarningPanel: React.FC<WarningPanelProps> = ({ message }) => {
 
   return (
     <Alert
+      className='chakra-panel'
       status="warning"
       bg={bgColor}
       border="1px solid"
       borderColor={borderColor}
-      borderRadius="md"
-      boxShadow="lg"
       p={4}
     >
       <Stack spacing={3}>

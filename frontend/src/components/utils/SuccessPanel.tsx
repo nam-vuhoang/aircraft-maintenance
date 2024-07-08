@@ -19,11 +19,11 @@ const SuccessPanel: React.FC<SuccessPanelProps> = ({ message }) => {
 
   return (
     <Alert
+      className='chakra-panel'
       status="success"
       bg={bgColor}
       border="1px solid"
       borderColor={borderColor}
-      borderRadius="md"
       boxShadow="lg"
       p={4}
     >

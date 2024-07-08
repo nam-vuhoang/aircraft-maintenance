@@ -19,11 +19,11 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ message }) => {
 
   return (
     <Alert
+      className="chakra-panel"
       status="info"
       bg={bgColor}
       border="1px solid"
       borderColor={borderColor}
-      borderRadius="md"
       boxShadow="lg"
       p={4}
     >

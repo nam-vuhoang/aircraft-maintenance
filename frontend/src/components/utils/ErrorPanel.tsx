@@ -20,11 +20,11 @@ const ErrorPanel: React.FC<ErrorPanelProps> = ({ error }) => {
 
   return (
     <Alert
+      className="chakra-panel"
       status="error"
       bg={bgColor}
       border="1px solid"
       borderColor={borderColor}
-      borderRadius="md"
       boxShadow="lg"
       p={4}
     >
