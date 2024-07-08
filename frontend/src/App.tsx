@@ -1,122 +1,74 @@
-import React, { useEffect, useState } from 'react';
-import { ChakraProvider } from '@chakra-ui/react';
-import AircraftGanttChart from './components/AircraftGanttChart/AircraftGanttChart';
-import { Flight, WorkPackage } from './models';
-import { FlightService, WorkPackageService } from './services';
-// import { AiOutlineAirplane } from 'react-icons/ai';
-import { FaPlane } from 'react-icons/fa';
-import { GiAirplaneArrival, GiAirplaneDeparture } from 'react-icons/gi';
-import { MdBuild } from 'react-icons/md';
+// src/App.tsx
+import { Box, VStack, HStack, Text, useColorModeValue } from '@chakra-ui/react';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { FaRegChartBar, FaFileImport, FaDatabase, FaChartBar } from 'react-icons/fa';
+import ImportPage from './pages/ImportPage';
+import DashboardPage from './pages/DashboardPage';
+import FlightsPage from './pages/FlightsPage';
 
-// const generateTasks = (
-//   groupId: number
-// ): { id: number; name: string; startTime: Date; endTime: Date; type: number }[] => {
-//   if (groupId % 10 === 0) {
-//     // Create overlapping tasks for every third group
-//     return [
-//       {
-//         id: groupId * 10 + 1,
-//         name: `Task ${groupId}-1`,
-//         startTime: new Date(`2024-07-01`),
-//         endTime: new Date(`2024-07-05`),
-//         type: 1,
-//       },
-//       {
-//         id: groupId * 10 + 2,
-//         name: `Task ${groupId}-2`,
-//         startTime: new Date(`2024-07-04`),
-//         endTime: new Date(`2024-07-08`),
-//         type: 2,
-//       },
-//       {
-//         id: groupId * 10 + 3,
-//         name: `Task ${groupId}-3`,
-//         startTime: new Date(`2024-07-06`),
-//         endTime: new Date(`2024-07-10`),
-//         type: 1,
-//       },
-//     ];
-//   } else {
-//     // Create non-overlapping tasks
-//     return [
-//       {
-//         id: groupId * 10 + 1,
-//         name: `Task ${groupId}-1`,
-//         startTime: new Date(`2024-07-${String(groupId).padStart(2, '0')}`),
-//         endTime: new Date(`2024-07-${String(groupId + 1).padStart(2, '0')}`),
-//         type: 1,
-//       },
-//       {
-//         id: groupId * 10 + 2,
-//         name: `Task ${groupId}-2`,
-//         startTime: new Date(`2024-07-${String(groupId + 2).padStart(2, '0')}`),
-//         endTime: new Date(`2024-07-${String(groupId + 3).padStart(2, '0')}`),
-//         type: 2,
-//       },
-//     ];
-//   }
-// };
-
-// const taskGroups: TaskGroup[] = [
-//   { name: 'Group 1', tasks: generateTasks(1) },
-//   { name: 'Group 2', tasks: generateTasks(2) },
-//   { name: 'Group 3', tasks: generateTasks(3) },
-//   { name: 'Group 4', tasks: generateTasks(4) },
-//   { name: 'Group 5', tasks: generateTasks(5) },
-//   { name: 'Group 6', tasks: generateTasks(6) },
-//   { name: 'Group 7', tasks: generateTasks(7) },
-//   { name: 'Group 8', tasks: generateTasks(8) },
-//   { name: 'Group 9', tasks: generateTasks(9) },
-//   { name: 'Group 10', tasks: generateTasks(10) },
-// ];
-
-const App: React.FC = () => {
-  const [flights, setFlights] = useState<Flight[]>([]);
-  const [workPackages, setWorkPackages] = useState<WorkPackage[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const [flights, workPackages] = await Promise.all([
-        FlightService.getAllFlights(),
-        WorkPackageService.getAllWorkPackages(),
-      ]);
-
-      setFlights(flights);
-      setWorkPackages(workPackages);
-    };
-
-    fetchData();
-  }, []);
+function App() {
+  const activeLinkColor = useColorModeValue('brand.500', 'brand.200');
+  const sidebarBg = useColorModeValue('white', 'gray.800');
+  const sidebarBorderColor = useColorModeValue('gray.200', 'gray.700');
+  const iconBg = useColorModeValue('secondaryGray.300', 'gray.700');
 
   return (
-    <ChakraProvider>
-      <div>
-        {/* <div>
-          <h1>Colorful Table Example</h1>
-          <ColorfulTable />
-        </div> */}
-        <h1>Gantt Chart</h1>
-        <AircraftGanttChart flights={flights} workPackages={workPackages} />
-        {/* <TimeRuler
-          minTime={new Date(2024, 6, 2, 22, 15)}
-          maxTime={new Date(2024, 6, 25, 12, 14)}
-          units={['day', 'hour-3']}
-          onStateChange={(state) => console.log(state)}
-        />
-        <TimeRuler
-          minTime={new Date(2024, 5, 30, 13, 15)}
-          maxTime={new Date(2024, 7, 5, 12, 15)}
-          units={['month', 'week', 'day']}
-          minUnitWidth={30}
-          onStateChange={(state) => console.log(state)}
-        /> */}
-        {/* 
-        {/* <TimeRuler mode="days" startDate={new Date(2024, 6, 1)} endDate={new Date(2024, 6, 7)} />
-        <TimeRuler mode="months" startDate={new Date(2024, 0, 1)} endDate={new Date(2024, 11, 31)} /> */}
-        {/* <FlightList /> */}
-      </div>
-    </ChakraProvider>
+    <Box display="flex">
+      <Box
+        className="chakra-sidebar"
+        width="250px"
+        mr={4}
+        bg={sidebarBg}
+        borderColor={sidebarBorderColor}
+        borderWidth={1}
+        borderRadius="md"
+        p={4}
+      >
+        <VStack spacing={4} align="stretch">
+          <NavLink
+            to="/"
+            style={({ isActive }) => ({
+              color: isActive ? activeLinkColor : 'inherit',
+            })}
+          >
+            <HStack>
+              <Box w={5} h={5} as={FaRegChartBar} bg={iconBg} borderRadius="md" />
+              <Text>Dashboard</Text>
+            </HStack>
+          </NavLink>
+          <NavLink
+            to="/flights"
+            style={({ isActive }) => ({
+              color: isActive ? activeLinkColor : 'inherit',
+            })}
+          >
+            <HStack>
+              <Box w={5} h={5} as={FaChartBar} bg={iconBg} borderRadius="md" />
+              <Text>Flights</Text>
+            </HStack>
+          </NavLink>
+          <NavLink
+            to="/import"
+            style={({ isActive }) => ({
+              color: isActive ? activeLinkColor : 'inherit',
+            })}
+          >
+            <HStack>
+              <Box w={5} h={5} as={FaDatabase} bg={iconBg} borderRadius="md" />
+              <Text>Import</Text>
+            </HStack>
+          </NavLink>
+        </VStack>
+      </Box>
+      <Box flex="1" p={4}>
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/flights" element={<FlightsPage />} />
+          <Route path="/import" element={<ImportPage />} />
+        </Routes>
+      </Box>
+    </Box>
   );
-};
+}
 
 export default App;

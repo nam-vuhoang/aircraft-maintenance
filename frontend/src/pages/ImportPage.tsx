@@ -15,10 +15,10 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { FaDatabase } from 'react-icons/fa';
-import { FlightImportDto } from '../../models/FlightImport.dto';
-import { FlightService, WorkPackageService } from '../../services';
-import { WorkPackageDto } from '../../services/WorkPackage.dto';
-import { AppStatusPanel, AppStatus, InfoPanel } from '../../components/utils';
+import { FlightImportDto } from '../models/FlightImport.dto';
+import { FlightService, WorkPackageService } from '../services';
+import { WorkPackageDto } from '../services/WorkPackage.dto';
+import { AppStatusPanel, AppStatus, InfoPanel } from '../components/utils';
 
 const ImportPage: React.FC = () => {
   const [flightFile, setFlightFile] = useState<File | null>(null);
