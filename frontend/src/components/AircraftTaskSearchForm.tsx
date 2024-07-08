@@ -9,14 +9,15 @@ import {
   FormControl,
   FormLabel,
   Select,
-  Checkbox,
+  Text,
 } from '@chakra-ui/react';
 import CategoryService from '../services/Category.service';
 import { FlightFilter } from '../models/FlightFilter.dto';
 import MultiSelect, { Option } from './utils/MultiSelect';
+import { WorkPackageFilter } from '../models';
 
 interface AircraftTaskSearchFormProps {
-  onSearch: (filter: FlightFilter) => void;
+  onSearch: (filters: { flightFilter: FlightFilter; workPackageFilter: WorkPackageFilter }) => void;
 }
 
 const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearch }) => {
@@ -32,9 +33,8 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
     registrations: [],
     aircraftTypes: [],
     stations: [],
-    limit: '25',
-    includeFlights: true,
-    includeWorkPackages: true,
+    limitFlights: 'all',
+    limitWorkPackages: 'all',
   });
 
   useEffect(() => {
@@ -55,11 +55,11 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
     fetchData(); // initial fetch
   }, []);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = event.target;
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
     setFormValues((prevValues) => ({
       ...prevValues,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -70,38 +70,36 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
     }));
   };
 
-  const handleLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value } = event.target;
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      limit: value,
-    }));
-  };
-
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
-    const newFilter: FlightFilter = {
+    const stations =
+      formValues.stations.length > 0 ? formValues.stations.map((option: Option) => option.value) : undefined;
+    const workPackageFilter: WorkPackageFilter = {
       startTime: formValues.startTime ? new Date(formValues.startTime) : undefined,
       endTime: formValues.endTime ? new Date(formValues.endTime) : undefined,
-      flightNumbers: formValues.flightNumbers ? formValues.flightNumbers.split(',') : undefined,
-      airlines: formValues.airlines.length > 0 ? formValues.airlines.map((option: Option) => option.value) : undefined,
+
+      stations,
+
       registrations:
         formValues.registrations.length > 0
           ? formValues.registrations.map((option: Option) => option.value)
           : undefined,
+
+      limit: formValues.limitWorkPackages === 'all' ? undefined : Number(formValues.limitWorkPackages),
+    };
+
+    const flightFilter: FlightFilter = {
+      ...workPackageFilter,
+      airlines: formValues.airlines.length > 0 ? formValues.airlines.map((option: Option) => option.value) : undefined,
       aircraftTypes:
         formValues.aircraftTypes.length > 0
           ? formValues.aircraftTypes.map((option: Option) => option.value)
           : undefined,
-      departureStations:
-        formValues.stations.length > 0 ? formValues.stations.map((option: Option) => option.value) : undefined,
-      arrivalStations:
-        formValues.stations.length > 0 ? formValues.stations.map((option: Option) => option.value) : undefined,
-      limit: formValues.limit === 'all' ? undefined : Number(formValues.limit),
-      includeFlights: formValues.includeFlights,
-      includeWorkPackages: formValues.includeWorkPackages,
+      flightNumbers: formValues.flightNumbers ? formValues.flightNumbers.split(',') : undefined,
+      limit: formValues.limitFlights === 'all' ? undefined : Number(formValues.limitFlights),
     };
-    onSearch(newFilter);
+
+    onSearch({ flightFilter, workPackageFilter });
   };
 
   const handleReset = () => {
@@ -113,9 +111,8 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
       registrations: [],
       aircraftTypes: [],
       stations: [],
-      limit: '25',
-      includeFlights: true,
-      includeWorkPackages: true,
+      limitFlights: 'all',
+      limitWorkPackages: 'all',
     });
   };
 
@@ -208,25 +205,29 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
           </FormControl>
           <HStack spacing={4}>
             <FormControl mb={0.5}>
-              <FormLabel>Limit</FormLabel>
-              <Select name="limit" value={formValues.limit} onChange={handleLimitChange}>
+              <FormLabel>Limit (Flights)</FormLabel>
+              <Select name="limitFlights" value={formValues.limitFlights} onChange={handleInputChange}>
+                <option value="none">None</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
                 <option value="all">All</option>
               </Select>
             </FormControl>
-            <Checkbox name="includeFlights" isChecked={formValues.includeFlights} onChange={handleInputChange}>
-              Flights
-            </Checkbox>
-            <Checkbox
-              name="includeWorkPackages"
-              isChecked={formValues.includeWorkPackages}
-              onChange={handleInputChange}
-            >
-              Work Packages
-            </Checkbox>
+            <FormControl mb={0.5}>
+              <FormLabel>Limit (Work Packages)</FormLabel>
+              <Select name="limitWorkPackages" value={formValues.limitWorkPackages} onChange={handleInputChange}>
+                <option value="none">None</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="all">All</option>
+              </Select>
+            </FormControl>
           </HStack>
+          <Text fontSize="sm" color="red.300">
+            Warning: Pagination is currently not supported.
+          </Text>
           <HStack spacing={4}>
             <Button type="submit" colorScheme="brand">
               Search

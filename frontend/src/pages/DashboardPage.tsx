@@ -1,21 +1,32 @@
 import { Box, Heading, HStack, Icon } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import FlightSearchForm from '../components/FlightSearchForm';
-import FlightTable from '../components/FlightTable';
-import { Flight, FlightFilter } from '../models';
-import { FlightService } from '../services';
+import { Flight, FlightFilter, WorkPackage, WorkPackageFilter } from '../models';
+import { FlightService, WorkPackageService } from '../services';
 import { AppStatus, AppStatusPanel } from '../components/utils';
 import { MdDashboard } from 'react-icons/md'; // Change the icon to MdDashboard
+import AircraftTaskSearchForm from '../components/AircraftTaskSearchForm';
+import AircraftGanttChart from '../components/AircraftGanttChart/AircraftGanttChart';
 
 const DashboardPage: React.FC = () => {
   const [flights, setFlights] = useState<Flight[] | undefined>(undefined);
+  const [workPackages, setWorkPackages] = useState<WorkPackage[] | undefined>(undefined);
   const [status, setStatus] = useState<AppStatus | null>(null);
 
-  const handleSearch = async (filter: FlightFilter) => {
+  const handleSearch = async ({
+    flightFilter,
+    workPackageFilter,
+  }: {
+    flightFilter: FlightFilter;
+    workPackageFilter: WorkPackageFilter;
+  }) => {
     try {
-      setStatus({ info: 'Fetching flights...' });
-      const response = await FlightService.searchFlights(filter);
-      setFlights(response);
+      setStatus({ info: 'Fetching flights and work packages...' });
+      const [flights, workPackages] = await Promise.all([
+        FlightService.searchFlights(flightFilter),
+        WorkPackageService.searchWorkPackages(workPackageFilter),
+      ]);
+      setFlights(flights);
+      setWorkPackages(workPackages);
       setStatus(null);
     } catch (error: any) {
       setStatus({ error });
@@ -33,17 +44,17 @@ const DashboardPage: React.FC = () => {
 
       <Box className="chakra-panel">
         <Heading as="h1" size="lg" mb={4}>
-          Search flights
+          Search Flights & Work Packages
         </Heading>
-        <FlightSearchForm onSearch={handleSearch} />
+        <AircraftTaskSearchForm onSearch={handleSearch} />
       </Box>
 
-      {flights && (
-        <Box className="chakra-panel" mt={4}>
+      {flights && workPackages && (
+        <Box className="chakra-panel" mt={8}>
           <Heading as="h1" size="lg" mb={4}>
-            Flights
+            Flights & Work Packages
           </Heading>
-          <FlightTable flights={flights} />
+          <AircraftGanttChart flights={flights} workPackages={workPackages} />
         </Box>
       )}
 
