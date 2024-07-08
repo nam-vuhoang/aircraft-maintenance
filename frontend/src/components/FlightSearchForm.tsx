@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Input, Button, VStack, HStack, useColorModeValue, FormControl, FormLabel } from '@chakra-ui/react';
-import CategoryService from '../../services/Category.service';
-import { FlightFilter } from '../../models/FlightFilter.dto';
-import MultiSelect from '../utils/MultiSelect';
+import CategoryService from '../services/Category.service';
+import { FlightFilter } from '../models/FlightFilter.dto';
+import MultiSelect from './utils/MultiSelect';
 
 interface FlightSearchFormProps {
   onSearch: (filter: FlightFilter) => void;
