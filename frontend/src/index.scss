@@ -57,8 +57,10 @@ img {
   border-color: var(--chakra-colors-gray-200);
   border-radius: var(--chakra-radii-md);
   padding: var(--chakra-space-4);
-  height: 100vh; /* Ensure the sidebar takes up the full height of the screen */
+  height: 100%;
+  min-height: 100vh; /* Ensure the sidebar takes up the full height of the screen */
   overflow-y: auto; /* Add scrollbar if content overflows */
+  min-width: 60px;
 }
 
 .chakra-panel {
@@ -86,10 +88,12 @@ img {
   border-collapse: collapse;
   margin-top: 16px;
   border: 1px solid var(--chakra-colors-gray-200);
+  overflow-y: auto;  
 }
 
 .chakra-table thead {
   background-color: var(--chakra-colors-gray-100);
+  vertical-align: top;
 }
 
 .chakra-table tbody tr:nth-of-type(odd) {
