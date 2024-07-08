@@ -9,22 +9,21 @@ import {
   FormControl,
   FormLabel,
   Select,
+  Checkbox,
 } from '@chakra-ui/react';
 import CategoryService from '../services/Category.service';
 import { FlightFilter } from '../models/FlightFilter.dto';
 import MultiSelect, { Option } from './utils/MultiSelect';
 
-interface FlightSearchFormProps {
+interface AircraftTaskSearchFormProps {
   onSearch: (filter: FlightFilter) => void;
 }
 
-const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
+const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearch }) => {
   const [airlines, setAirlines] = useState<Option[]>([]);
   const [registrations, setRegistrations] = useState<Option[]>([]);
   const [aircraftTypes, setAircraftTypes] = useState<Option[]>([]);
-  const [departureStations, setDepartureStations] = useState<Option[]>([]);
-  const [arrivalStations, setArrivalStations] = useState<Option[]>([]);
-
+  const [stations, setStations] = useState<Option[]>([]);
   const [formValues, setFormValues] = useState({
     startTime: '',
     endTime: '',
@@ -32,9 +31,10 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
     airlines: [],
     registrations: [],
     aircraftTypes: [],
-    departureStations: [],
-    arrivalStations: [],
+    stations: [],
     limit: '25',
+    includeFlights: true,
+    includeWorkPackages: true,
   });
 
   useEffect(() => {
@@ -49,18 +49,17 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
       setAirlines(airlinesData.map((item: string) => ({ label: item, value: item })));
       setRegistrations(registrationsData.map((item: string) => ({ label: item, value: item })));
       setAircraftTypes(aircraftTypesData.map((item: string) => ({ label: item, value: item })));
-      setDepartureStations(stationsData.map((item: string) => ({ label: item, value: item })));
-      setArrivalStations(stationsData.map((item: string) => ({ label: item, value: item })));
+      setStations(stationsData.map((item: string) => ({ label: item, value: item })));
     };
 
     fetchData(); // initial fetch
   }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
     setFormValues((prevValues) => ({
       ...prevValues,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -95,14 +94,12 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
           ? formValues.aircraftTypes.map((option: Option) => option.value)
           : undefined,
       departureStations:
-        formValues.departureStations.length > 0
-          ? formValues.departureStations.map((option: Option) => option.value)
-          : undefined,
+        formValues.stations.length > 0 ? formValues.stations.map((option: Option) => option.value) : undefined,
       arrivalStations:
-        formValues.arrivalStations.length > 0
-          ? formValues.arrivalStations.map((option: Option) => option.value)
-          : undefined,
+        formValues.stations.length > 0 ? formValues.stations.map((option: Option) => option.value) : undefined,
       limit: formValues.limit === 'all' ? undefined : Number(formValues.limit),
+      includeFlights: formValues.includeFlights,
+      includeWorkPackages: formValues.includeWorkPackages,
     };
     onSearch(newFilter);
   };
@@ -115,9 +112,10 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
       airlines: [],
       registrations: [],
       aircraftTypes: [],
-      departureStations: [],
-      arrivalStations: [],
+      stations: [],
       limit: '25',
+      includeFlights: true,
+      includeWorkPackages: true,
     });
   };
 
@@ -199,34 +197,36 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
             />
           </FormControl>
           <FormControl mb={0.5}>
-            <FormLabel>Departure Stations</FormLabel>
+            <FormLabel>Stations</FormLabel>
             <MultiSelect
-              name="departureStations"
-              options={departureStations}
-              placeholder="Select departure stations..."
-              value={formValues.departureStations}
-              onChange={(selectedOptions) => handleSelectChange('departureStations', selectedOptions as Option[])}
+              name="stations"
+              options={stations}
+              placeholder="Select stations..."
+              value={formValues.stations}
+              onChange={(selectedOptions) => handleSelectChange('stations', selectedOptions as Option[])}
             />
           </FormControl>
-          <FormControl mb={0.5}>
-            <FormLabel>Arrival Stations</FormLabel>
-            <MultiSelect
-              name="arrivalStations"
-              options={arrivalStations}
-              placeholder="Select arrival stations..."
-              value={formValues.arrivalStations}
-              onChange={(selectedOptions) => handleSelectChange('arrivalStations', selectedOptions as Option[])}
-            />
-          </FormControl>
-          <FormControl mb={0.5}>
-            <FormLabel>Limit</FormLabel>
-            <Select name="limit" value={formValues.limit} onChange={handleLimitChange}>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-              <option value="all">All</option>
-            </Select>
-          </FormControl>
+          <HStack spacing={4}>
+            <FormControl mb={0.5}>
+              <FormLabel>Limit</FormLabel>
+              <Select name="limit" value={formValues.limit} onChange={handleLimitChange}>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="all">All</option>
+              </Select>
+            </FormControl>
+            <Checkbox name="includeFlights" isChecked={formValues.includeFlights} onChange={handleInputChange}>
+              Flights
+            </Checkbox>
+            <Checkbox
+              name="includeWorkPackages"
+              isChecked={formValues.includeWorkPackages}
+              onChange={handleInputChange}
+            >
+              Work Packages
+            </Checkbox>
+          </HStack>
           <HStack spacing={4}>
             <Button type="submit" colorScheme="brand">
               Search
@@ -241,4 +241,4 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
   );
 };
 
-export default FlightSearchForm;
+export default AircraftTaskSearchForm;
