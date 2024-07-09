@@ -174,7 +174,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
     <ChakraProvider>
       <div className={styles.ganttChart}>
         <div className={styles.zoomControl}>
-          <FormControl as={Flex} alignItems="center" justifyContent="flex-end">
+          <FormControl as={Flex} alignItems="center">
             <Box display="flex" alignItems="center">
               <FormLabel htmlFor="zoom" fontWeight="bold" whiteSpace="nowrap" mb="0">
                 Zoom:
