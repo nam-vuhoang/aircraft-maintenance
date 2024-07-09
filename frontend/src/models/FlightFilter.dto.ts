@@ -7,5 +7,6 @@ export interface FlightFilter {
   aircraftTypes?: string[];
   departureStations?: string[];
   arrivalStations?: string[];
+  stations?: string[];
   limit?: number;
 }

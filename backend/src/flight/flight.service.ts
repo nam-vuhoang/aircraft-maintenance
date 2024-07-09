@@ -112,6 +112,13 @@ export class FlightService {
       );
     }
 
+    if (filter.stations && filter.stations.length > 0) {
+      query.andWhere(
+        'flight.scheduledArrivalStation IN (:...stations) OR flight.scheduledArrivalStation IN (:...stations)',
+        { stations: filter.stations },
+      );
+    }
+
     if (filter.limit) {
       query.limit(filter.limit);
     }

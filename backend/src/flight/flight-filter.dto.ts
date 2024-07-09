@@ -46,6 +46,11 @@ export class FlightFilter {
   arrivalStations?: string[];
 
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  stations?: string[];
+
+  @IsOptional()
   @IsNumber()
   limit?: number;
 }
