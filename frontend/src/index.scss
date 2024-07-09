@@ -1,4 +1,5 @@
-// src/index.scss
+// This stylesheet is used to define the global styles for the application.
+// Inspired by (but not copied from) Horizon Ui Theme (https://horizon-ui.com/horizon-ui-chakra-ts).
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
@@ -60,7 +61,8 @@ img {
   height: 100%;
   min-height: 100vh; /* Ensure the sidebar takes up the full height of the screen */
   overflow-y: auto; /* Add scrollbar if content overflows */
-  min-width: 60px;
+  min-width: 140px;
+  width: 250px;
 }
 
 .chakra-panel {
@@ -88,7 +90,7 @@ img {
   border-collapse: collapse;
   margin-top: 16px;
   border: 1px solid var(--chakra-colors-gray-200);
-  overflow-y: auto;  
+  overflow-y: auto;
 }
 
 .chakra-table thead {
