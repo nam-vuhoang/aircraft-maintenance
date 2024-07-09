@@ -21,17 +21,12 @@ interface AircraftTaskSearchFormProps {
 }
 
 const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearch }) => {
-  const [airlines, setAirlines] = useState<Option[]>([]);
   const [registrations, setRegistrations] = useState<Option[]>([]);
-  const [aircraftTypes, setAircraftTypes] = useState<Option[]>([]);
   const [stations, setStations] = useState<Option[]>([]);
   const [formValues, setFormValues] = useState({
     startTime: '',
     endTime: '',
-    flightNumbers: '',
-    airlines: [],
     registrations: [],
-    aircraftTypes: [],
     stations: [],
     limitFlights: 'all',
     limitWorkPackages: 'all',
@@ -39,17 +34,26 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
 
   useEffect(() => {
     const fetchData = async () => {
-      const [airlinesData, registrationsData, aircraftTypesData, stationsData] = await Promise.all([
-        CategoryService.getFlightCategoryValues('airlines'),
+      const [flightRegistrations, flightStations, workPackageRegistrations, workPackageStations] = await Promise.all([
         CategoryService.getFlightCategoryValues('registrations'),
-        CategoryService.getFlightCategoryValues('aircraftTypes'),
         CategoryService.getFlightCategoryValues('stations'),
+        CategoryService.getWorkPackageCategoryValues('registrations'),
+        CategoryService.getWorkPackageCategoryValues('stations'),
       ]);
 
-      setAirlines(airlinesData.map((item: string) => ({ label: item, value: item })));
-      setRegistrations(registrationsData.map((item: string) => ({ label: item, value: item })));
-      setAircraftTypes(aircraftTypesData.map((item: string) => ({ label: item, value: item })));
-      setStations(stationsData.map((item: string) => ({ label: item, value: item })));
+      setRegistrations(
+        Array.from(new Set([...flightRegistrations, ...workPackageRegistrations]))
+          .sort()
+          .map((item: string) => ({ label: item, value: item }))
+      );
+      setStations(
+        Array.from(new Set([...flightStations, ...workPackageStations]))
+          .sort()
+          .map((item: string) => ({
+            label: item,
+            value: item,
+          }))
+      );
     };
 
     fetchData(); // initial fetch
@@ -72,30 +76,24 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
-    const stations =
-      formValues.stations.length > 0 ? formValues.stations.map((option: Option) => option.value) : undefined;
-    const workPackageFilter: WorkPackageFilter = {
+
+    const commonValues = {
       startTime: formValues.startTime ? new Date(formValues.startTime) : undefined,
       endTime: formValues.endTime ? new Date(formValues.endTime) : undefined,
-
-      stations,
-
       registrations:
         formValues.registrations.length > 0
           ? formValues.registrations.map((option: Option) => option.value)
           : undefined,
+      stations: formValues.stations.length > 0 ? formValues.stations.map((option: Option) => option.value) : undefined,
+    };
 
+    const workPackageFilter: WorkPackageFilter = {
+      ...commonValues,
       limit: formValues.limitWorkPackages === 'all' ? undefined : Number(formValues.limitWorkPackages),
     };
 
     const flightFilter: FlightFilter = {
-      ...workPackageFilter,
-      airlines: formValues.airlines.length > 0 ? formValues.airlines.map((option: Option) => option.value) : undefined,
-      aircraftTypes:
-        formValues.aircraftTypes.length > 0
-          ? formValues.aircraftTypes.map((option: Option) => option.value)
-          : undefined,
-      flightNumbers: formValues.flightNumbers ? formValues.flightNumbers.split(',') : undefined,
+      ...commonValues,
       limit: formValues.limitFlights === 'all' ? undefined : Number(formValues.limitFlights),
     };
 
@@ -106,10 +104,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
     setFormValues({
       startTime: '',
       endTime: '',
-      flightNumbers: '',
-      airlines: [],
       registrations: [],
-      aircraftTypes: [],
       stations: [],
       limitFlights: 'all',
       limitWorkPackages: 'all',
@@ -154,26 +149,6 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
             </FormControl>
           </HStack>
           <FormControl mb={0.5}>
-            <FormLabel>Flight Numbers</FormLabel>
-            <Input
-              type="text"
-              name="flightNumbers"
-              placeholder="Flight Numbers (comma separated)"
-              value={formValues.flightNumbers}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <FormControl mb={0.5}>
-            <FormLabel>Airlines</FormLabel>
-            <MultiSelect
-              name="airlines"
-              options={airlines}
-              placeholder="Select airlines..."
-              value={formValues.airlines}
-              onChange={(selectedOptions) => handleSelectChange('airlines', selectedOptions as Option[])}
-            />
-          </FormControl>
-          <FormControl mb={0.5}>
             <FormLabel>Registrations</FormLabel>
             <MultiSelect
               name="registrations"
@@ -181,16 +156,6 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
               placeholder="Select registrations..."
               value={formValues.registrations}
               onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as Option[])}
-            />
-          </FormControl>
-          <FormControl mb={0.5}>
-            <FormLabel>Aircraft Types</FormLabel>
-            <MultiSelect
-              name="aircraftTypes"
-              options={aircraftTypes}
-              placeholder="Select aircraft types..."
-              value={formValues.aircraftTypes}
-              onChange={(selectedOptions) => handleSelectChange('aircraftTypes', selectedOptions as Option[])}
             />
           </FormControl>
           <FormControl mb={0.5}>
@@ -207,7 +172,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
             <FormControl mb={0.5}>
               <FormLabel>Limit (Flights)</FormLabel>
               <Select name="limitFlights" value={formValues.limitFlights} onChange={handleInputChange}>
-                <option value="none">None</option>
+                <option value="0">None</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
@@ -217,7 +182,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
             <FormControl mb={0.5}>
               <FormLabel>Limit (Work Packages)</FormLabel>
               <Select name="limitWorkPackages" value={formValues.limitWorkPackages} onChange={handleInputChange}>
-                <option value="none">None</option>
+                <option value="0">None</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
