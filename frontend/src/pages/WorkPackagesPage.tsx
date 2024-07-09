@@ -4,7 +4,7 @@ import WorkPackageSearchForm from '../components/WorkPackageSearchForm';
 import { WorkPackage, WorkPackageFilter } from '../models';
 import { WorkPackageService } from '../services';
 import { AppStatus, AppStatusPanel } from '../components/utils';
-import { MdAssignment } from 'react-icons/md';
+import { MdBuild } from 'react-icons/md';
 import WorkPackageTable from '../components/WorkPackageSearchForm/WorkPackageTable';
 
 const WorkPackagePage: React.FC = () => {
@@ -26,7 +26,7 @@ const WorkPackagePage: React.FC = () => {
     <Box p={5}>
       <HStack mb={12}>
         <Heading className="chakra-page-heading">
-          <Icon as={MdAssignment} w={8} h={8} mr={2} />
+          <Icon as={MdBuild} w={8} h={8} mr={2} />
           Work Packages
         </Heading>
       </HStack>
