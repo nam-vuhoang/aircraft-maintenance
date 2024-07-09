@@ -29,7 +29,10 @@ export class FlightService {
 
   async findAll(): Promise<Flight[]> {
     this.logger.log('Fetching all flights');
-    return this.flightRepository.find();
+    return this.flightRepository.find().then((flights) => {
+      this.logger.log(`Found ${flights.length} flights`);
+      return flights;
+    });
   }
 
   async findOne(id: string): Promise<Flight> {
@@ -58,6 +61,13 @@ export class FlightService {
 
   async search(filter: FlightFilter): Promise<Flight[]> {
     this.logger.log(`Searching flights with filter: ${JSON.stringify(filter)}`);
+
+    // TypeORM does not support limit 0, so we return an empty array
+    if (filter.limit !== undefined && filter.limit <= 0) {
+      this.logger.log(`Found 0 flights`);
+      return [];
+    }
+
     const query = this.flightRepository.createQueryBuilder('flight');
 
     if (filter.startTime) {

@@ -68,6 +68,13 @@ export class WorkPackageService {
     this.logger.log(
       `Searching work packages with filter: ${JSON.stringify(filter)}`,
     );
+
+    // TypeORM does not support limit 0, so we return an empty array
+    if (filter.limit !== undefined && filter.limit <= 0) {
+      this.logger.log(`Found 0 work packages`);
+      return [];
+    }
+
     const query = this.workPackageRepository.createQueryBuilder('workPackage');
 
     if (filter.startTime) {
