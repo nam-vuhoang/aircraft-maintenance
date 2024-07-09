@@ -172,7 +172,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
             <FormControl mb={0.5}>
               <FormLabel>Limit (Flights)</FormLabel>
               <Select name="limitFlights" value={formValues.limitFlights} onChange={handleInputChange}>
-                <option value="0">None</option>
+                <option value="0">0</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
@@ -182,7 +182,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
             <FormControl mb={0.5}>
               <FormLabel>Limit (Work Packages)</FormLabel>
               <Select name="limitWorkPackages" value={formValues.limitWorkPackages} onChange={handleInputChange}>
-                <option value="0">None</option>
+                <option value="0">0</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
