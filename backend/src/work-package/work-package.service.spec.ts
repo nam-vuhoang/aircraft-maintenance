@@ -3,12 +3,23 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WorkPackageService } from './work-package.service';
 import { WorkPackage } from './work-package.entity';
-import { NotFoundException } from '@nestjs/common';
 import { WorkPackageFilter } from './work-package-filter.dto';
+import { NotFoundException } from '@nestjs/common';
+
+const mockWorkPackageRepository = () => ({
+  save: jest.fn(),
+  find: jest.fn(),
+  findOne: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+  createQueryBuilder: jest.fn(),
+});
+
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
 describe('WorkPackageService', () => {
   let service: WorkPackageService;
-  let repository: Repository<WorkPackage>;
+  let repository: MockRepository<WorkPackage>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,87 +27,148 @@ describe('WorkPackageService', () => {
         WorkPackageService,
         {
           provide: getRepositoryToken(WorkPackage),
-          useClass: Repository,
+          useValue: mockWorkPackageRepository(),
         },
       ],
     }).compile();
 
     service = module.get<WorkPackageService>(WorkPackageService);
-    repository = module.get<Repository<WorkPackage>>(
+    repository = module.get<MockRepository<WorkPackage>>(
       getRepositoryToken(WorkPackage),
     );
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('create', () => {
+    it('should create a work package', async () => {
+      const workPackage = new WorkPackage();
+      repository.save.mockResolvedValue(workPackage);
+
+      const result = await service.create(workPackage);
+      expect(result).toEqual(workPackage);
+      expect(repository.save).toHaveBeenCalledWith(workPackage);
+    });
   });
 
-  it('should create a work package', async () => {
-    const workPackage = new WorkPackage();
-    jest.spyOn(repository, 'save').mockResolvedValue(workPackage);
-    expect(await service.create(workPackage)).toEqual(workPackage);
+  describe('createAll', () => {
+    it('should create multiple work packages', async () => {
+      const workPackages = [new WorkPackage(), new WorkPackage()];
+      repository.save.mockResolvedValue(workPackages);
+
+      const result = await service.createAll(workPackages);
+      expect(result).toEqual(workPackages);
+      expect(repository.save).toHaveBeenCalledWith(workPackages);
+    });
   });
 
-  it('should return all work packages', async () => {
-    const workPackages = [new WorkPackage(), new WorkPackage()];
-    jest.spyOn(repository, 'find').mockResolvedValue(workPackages);
-    expect(await service.findAll()).toEqual(workPackages);
+  describe('findAll', () => {
+    it('should find all work packages', async () => {
+      const workPackages = [new WorkPackage(), new WorkPackage()];
+      repository.find.mockResolvedValue(workPackages);
+
+      const result = await service.findAll();
+      expect(result).toEqual(workPackages);
+      expect(repository.find).toHaveBeenCalled();
+    });
   });
 
-  it('should return a work package by ID', async () => {
-    const id = '1';
-    const workPackage = new WorkPackage();
-    jest.spyOn(repository, 'findOne').mockResolvedValue(workPackage);
-    expect(await service.findOne(id)).toEqual(workPackage);
+  describe('findOne', () => {
+    it('should find a work package by ID', async () => {
+      const workPackage = new WorkPackage();
+      repository.findOne.mockResolvedValue(workPackage);
+
+      const result = await service.findOne('1');
+      expect(result).toEqual(workPackage);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    });
+
+    it('should throw NotFoundException if work package not found', async () => {
+      repository.findOne.mockResolvedValue(null);
+
+      await expect(service.findOne('1')).rejects.toThrow(NotFoundException);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    });
   });
 
-  it('should throw an error if work package not found', async () => {
-    const id = '1';
-    jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-    await expect(service.findOne(id)).rejects.toThrow(NotFoundException);
+  describe('update', () => {
+    it('should update a work package by ID', async () => {
+      const workPackage = new WorkPackage();
+      repository.update.mockResolvedValue(null);
+      repository.findOne.mockResolvedValue(workPackage);
+
+      const result = await service.update('1', workPackage);
+      expect(result).toEqual(workPackage);
+      expect(repository.update).toHaveBeenCalledWith('1', workPackage);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    });
+
+    it('should throw NotFoundException if work package not found for update', async () => {
+      const workPackage = new WorkPackage();
+      repository.update.mockResolvedValue(null);
+      repository.findOne.mockResolvedValue(null);
+
+      await expect(service.update('1', workPackage)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(repository.update).toHaveBeenCalledWith('1', workPackage);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    });
   });
 
-  it('should update a work package', async () => {
-    const id = '1';
-    const workPackage = new WorkPackage();
-    jest.spyOn(repository, 'update').mockResolvedValue(undefined);
-    jest.spyOn(service, 'findOne').mockResolvedValue(workPackage);
-    expect(await service.update(id, workPackage)).toEqual(workPackage);
+  describe('remove', () => {
+    it('should remove a work package by ID', async () => {
+      repository.delete.mockResolvedValue(null);
+
+      await service.remove('1');
+      expect(repository.delete).toHaveBeenCalledWith('1');
+    });
   });
 
-  it('should delete a work package', async () => {
-    const id = '1';
-    jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
-    await expect(service.remove(id)).resolves.toBeUndefined();
+  describe('search', () => {
+    it('should search work packages with filter', async () => {
+      const workPackages = [new WorkPackage(), new WorkPackage()];
+      const filter: WorkPackageFilter = {
+        startTime: new Date().toISOString(),
+        endTime: new Date().toISOString(),
+        registrations: ['N12345'],
+        stations: ['JFK'],
+        statuses: ['OPEN'],
+        areas: ['APRON'],
+        namePattern: 'Maintenance%',
+        limit: 10,
+      };
+      const queryBuilder: any = {
+        andWhere: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(workPackages),
+      };
+      repository.createQueryBuilder.mockReturnValue(queryBuilder);
+
+      const result = await service.search(filter);
+      expect(result).toEqual(workPackages);
+      expect(queryBuilder.andWhere).toHaveBeenCalledTimes(7);
+      expect(queryBuilder.limit).toHaveBeenCalledWith(10);
+      expect(queryBuilder.getMany).toHaveBeenCalled();
+    });
   });
 
-  it('should search work packages with filter', async () => {
-    const filter: WorkPackageFilter = { registrations: ['123'] };
-    const workPackages = [new WorkPackage()];
-    const queryBuilder: any = {
-      andWhere: jest.fn().mockReturnThis(),
-      getMany: jest.fn().mockResolvedValue(workPackages),
-    };
-    jest.spyOn(repository, 'createQueryBuilder').mockReturnValue(queryBuilder);
-    expect(await service.search(filter)).toEqual(workPackages);
-  });
+  describe('getCategoryValues', () => {
+    it('should get distinct and sorted values for a category', async () => {
+      const values = [{ value: 'OPEN' }, { value: 'CLOSED' }];
+      repository.createQueryBuilder.mockReturnValue({
+        select: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue(values),
+      });
 
-  it('should get category values for registrations', async () => {
-    const results = [{ value: 'A' }, { value: 'B' }];
-    jest.spyOn(repository, 'createQueryBuilder').mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      orderBy: jest.fn().mockReturnThis(),
-      getRawMany: jest.fn().mockResolvedValue(results),
-    } as any);
-    expect(await service.getCategoryValues('registrations')).toEqual([
-      'A',
-      'B',
-    ]);
-  });
+      const result = await service.getCategoryValues('statuses');
+      expect(result).toEqual(['OPEN', 'CLOSED']);
+      expect(repository.createQueryBuilder).toHaveBeenCalledWith('workPackage');
+    });
 
-  it('should throw an error for unknown category', async () => {
-    await expect(service.getCategoryValues('unknown')).rejects.toThrow(
-      NotFoundException,
-    );
+    it('should throw NotFoundException if category not found', async () => {
+      await expect(service.getCategoryValues('unknown')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 });

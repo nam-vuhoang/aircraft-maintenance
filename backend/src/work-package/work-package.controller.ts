@@ -136,12 +136,20 @@ export class WorkPackageController {
     status: 404,
     description: 'Work package not found',
   })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() workPackage: WorkPackage,
   ): Promise<WorkPackage> {
     this.logger.log(`Updating work package with ID: ${id}`);
-    return this.workPackageService.update(id, workPackage);
+    const updatedWorkPackage = await this.workPackageService.update(
+      id,
+      workPackage,
+    );
+    if (!updatedWorkPackage) {
+      this.logger.warn(`Work package with ID ${id} not found for update`);
+      throw new NotFoundException(`Work package with ID ${id} not found`);
+    }
+    return updatedWorkPackage;
   }
 
   @Delete(':id')
@@ -160,9 +168,9 @@ export class WorkPackageController {
     status: 404,
     description: 'Work package not found',
   })
-  remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id') id: string): Promise<void> {
     this.logger.log(`Deleting work package with ID: ${id}`);
-    return this.workPackageService.remove(id);
+    await this.workPackageService.remove(id);
   }
 
   @Post('search')

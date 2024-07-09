@@ -152,9 +152,19 @@ export class FlightController {
     status: 404,
     description: 'Flight not found',
   })
-  update(@Param('id') id: string, @Body() flight: Flight): Promise<Flight> {
+  async update(
+    @Param('id') id: string,
+    @Body() flight: Flight,
+  ): Promise<Flight> {
     this.logger.log(`Updating flight with ID: ${id}`);
-    return this.flightService.update(id, flight);
+
+    this.logger.log(`Updating work package with ID: ${id}`);
+    const updatedFlight = await this.flightService.update(id, flight);
+    if (!updatedFlight) {
+      this.logger.warn(`Flight with ID ${id} not found for update`);
+      throw new NotFoundException(`Flight with ID ${id} not found`);
+    }
+    return updatedFlight;
   }
 
   @Delete(':id')

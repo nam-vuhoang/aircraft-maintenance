@@ -3,12 +3,23 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FlightService } from './flight.service';
 import { Flight } from './flight.entity';
-import { NotFoundException } from '@nestjs/common';
 import { FlightFilter } from './flight-filter.dto';
+import { NotFoundException } from '@nestjs/common';
+
+const mockFlightRepository = () => ({
+  save: jest.fn(),
+  find: jest.fn(),
+  findOne: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+  createQueryBuilder: jest.fn(),
+});
+
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
 describe('FlightService', () => {
   let service: FlightService;
-  let repository: Repository<Flight>;
+  let repository: MockRepository<Flight>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,85 +27,149 @@ describe('FlightService', () => {
         FlightService,
         {
           provide: getRepositoryToken(Flight),
-          useClass: Repository,
+          useValue: mockFlightRepository(),
         },
       ],
     }).compile();
 
     service = module.get<FlightService>(FlightService);
-    repository = module.get<Repository<Flight>>(getRepositoryToken(Flight));
+    repository = module.get<MockRepository<Flight>>(getRepositoryToken(Flight));
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('create', () => {
+    it('should create a flight', async () => {
+      const flight = new Flight();
+      repository.save.mockResolvedValue(flight);
+
+      const result = await service.create(flight);
+      expect(result).toEqual(flight);
+      expect(repository.save).toHaveBeenCalledWith(flight);
+    });
   });
 
-  it('should create a flight', async () => {
-    const flight = new Flight();
-    jest.spyOn(repository, 'save').mockResolvedValue(flight);
-    expect(await service.create(flight)).toEqual(flight);
+  describe('createAll', () => {
+    it('should create multiple flights', async () => {
+      const flights = [new Flight(), new Flight()];
+      repository.save.mockResolvedValue(flights);
+
+      const result = await service.createAll(flights);
+      expect(result).toEqual(flights);
+      expect(repository.save).toHaveBeenCalledWith(flights);
+    });
   });
 
-  it('should return all flights', async () => {
-    const flights = [new Flight(), new Flight()];
-    jest.spyOn(repository, 'find').mockResolvedValue(flights);
-    expect(await service.findAll()).toEqual(flights);
+  describe('findAll', () => {
+    it('should find all flights', async () => {
+      const flights = [new Flight(), new Flight()];
+      repository.find.mockResolvedValue(flights);
+
+      const result = await service.findAll();
+      expect(result).toEqual(flights);
+      expect(repository.find).toHaveBeenCalled();
+    });
   });
 
-  it('should return a flight by ID', async () => {
-    const id = '1';
-    const flight = new Flight();
-    jest.spyOn(repository, 'findOne').mockResolvedValue(flight);
-    expect(await service.findOne(id)).toEqual(flight);
+  describe('findOne', () => {
+    it('should find a flight by ID', async () => {
+      const flight = new Flight();
+      repository.findOne.mockResolvedValue(flight);
+
+      const result = await service.findOne('1');
+      expect(result).toEqual(flight);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    });
+
+    it('should throw NotFoundException if flight not found', async () => {
+      repository.findOne.mockResolvedValue(null);
+
+      await expect(service.findOne('1')).rejects.toThrow(NotFoundException);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    });
   });
 
-  it('should throw an error if flight not found', async () => {
-    const id = '1';
-    jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-    await expect(service.findOne(id)).rejects.toThrow(NotFoundException);
+  describe('update', () => {
+    it('should update a flight by ID', async () => {
+      const flight = new Flight();
+      repository.update.mockResolvedValue(null);
+      repository.findOne.mockResolvedValue(flight);
+
+      const result = await service.update('1', flight);
+      expect(result).toEqual(flight);
+      expect(repository.update).toHaveBeenCalledWith('1', flight);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    });
+
+    it('should throw NotFoundException if flight not found for update', async () => {
+      const flight = new Flight();
+      repository.update.mockResolvedValue(null);
+      repository.findOne.mockResolvedValue(null);
+
+      await expect(service.update('1', flight)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(repository.update).toHaveBeenCalledWith('1', flight);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+    });
   });
 
-  it('should update a flight', async () => {
-    const id = '1';
-    const flight = new Flight();
-    jest.spyOn(repository, 'update').mockResolvedValue(undefined);
-    jest.spyOn(service, 'findOne').mockResolvedValue(flight);
-    expect(await service.update(id, flight)).toEqual(flight);
+  describe('remove', () => {
+    it('should remove a flight by ID', async () => {
+      repository.delete.mockResolvedValue(null);
+
+      await service.remove('1');
+      expect(repository.delete).toHaveBeenCalledWith('1');
+    });
   });
 
-  it('should delete a flight', async () => {
-    const id = '1';
-    jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
-    await expect(service.remove(id)).resolves.toBeUndefined();
+  describe('search', () => {
+    it('should search flights with filter', async () => {
+      const flights = [new Flight(), new Flight()];
+      const filter: FlightFilter = {
+        startTime: new Date().toISOString(),
+        endTime: new Date().toISOString(),
+        flightNumbers: ['123'],
+        airlines: ['AA'],
+        registrations: ['N12345'],
+        aircraftTypes: ['B737'],
+        departureStations: ['JFK'],
+        arrivalStations: ['LAX'],
+        stations: ['JFK', 'LAX'],
+        limit: 10,
+      };
+      const queryBuilder: any = {
+        andWhere: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(flights),
+      };
+      repository.createQueryBuilder.mockReturnValue(queryBuilder);
+
+      const result = await service.search(filter);
+      expect(result).toEqual(flights);
+      // Expecting 8 calls: 2 for startTime and endTime, and 1 each for flightNumbers, airlines, registrations, aircraftTypes, departureStations, arrivalStations, and stations
+      expect(queryBuilder.andWhere).toHaveBeenCalledTimes(9);
+      expect(queryBuilder.limit).toHaveBeenCalledWith(10);
+      expect(queryBuilder.getMany).toHaveBeenCalled();
+    });
   });
 
-  it('should search flights with filter', async () => {
-    const filter: FlightFilter = { flightNumbers: ['123'] };
-    const flights = [new Flight()];
-    const queryBuilder: any = {
-      andWhere: jest.fn().mockReturnThis(),
-      getMany: jest.fn().mockResolvedValue(flights),
-    };
-    jest.spyOn(repository, 'createQueryBuilder').mockReturnValue(queryBuilder);
-    expect(await service.search(filter)).toEqual(flights);
-  });
+  describe('getCategoryValues', () => {
+    it('should get distinct and sorted values for a category', async () => {
+      const values = [{ value: 'AA' }, { value: 'BB' }];
+      repository.createQueryBuilder.mockReturnValue({
+        select: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue(values),
+      });
 
-  it('should get category values for registrations', async () => {
-    const results = [{ value: 'A' }, { value: 'B' }];
-    jest.spyOn(repository, 'createQueryBuilder').mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      orderBy: jest.fn().mockReturnThis(),
-      getRawMany: jest.fn().mockResolvedValue(results),
-    } as any);
-    expect(await service.getCategoryValues('registrations')).toEqual([
-      'A',
-      'B',
-    ]);
-  });
+      const result = await service.getCategoryValues('airlines');
+      expect(result).toEqual(['AA', 'BB']);
+      expect(repository.createQueryBuilder).toHaveBeenCalledWith('flight');
+    });
 
-  it('should throw an error for unknown category', async () => {
-    await expect(service.getCategoryValues('unknown')).rejects.toThrow(
-      NotFoundException,
-    );
+    it('should throw NotFoundException if category not found', async () => {
+      await expect(service.getCategoryValues('unknown')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 });

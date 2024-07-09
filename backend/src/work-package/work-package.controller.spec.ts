@@ -2,13 +2,24 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WorkPackageController } from './work-package.controller';
 import { WorkPackageService } from './work-package.service';
 import { WorkPackage } from './work-package.entity';
-import { NotFoundException } from '@nestjs/common';
 import { WorkPackageFilter } from './work-package-filter.dto';
 import { WorkPackageImportDto } from './work-package-import.dto';
+import { NotFoundException } from '@nestjs/common';
+
+const mockWorkPackageService = () => ({
+  create: jest.fn(),
+  findAll: jest.fn(),
+  findOne: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn(),
+  search: jest.fn(),
+  createAll: jest.fn(),
+  getCategoryValues: jest.fn(),
+});
 
 describe('WorkPackageController', () => {
   let controller: WorkPackageController;
-  let service: WorkPackageService;
+  let service: ReturnType<typeof mockWorkPackageService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,131 +27,150 @@ describe('WorkPackageController', () => {
       providers: [
         {
           provide: WorkPackageService,
-          useValue: {
-            create: jest.fn(),
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            update: jest.fn(),
-            remove: jest.fn(),
-            search: jest.fn(),
-            getCategoryValues: jest.fn(),
-          },
+          useValue: mockWorkPackageService(),
         },
       ],
     }).compile();
 
     controller = module.get<WorkPackageController>(WorkPackageController);
-    service = module.get<WorkPackageService>(WorkPackageService);
+    service =
+      module.get<ReturnType<typeof mockWorkPackageService>>(WorkPackageService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+  describe('create', () => {
+    it('should create a work package', async () => {
+      const workPackage = new WorkPackage();
+      service.create.mockResolvedValue(workPackage);
 
-  it('should create a work package', async () => {
-    const workPackage = new WorkPackage();
-    jest.spyOn(service, 'create').mockResolvedValue(workPackage);
-    expect(await controller.create(workPackage)).toBe(workPackage);
-    expect(service.create).toHaveBeenCalledWith(workPackage);
-  });
-
-  it('should return all work packages', async () => {
-    const workPackages = [new WorkPackage(), new WorkPackage()];
-    jest.spyOn(service, 'findAll').mockResolvedValue(workPackages);
-    expect(await controller.findAll()).toBe(workPackages);
-    expect(service.findAll).toHaveBeenCalled();
-  });
-
-  it('should return a work package by ID', async () => {
-    const id = '1';
-    const workPackage = new WorkPackage();
-    jest.spyOn(service, 'findOne').mockResolvedValue(workPackage);
-    expect(await controller.findOne(id)).toBe(workPackage);
-    expect(service.findOne).toHaveBeenCalledWith(id);
-  });
-
-  it('should throw an error if work package not found', async () => {
-    const id = '1';
-    jest.spyOn(service, 'findOne').mockResolvedValue(null);
-    await expect(controller.findOne(id)).rejects.toThrow(NotFoundException);
-  });
-
-  it('should update a work package', async () => {
-    const id = '1';
-    const workPackage = new WorkPackage();
-    jest.spyOn(service, 'update').mockResolvedValue(workPackage);
-    expect(await controller.update(id, workPackage)).toBe(workPackage);
-    expect(service.update).toHaveBeenCalledWith(id, workPackage);
-  });
-
-  it('should delete a work package', async () => {
-    const id = '1';
-    jest.spyOn(service, 'remove').mockResolvedValue(undefined);
-    await expect(controller.remove(id)).resolves.toBeUndefined();
-    expect(service.remove).toHaveBeenCalledWith(id);
-  });
-
-  it('should search work packages with filter', async () => {
-    const filter: WorkPackageFilter = { registrations: ['123'] };
-    const workPackages = [new WorkPackage()];
-    jest.spyOn(service, 'search').mockResolvedValue(workPackages);
-    expect(await controller.search(filter)).toBe(workPackages);
-    expect(service.search).toHaveBeenCalledWith(filter);
-  });
-
-  it('should import work packages', async () => {
-    const importWorkPackagesDto: WorkPackageImportDto[] = [
-      {
-        workPackageId: 'WP12345',
-        registration: 'ABC123',
-        name: 'Maintenance A',
-        station: 'HEL',
-        status: 'OPEN',
-        area: 'APRON',
-        startDateTime: '2024-04-16T08:00:00.000Z',
-        endDateTime: '2024-04-16T09:30:00.000Z',
-        convertToWorkPackageEntity: function (): WorkPackage {
-          const workPackage = new WorkPackage();
-          workPackage.id = this.workPackageId;
-          workPackage.registration = this.registration;
-          workPackage.name = this.name;
-          workPackage.station = this.station;
-          workPackage.status = this.status;
-          workPackage.area = this.area;
-          workPackage.startTime = new Date(this.startDateTime);
-          workPackage.endTime = new Date(this.endDateTime);
-          return workPackage;
-        },
-      },
-    ];
-
-    jest.spyOn(service, 'create').mockResolvedValue(new WorkPackage());
-    const result = await controller.import(importWorkPackagesDto);
-
-    expect(result).toEqual({ imported: importWorkPackagesDto.length });
-    expect(service.create).toHaveBeenCalledTimes(importWorkPackagesDto.length);
-    importWorkPackagesDto.forEach((dto) => {
-      expect(service.create).toHaveBeenCalledWith(
-        dto.convertToWorkPackageEntity(),
-      );
+      const result = await controller.create(workPackage);
+      expect(result).toEqual(workPackage);
+      expect(service.create).toHaveBeenCalledWith(workPackage);
     });
   });
 
-  it('should get category values', async () => {
-    const category = 'registrations';
-    const values = ['A', 'B'];
-    jest.spyOn(service, 'getCategoryValues').mockResolvedValue(values);
-    expect(await controller.getCategoryValues(category)).toBe(values);
-    expect(service.getCategoryValues).toHaveBeenCalledWith(category);
+  describe('findAll', () => {
+    it('should find all work packages', async () => {
+      const workPackages = [new WorkPackage(), new WorkPackage()];
+      service.findAll.mockResolvedValue(workPackages);
+
+      const result = await controller.findAll();
+      expect(result).toEqual(workPackages);
+      expect(service.findAll).toHaveBeenCalled();
+    });
   });
 
-  it('should throw an error for unknown category', async () => {
-    const category = 'unknown';
-    jest
-      .spyOn(service, 'getCategoryValues')
-      .mockRejectedValue(new NotFoundException());
-    await expect(controller.getCategoryValues(category)).rejects.toThrow(
-      NotFoundException,
-    );
+  describe('findOne', () => {
+    it('should find a work package by ID', async () => {
+      const workPackage = new WorkPackage();
+      service.findOne.mockResolvedValue(workPackage);
+
+      const result = await controller.findOne('1');
+      expect(result).toEqual(workPackage);
+      expect(service.findOne).toHaveBeenCalledWith('1');
+    });
+
+    it('should throw NotFoundException if work package not found', async () => {
+      service.findOne.mockResolvedValue(null);
+
+      await expect(controller.findOne('1')).rejects.toThrow(NotFoundException);
+      expect(service.findOne).toHaveBeenCalledWith('1');
+    });
+  });
+
+  describe('update', () => {
+    it('should update a work package by ID', async () => {
+      const workPackage = new WorkPackage();
+      service.update.mockResolvedValue(workPackage);
+
+      const result = await controller.update('1', workPackage);
+      expect(result).toEqual(workPackage);
+      expect(service.update).toHaveBeenCalledWith('1', workPackage);
+    });
+
+    it('should throw NotFoundException if work package not found for update', async () => {
+      service.update.mockResolvedValue(null);
+
+      await expect(controller.update('1', new WorkPackage())).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(service.update).toHaveBeenCalledWith('1', expect.any(WorkPackage));
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove a work package by ID', async () => {
+      service.remove.mockResolvedValue(undefined);
+
+      await controller.remove('1');
+      expect(service.remove).toHaveBeenCalledWith('1');
+    });
+  });
+
+  describe('search', () => {
+    it('should search work packages with filter', async () => {
+      const workPackages = [new WorkPackage(), new WorkPackage()];
+      const filter: WorkPackageFilter = {
+        startTime: new Date().toISOString(),
+        endTime: new Date().toISOString(),
+        registrations: ['N12345'],
+        stations: ['JFK'],
+        statuses: ['OPEN'],
+        areas: ['APRON'],
+        namePattern: 'Maintenance%',
+        limit: 10,
+      };
+      service.search.mockResolvedValue(workPackages);
+
+      const result = await controller.search(filter);
+      expect(result).toEqual(workPackages);
+      expect(service.search).toHaveBeenCalledWith(filter);
+    });
+  });
+
+  describe('import', () => {
+    it('should import work packages from JSON', async () => {
+      const importDtos: WorkPackageImportDto[] = [
+        Object.assign(new WorkPackageImportDto(), {
+          workPackageId: 'WP12345',
+          registration: 'ABC123',
+          name: 'Maintenance A',
+          station: 'HEL',
+          status: 'OPEN',
+          area: 'APRON',
+          startDateTime: '2024-04-16T08:00:00.000Z',
+          endDateTime: '2024-04-16T09:30:00.000Z',
+        }),
+      ];
+      const workPackages = importDtos.map((dto) =>
+        dto.convertToWorkPackageEntity(),
+      );
+      service.createAll.mockResolvedValue(workPackages);
+
+      const result = await controller.import(importDtos);
+      expect(result).toEqual({ imported: importDtos.length });
+      expect(service.createAll).toHaveBeenCalledWith(workPackages);
+    });
+  });
+
+  describe('getCategoryValues', () => {
+    it('should get unique and sorted values for a category', async () => {
+      const values = ['OPEN', 'CLOSED'];
+      service.getCategoryValues.mockResolvedValue(values);
+
+      const result = await controller.getCategoryValues('statuses');
+      expect(result).toEqual(values);
+      expect(service.getCategoryValues).toHaveBeenCalledWith('statuses');
+    });
+
+    it('should throw NotFoundException if category not found', async () => {
+      service.getCategoryValues.mockRejectedValue(
+        new NotFoundException('Category not found'),
+      );
+
+      await expect(controller.getCategoryValues('unknown')).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(service.getCategoryValues).toHaveBeenCalledWith('unknown');
+    });
   });
 });
