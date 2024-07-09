@@ -174,7 +174,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
     <ChakraProvider>
       <div className={styles.ganttChart}>
         <div className={styles.zoomControl}>
-          <FormControl as={Flex} alignItems="center">
+          <FormControl as={Flex} alignItems="center" justifyContent="flex-end">
             <Box display="flex" alignItems="center">
               <FormLabel htmlFor="zoom" fontWeight="bold" whiteSpace="nowrap" mb="0">
                 Zoom:
@@ -242,7 +242,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
               />
             </>
           </ResizableBox>
-          <div className={styles.rightPanel} ref={rightPanelRef}>
+          <Box className={styles.rightPanel} ref={rightPanelRef}>
             <TimeRuler minTime={minTime} maxTime={maxTime} units={units} millisecondWidth={millisecondWidth} />
             <Timeline
               taskGroups={taskGroups}
@@ -252,7 +252,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
               millisecondWidth={millisecondWidth}
               taskTypeInfos={taskTypeInfos}
             />
-          </div>
+          </Box>
         </div>
       </div>
     </ChakraProvider>
