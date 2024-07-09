@@ -70,7 +70,11 @@ img {
   border-color: var(--chakra-colors-gray-200);
   border-radius: var(--chakra-radii-md);
   padding: var(--chakra-space-4);
-  box-shadow: var(--chakra-shadows-lg); /* Add shadow similar to alert box */
+  box-shadow: var(--chakra-shadows-lg);
+  
+  .chakra-heading {
+    margin-top: 8px;
+  }
 }
 
 .chakra-icon {

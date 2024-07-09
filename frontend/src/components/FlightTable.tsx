@@ -1,12 +1,17 @@
 import React from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
 import { Flight } from '../models/Flight.entity';
+import { WarningPanel } from './utils';
 
 interface FlightTableProps {
   flights: Flight[];
 }
 
 const FlightTable: React.FC<FlightTableProps> = ({ flights }) => {
+  if (!flights.length) {
+    return <WarningPanel message="No flight found. Update the search filter." />;
+  }
+
   return (
     <Table className="chakra-table">
       <Thead>

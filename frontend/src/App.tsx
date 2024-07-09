@@ -5,7 +5,8 @@ import { FaDatabase } from 'react-icons/fa';
 import ImportPage from './pages/ImportPage';
 import DashboardPage from './pages/DashboardPage';
 import FlightsPage from './pages/FlightsPage';
-import { MdDashboard, MdFlightTakeoff } from 'react-icons/md';
+import { MdBuild, MdDashboard, MdFlightTakeoff } from 'react-icons/md';
+import WorkPackagePage from './pages/WorkPackagesPage';
 
 const App: React.FC = () => {
   const activeLinkColor = useColorModeValue('brand.500', 'brand.200');
@@ -48,6 +49,17 @@ const App: React.FC = () => {
             </HStack>
           </NavLink>
           <NavLink
+            to="/work-packages"
+            style={({ isActive }) => ({
+              color: isActive ? activeLinkColor : 'inherit',
+            })}
+          >
+            <HStack>
+              <Box w={5} h={5} as={MdBuild} bg={iconBg} borderRadius="md" title="Flights" />
+              <Text>Work Packages</Text>
+            </HStack>
+          </NavLink>
+          <NavLink
             to="/import"
             style={({ isActive }) => ({
               color: isActive ? activeLinkColor : 'inherit',
@@ -65,6 +77,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/flights" element={<FlightsPage />} />
+          <Route path="/work-packages" element={<WorkPackagePage />} />
           <Route path="/import" element={<ImportPage />} />
         </Routes>
       </Box>
