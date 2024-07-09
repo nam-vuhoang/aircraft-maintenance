@@ -61,8 +61,20 @@ img {
   height: 100%;
   min-height: 100vh; /* Ensure the sidebar takes up the full height of the screen */
   overflow-y: auto; /* Add scrollbar if content overflows */
-  min-width: 140px;
   width: 250px;
+  min-width: 50px;
+
+  @media (max-width: 800px) {
+    width: 50px;
+  }
+
+  .chakra-sidebar-text {
+    font-size: var(--chakra-fontSizes-lg);
+    @media (max-width: 800px) {
+      // hide text on smaller screens
+      display: none;
+    }
+  }
 }
 
 .chakra-panel {
@@ -71,7 +83,7 @@ img {
   border-radius: var(--chakra-radii-md);
   padding: var(--chakra-space-4);
   box-shadow: var(--chakra-shadows-lg);
-  
+
   .chakra-heading {
     margin-top: 8px;
   }

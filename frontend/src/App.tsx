@@ -34,7 +34,7 @@ const App: React.FC = () => {
           >
             <HStack>
               <Box w={5} h={5} as={MdDashboard} bg={iconBg} borderRadius="md" title="Dashboard" />
-              <Text>Dashboard</Text>
+              <Text className="chakra-sidebar-text">Dashboard</Text>
             </HStack>
           </NavLink>
           <NavLink
@@ -45,7 +45,7 @@ const App: React.FC = () => {
           >
             <HStack>
               <Box w={5} h={5} as={MdFlightTakeoff} bg={iconBg} borderRadius="md" title="Flights" />
-              <Text>Flights</Text>
+              <Text className="chakra-sidebar-text">Flights</Text>
             </HStack>
           </NavLink>
           <NavLink
@@ -56,7 +56,7 @@ const App: React.FC = () => {
           >
             <HStack>
               <Box w={5} h={5} as={MdBuild} bg={iconBg} borderRadius="md" title="Flights" />
-              <Text>Work Packages</Text>
+              <Text className="chakra-sidebar-text">Work Packages</Text>
             </HStack>
           </NavLink>
           <NavLink
@@ -67,7 +67,7 @@ const App: React.FC = () => {
           >
             <HStack>
               <Box w={5} h={5} as={FaDatabase} bg={iconBg} borderRadius="md" title="Import" />
-              <Text>Import</Text>
+              <Text className="chakra-sidebar-text">Import</Text>
             </HStack>
           </NavLink>
           <Box flex={1}>&nbsp;</Box>
