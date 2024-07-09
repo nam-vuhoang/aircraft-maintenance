@@ -22,7 +22,7 @@ import {
   Flex,
   Checkbox,
 } from '@chakra-ui/react';
-import { set } from 'date-fns';
+import { WarningPanel } from '../utils';
 
 export interface GanttChartTypeInfo {
   typeIndex: number;
@@ -169,6 +169,10 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
       setLowestUnitWidth(defaultLowestUnitWidth);
     }
   };
+
+  if (!taskGroups.length) {
+    return <WarningPanel message="No flight or work package found. Update the search filter." />;
+  }
 
   return (
     <ChakraProvider>
