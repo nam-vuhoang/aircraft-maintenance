@@ -86,7 +86,7 @@ class WorkPackageService {
     }
   }
 
-  async getCategoryValues(category: string): Promise<string[]> {
+  async getCategoryValues(category: 'registrations' | 'stations' | 'statuses' | 'areas'): Promise<string[]> {
     try {
       logger.debug(`Fetching work package category values for ${category}`);
       const response = await this.axiosInstance.get<string[]>(`/work-packages/categories/${category}`);

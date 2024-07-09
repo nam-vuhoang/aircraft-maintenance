@@ -87,7 +87,7 @@ class FlightService {
     }
   }
 
-  async getCategoryValues(category: string): Promise<string[]> {
+  async getCategoryValues(category: 'airlines' | 'registrations' | 'aircraftTypes' | 'stations'): Promise<string[]> {
     try {
       logger.debug(`Fetching flight category values for ${category}`);
       const response = await this.axiosInstance.get<string[]>(`/flights/categories/${category}`);
