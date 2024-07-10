@@ -74,12 +74,12 @@ const zoomLevels: ZoomLevel[] = [
     units: ['week', 'day', 'hour-3'],
   },
   {
-    name: 'Months + Weeks + Days',
-    units: ['month', 'week', 'day'],
-  },
-  {
     name: 'Months + Days + 3 Hours',
     units: ['month', 'day', 'hour-3'],
+  },
+  {
+    name: 'Months + Weeks + Days',
+    units: ['month', 'week', 'day'],
   },
 ];
 
