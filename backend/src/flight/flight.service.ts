@@ -21,7 +21,7 @@ export class FlightService {
   }
 
   async createAll(flights: Flight[]): Promise<Flight[]> {
-    this.logger.log(`Creating multiple flights: ${JSON.stringify(flights)}`);
+    this.logger.log(`Creating multiple flights: ${flights.length} flights`);
     const createdFlights = await this.flightRepository.save(flights);
     this.logger.log(`Created ${createdFlights.length} flights`);
     return createdFlights;

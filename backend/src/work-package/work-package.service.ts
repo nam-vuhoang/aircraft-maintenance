@@ -25,7 +25,7 @@ export class WorkPackageService {
 
   async createAll(workPackages: WorkPackage[]): Promise<WorkPackage[]> {
     this.logger.log(
-      `Creating multiple work packages: ${JSON.stringify(workPackages)}`,
+      `Creating multiple work packages: ${workPackages.length} work packages`,
     );
     const createdWorkPackages =
       await this.workPackageRepository.save(workPackages);
