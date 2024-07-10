@@ -18,4 +18,4 @@ RUN yarn build
 EXPOSE 3000
 
 # Combine the migration and start commands into a single script
-CMD ["sh", "-c", "yarn run migration:run && yarn start:prod"]
+CMD ["sh", "-c", "yarn run typeorm:migration:run && yarn start:prod"]
