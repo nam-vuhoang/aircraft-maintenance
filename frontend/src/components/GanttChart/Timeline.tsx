@@ -1,10 +1,10 @@
 import React from 'react';
 import styles from './Timeline.module.scss';
 import { TaskGroup } from '../../models/TaskGroup.entity';
-import InlineIcon from '../InlineIcon/InlineIcon';
 import { GanttChartTypeInfo } from '../GanttChart/GanttChart';
-import { Box, Flex } from '@chakra-ui/react';
-import { emToPx, pxToEm, smallFontSizeInEm } from '../../utils/CssUtils';
+import { Flex } from '@chakra-ui/react';
+import { emToPx, smallFontSizeInEm } from '../../utils/CssUtils';
+import InlineIcon from './InlineIcon';
 
 interface TimelineProps {
   taskGroups: TaskGroup[];

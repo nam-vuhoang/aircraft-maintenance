@@ -3,7 +3,7 @@ import styles from './TaskList.module.scss';
 import { TaskGroup } from '../../models/TaskGroup.entity';
 import { GanttChartTypeInfo } from '../GanttChart/GanttChart';
 import { Box } from '@chakra-ui/react';
-import InlineIcon from '../InlineIcon/InlineIcon';
+import InlineIcon from './InlineIcon';
 
 interface TaskListProps {
   taskGroups: TaskGroup[];
@@ -42,24 +42,24 @@ const TaskList: React.FC<TaskListProps> = ({
               </Box>
 
               {/* <Box whiteSpace="nowrap"> */}
-                {taskTypeCounts?.map((taskTypeCount) =>
-                  taskTypeCount.counts
-                    .filter((taskTypeCount) => taskTypeCount.groupName === group.name)
-                    .map((count) => (
-                      <span
-                        key={taskTypeCount.info.typeIndex}
-                        style={{
-                          fontWeight: 'bold',
-                          color: taskTypeCount.info.textColor,
-                          width: '3em',
-                          textAlign: 'right',
-                        }}
-                      >
-                        {count.count}
-                        <InlineIcon style={{marginLeft: '4px'}}>{taskTypeCount.info.icon}</InlineIcon>
-                      </span>
-                    ))
-                )}
+              {taskTypeCounts?.map((taskTypeCount) =>
+                taskTypeCount.counts
+                  .filter((taskTypeCount) => taskTypeCount.groupName === group.name)
+                  .map((count) => (
+                    <span
+                      key={taskTypeCount.info.typeIndex}
+                      style={{
+                        fontWeight: 'bold',
+                        color: taskTypeCount.info.textColor,
+                        width: '3em',
+                        textAlign: 'right',
+                      }}
+                    >
+                      {count.count}
+                      <InlineIcon style={{ marginLeft: '4px' }}>{taskTypeCount.info.icon}</InlineIcon>
+                    </span>
+                  ))
+              )}
               {/* </Box> */}
             </Box>
           </div>

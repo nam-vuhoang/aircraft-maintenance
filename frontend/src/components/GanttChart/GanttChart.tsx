@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useRef, ReactNode } from 'react';
-import TaskList from '../TaskList/TaskList';
 import styles from './GanttChart.module.scss';
 import { TaskGroup } from '../../models/TaskGroup.entity';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import TimeRuler from '../TimeRuler/TimeRuler';
 import { getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
-import Timeline from '../Timeline/Timeline';
-import InlineIcon from '../InlineIcon/InlineIcon';
 import {
   ChakraProvider,
   Box,
@@ -23,6 +19,10 @@ import {
   Checkbox,
 } from '@chakra-ui/react';
 import { WarningPanel } from '../utils';
+import InlineIcon from './InlineIcon';
+import TaskList from './TaskList';
+import Timeline from './Timeline';
+import TimeRuler from './TimeRuler';
 
 export interface GanttChartTypeInfo {
   typeIndex: number;
