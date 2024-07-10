@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 /**
  * Get the log levels based on the base log level
  * @param baseLogLevel The base log level, e.g. 'debug', 'info', 'warn', 'error'
- * @returns 
+ * @returns
  */
 const getNestLogLevels = (baseLogLevel: string): LogLevel[] => {
   // https://docs.nestjs.com/techniques/logger
@@ -45,17 +45,15 @@ async function bootstrap() {
   const logger = new Logger('bootstrap');
   logger.log('Logger level:', logLevel);
 
-  // Enable CORS for development
+  // Enable CORS for frontend URL
   const configService = app.get(ConfigService);
-  console.log('NODE_ENV:', configService.get<string>('NODE_ENV'));
-  if (configService.get<string>('NODE_ENV') === 'development') {
-    logger.warn('Enabling CORS for development');
-    app.enableCors({
-      origin: configService.get<string>('FRONTEND_URL'),
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      credentials: true,
-    });
-  }
+  const frontendUrl = configService.get<string>('FRONTEND_URL');
+  logger.log(`Enabling CORS for frontend URL: ${frontendUrl}`);
+  app.enableCors({
+    origin: frontendUrl,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   // Enable global validation
   app.useGlobalPipes(new ValidationPipe());
