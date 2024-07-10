@@ -1,16 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Input,
-  Button,
-  VStack,
-  HStack,
-  useColorModeValue,
-  FormControl,
-  FormLabel,
-  Select,
-  Text,
-} from '@chakra-ui/react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Box, Input, Button, VStack, HStack, FormControl, FormLabel, Select, Text } from '@chakra-ui/react';
 import CategoryService from '../services/Category.service';
 import { FlightFilter } from '../models/FlightFilter.dto';
 import MultiSelect, { Option } from './utils/MultiSelect';
@@ -21,8 +10,9 @@ interface AircraftTaskSearchFormProps {
 }
 
 const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearch }) => {
-  const [registrations, setRegistrations] = useState<Option[]>([]);
-  const [stations, setStations] = useState<Option[]>([]);
+  const [registrations, setRegistrations] = useState<string[]>([]);
+  const [stations, setStations] = useState<string[]>([]);
+
   const [formValues, setFormValues] = useState({
     startTime: '',
     endTime: '',
@@ -34,30 +24,29 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
 
   useEffect(() => {
     const fetchData = async () => {
-      const [flightRegistrations, flightStations, workPackageRegistrations, workPackageStations] = await Promise.all([
-        CategoryService.getFlightCategoryValues('registrations'),
-        CategoryService.getFlightCategoryValues('stations'),
-        CategoryService.getWorkPackageCategoryValues('registrations'),
-        CategoryService.getWorkPackageCategoryValues('stations'),
-      ]);
+      try {
+        const [flightRegistrations, flightStations, workPackageRegistrations, workPackageStations] = await Promise.all([
+          CategoryService.getFlightCategoryValues('registrations'),
+          CategoryService.getFlightCategoryValues('stations'),
+          CategoryService.getWorkPackageCategoryValues('registrations'),
+          CategoryService.getWorkPackageCategoryValues('stations'),
+        ]);
 
-      setRegistrations(
-        Array.from(new Set([...flightRegistrations, ...workPackageRegistrations]))
-          .sort()
-          .map((item: string) => ({ label: item, value: item }))
-      );
-      setStations(
-        Array.from(new Set([...flightStations, ...workPackageStations]))
-          .sort()
-          .map((item: string) => ({
-            label: item,
-            value: item,
-          }))
-      );
+        setRegistrations(Array.from(new Set([...flightRegistrations, ...workPackageRegistrations])).sort());
+        setStations(Array.from(new Set([...flightStations, ...workPackageStations])).sort());
+      } catch (error) {
+        console.error('Error fetching category values:', error);
+      }
     };
 
-    fetchData(); // initial fetch
+    fetchData();
   }, []);
+
+  const registrationOptions = useMemo(
+    () => registrations.map((item) => ({ label: item, value: item })),
+    [registrations]
+  );
+  const stationOptions = useMemo(() => stations.map((item) => ({ label: item, value: item })), [stations]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
@@ -111,19 +100,8 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
     });
   };
 
-  const panelBg = useColorModeValue('white', 'gray.800');
-  const panelBorderColor = useColorModeValue('gray.200', 'gray.700');
-
   return (
-    <Box
-      bg={panelBg}
-      borderColor={panelBorderColor}
-      borderWidth={1}
-      borderRadius="md"
-      p={4}
-      boxShadow="lg"
-      className="chakra-panel"
-    >
+    <Box borderWidth={1} borderRadius="md" p={4} boxShadow="lg" className="chakra-panel">
       <form onSubmit={handleSearch}>
         <VStack spacing={4} align="stretch">
           <HStack spacing={4}>
@@ -152,7 +130,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
             <FormLabel>Registrations</FormLabel>
             <MultiSelect
               name="registrations"
-              options={registrations}
+              options={registrationOptions}
               placeholder="Select registrations..."
               value={formValues.registrations}
               onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as Option[])}
@@ -162,7 +140,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
             <FormLabel>Stations</FormLabel>
             <MultiSelect
               name="stations"
-              options={stations}
+              options={stationOptions}
               placeholder="Select stations..."
               value={formValues.stations}
               onChange={(selectedOptions) => handleSelectChange('stations', selectedOptions as Option[])}

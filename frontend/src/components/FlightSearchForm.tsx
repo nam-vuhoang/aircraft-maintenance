@@ -1,16 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Input,
-  Button,
-  VStack,
-  HStack,
-  useColorModeValue,
-  FormControl,
-  FormLabel,
-  Select,
-  Text,
-} from '@chakra-ui/react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Box, Input, Button, VStack, HStack, FormControl, FormLabel, Select, Text } from '@chakra-ui/react';
 import CategoryService from '../services/Category.service';
 import { FlightFilter } from '../models/FlightFilter.dto';
 import MultiSelect, { Option } from './utils/MultiSelect';
@@ -20,11 +9,10 @@ interface FlightSearchFormProps {
 }
 
 const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
-  const [airlines, setAirlines] = useState<Option[]>([]);
-  const [registrations, setRegistrations] = useState<Option[]>([]);
-  const [aircraftTypes, setAircraftTypes] = useState<Option[]>([]);
-  const [departureStations, setDepartureStations] = useState<Option[]>([]);
-  const [arrivalStations, setArrivalStations] = useState<Option[]>([]);
+  const [airlines, setAirlines] = useState<string[]>([]);
+  const [registrations, setRegistrations] = useState<string[]>([]);
+  const [aircraftTypes, setAircraftTypes] = useState<string[]>([]);
+  const [stations, setStations] = useState<string[]>([]);
 
   const [formValues, setFormValues] = useState({
     startTime: '',
@@ -40,22 +28,36 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [airlinesData, registrationsData, aircraftTypesData, stationsData] = await Promise.all([
-        CategoryService.getFlightCategoryValues('airlines'),
-        CategoryService.getFlightCategoryValues('registrations'),
-        CategoryService.getFlightCategoryValues('aircraftTypes'),
-        CategoryService.getFlightCategoryValues('stations'),
-      ]);
+      try {
+        const [airlinesData, registrationsData, aircraftTypesData, stationsData] = await Promise.all([
+          CategoryService.getFlightCategoryValues('airlines'),
+          CategoryService.getFlightCategoryValues('registrations'),
+          CategoryService.getFlightCategoryValues('aircraftTypes'),
+          CategoryService.getFlightCategoryValues('stations'),
+        ]);
 
-      setAirlines(airlinesData.map((item: string) => ({ label: item, value: item })));
-      setRegistrations(registrationsData.map((item: string) => ({ label: item, value: item })));
-      setAircraftTypes(aircraftTypesData.map((item: string) => ({ label: item, value: item })));
-      setDepartureStations(stationsData.map((item: string) => ({ label: item, value: item })));
-      setArrivalStations(stationsData.map((item: string) => ({ label: item, value: item })));
+        setAirlines(airlinesData);
+        setRegistrations(registrationsData);
+        setAircraftTypes(aircraftTypesData);
+        setStations(stationsData);
+      } catch (error) {
+        console.error('Error fetching category values:', error);
+      }
     };
 
-    fetchData(); // initial fetch
+    fetchData();
   }, []);
+
+  const airlineOptions = useMemo(() => airlines.map((item) => ({ label: item, value: item })), [airlines]);
+  const registrationOptions = useMemo(
+    () => registrations.map((item) => ({ label: item, value: item })),
+    [registrations]
+  );
+  const aircraftTypeOptions = useMemo(
+    () => aircraftTypes.map((item) => ({ label: item, value: item })),
+    [aircraftTypes]
+  );
+  const stationOptions = useMemo(() => stations.map((item) => ({ label: item, value: item })), [stations]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -122,19 +124,8 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
     });
   };
 
-  const panelBg = useColorModeValue('white', 'gray.800');
-  const panelBorderColor = useColorModeValue('gray.200', 'gray.700');
-
   return (
-    <Box
-      bg={panelBg}
-      borderColor={panelBorderColor}
-      borderWidth={1}
-      borderRadius="md"
-      p={4}
-      boxShadow="lg"
-      className="chakra-panel"
-    >
+    <Box borderWidth={1} borderRadius="md" p={4} boxShadow="lg" className="chakra-panel">
       <form onSubmit={handleSearch}>
         <VStack spacing={4} align="stretch">
           <HStack spacing={4}>
@@ -173,7 +164,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
             <FormLabel>Airlines</FormLabel>
             <MultiSelect
               name="airlines"
-              options={airlines}
+              options={airlineOptions}
               placeholder="Select airlines..."
               value={formValues.airlines}
               onChange={(selectedOptions) => handleSelectChange('airlines', selectedOptions as Option[])}
@@ -183,7 +174,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
             <FormLabel>Registrations</FormLabel>
             <MultiSelect
               name="registrations"
-              options={registrations}
+              options={registrationOptions}
               placeholder="Select registrations..."
               value={formValues.registrations}
               onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as Option[])}
@@ -193,7 +184,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
             <FormLabel>Aircraft Types</FormLabel>
             <MultiSelect
               name="aircraftTypes"
-              options={aircraftTypes}
+              options={aircraftTypeOptions}
               placeholder="Select aircraft types..."
               value={formValues.aircraftTypes}
               onChange={(selectedOptions) => handleSelectChange('aircraftTypes', selectedOptions as Option[])}
@@ -203,7 +194,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
             <FormLabel>Departure Stations</FormLabel>
             <MultiSelect
               name="departureStations"
-              options={departureStations}
+              options={stationOptions}
               placeholder="Select departure stations..."
               value={formValues.departureStations}
               onChange={(selectedOptions) => handleSelectChange('departureStations', selectedOptions as Option[])}
@@ -213,7 +204,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
             <FormLabel>Arrival Stations</FormLabel>
             <MultiSelect
               name="arrivalStations"
-              options={arrivalStations}
+              options={stationOptions}
               placeholder="Select arrival stations..."
               value={formValues.arrivalStations}
               onChange={(selectedOptions) => handleSelectChange('arrivalStations', selectedOptions as Option[])}

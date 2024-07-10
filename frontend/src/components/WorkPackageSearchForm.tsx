@@ -1,16 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Input,
-  Button,
-  VStack,
-  HStack,
-  useColorModeValue,
-  FormControl,
-  FormLabel,
-  Select,
-  Text,
-} from '@chakra-ui/react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Box, Input, Button, VStack, HStack, FormControl, FormLabel, Select, Text } from '@chakra-ui/react';
 import CategoryService from '../services/Category.service';
 import { WorkPackageFilter } from '../models';
 import MultiSelect, { Option } from './utils/MultiSelect';
@@ -20,10 +9,10 @@ interface WorkPackageSearchFormProps {
 }
 
 const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch }) => {
-  const [registrations, setRegistrations] = useState<Option[]>([]);
-  const [stations, setStations] = useState<Option[]>([]);
-  const [statuses, setStatuses] = useState<Option[]>([]);
-  const [areas, setAreas] = useState<Option[]>([]);
+  const [registrations, setRegistrations] = useState<string[]>([]);
+  const [stations, setStations] = useState<string[]>([]);
+  const [statuses, setStatuses] = useState<string[]>([]);
+  const [areas, setAreas] = useState<string[]>([]);
 
   const [formValues, setFormValues] = useState({
     startTime: '',
@@ -38,21 +27,33 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
 
   useEffect(() => {
     const fetchData = async () => {
-      const [registrationsData, stationsData, statusesData, areasData] = await Promise.all([
-        CategoryService.getWorkPackageCategoryValues('registrations'),
-        CategoryService.getWorkPackageCategoryValues('stations'),
-        CategoryService.getWorkPackageCategoryValues('statuses'),
-        CategoryService.getWorkPackageCategoryValues('areas'),
-      ]);
+      try {
+        const [registrationsData, stationsData, statusesData, areasData] = await Promise.all([
+          CategoryService.getWorkPackageCategoryValues('registrations'),
+          CategoryService.getWorkPackageCategoryValues('stations'),
+          CategoryService.getWorkPackageCategoryValues('statuses'),
+          CategoryService.getWorkPackageCategoryValues('areas'),
+        ]);
 
-      setRegistrations(registrationsData.map((item: string) => ({ label: item, value: item })));
-      setStations(stationsData.map((item: string) => ({ label: item, value: item })));
-      setStatuses(statusesData.map((item: string) => ({ label: item, value: item })));
-      setAreas(areasData.map((item: string) => ({ label: item, value: item })));
+        setRegistrations(registrationsData);
+        setStations(stationsData);
+        setStatuses(statusesData);
+        setAreas(areasData);
+      } catch (error) {
+        console.error('Error fetching category values:', error);
+      }
     };
 
-    fetchData(); // initial fetch
+    fetchData();
   }, []);
+
+  const registrationOptions = useMemo(
+    () => registrations.map((item) => ({ label: item, value: item })),
+    [registrations]
+  );
+  const stationOptions = useMemo(() => stations.map((item) => ({ label: item, value: item })), [stations]);
+  const statusOptions = useMemo(() => statuses.map((item) => ({ label: item, value: item })), [statuses]);
+  const areaOptions = useMemo(() => areas.map((item) => ({ label: item, value: item })), [areas]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -108,19 +109,8 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
     });
   };
 
-  const panelBg = useColorModeValue('white', 'gray.800');
-  const panelBorderColor = useColorModeValue('gray.200', 'gray.700');
-
   return (
-    <Box
-      bg={panelBg}
-      borderColor={panelBorderColor}
-      borderWidth={1}
-      borderRadius="md"
-      p={4}
-      boxShadow="lg"
-      className="chakra-panel"
-    >
+    <Box borderWidth={1} borderRadius="md" p={4} boxShadow="lg" className="chakra-panel">
       <form onSubmit={handleSearch}>
         <VStack spacing={4} align="stretch">
           <HStack spacing={4}>
@@ -149,7 +139,7 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
             <FormLabel>Registrations</FormLabel>
             <MultiSelect
               name="registrations"
-              options={registrations}
+              options={registrationOptions}
               placeholder="Select registrations..."
               value={formValues.registrations}
               onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as Option[])}
@@ -159,7 +149,7 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
             <FormLabel>Stations</FormLabel>
             <MultiSelect
               name="stations"
-              options={stations}
+              options={stationOptions}
               placeholder="Select stations..."
               value={formValues.stations}
               onChange={(selectedOptions) => handleSelectChange('stations', selectedOptions as Option[])}
@@ -169,7 +159,7 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
             <FormLabel>Statuses</FormLabel>
             <MultiSelect
               name="statuses"
-              options={statuses}
+              options={statusOptions}
               placeholder="Select statuses..."
               value={formValues.statuses}
               onChange={(selectedOptions) => handleSelectChange('statuses', selectedOptions as Option[])}
@@ -179,7 +169,7 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
             <FormLabel>Areas</FormLabel>
             <MultiSelect
               name="areas"
-              options={areas}
+              options={areaOptions}
               placeholder="Select areas..."
               value={formValues.areas}
               onChange={(selectedOptions) => handleSelectChange('areas', selectedOptions as Option[])}
