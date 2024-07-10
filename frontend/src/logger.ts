@@ -2,7 +2,11 @@ import pino from 'pino';
 
 // import prettier from 'pino-pretty'
 
-const logger = pino();
+const level = import.meta.env.VITE_LOG_LEVEL || 'info';
+
+const logger = pino({ level });
+
+logger.info('Logger level:', level)
 
 // const logger = pino({
 //     prettyPrint: { colorize: true },
