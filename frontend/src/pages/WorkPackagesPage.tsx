@@ -17,8 +17,8 @@ const WorkPackagePage: React.FC = () => {
       const response = await WorkPackageService.searchWorkPackages(filter);
       setWorkPackages(response);
       setStatus(null);
-    } catch (error: any) {
-      setStatus({ error });
+    } catch (error: unknown) {
+      setStatus({ error: error as Error });
     }
   };
 

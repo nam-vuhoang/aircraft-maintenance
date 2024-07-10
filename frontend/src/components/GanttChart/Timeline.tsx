@@ -50,7 +50,7 @@ const Timeline: React.FC<TimelineProps> = ({
 
               const justifyContent = hasMultipleTexts ? 'space-between' : 'center';
 
-              const replacer = (key: string, value: any) => {
+              const replacer = (key: string, value: unknown) => {
                 if (key === 'startTime' || key === 'endTime') {
                   return undefined;
                 }

@@ -17,8 +17,8 @@ const FlightsPage: React.FC = () => {
       const response = await FlightService.searchFlights(filter);
       setFlights(response);
       setStatus(null);
-    } catch (error: any) {
-      setStatus({ error });
+    } catch (error: unknown) {
+      setStatus({ error: error as Error });
     }
   };
 

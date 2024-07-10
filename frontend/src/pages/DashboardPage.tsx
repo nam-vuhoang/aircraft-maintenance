@@ -28,8 +28,8 @@ const DashboardPage: React.FC = () => {
       setFlights(flights);
       setWorkPackages(workPackages);
       setStatus(null);
-    } catch (error: any) {
-      setStatus({ error });
+    } catch (error: unknown) {
+      setStatus({ error: error as Error });
     }
   };
 

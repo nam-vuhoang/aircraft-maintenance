@@ -19,7 +19,7 @@ import { FlightImportDto } from '../models/FlightImport.dto';
 import { FlightService, WorkPackageService } from '../services';
 import { WorkPackageDto } from '../services/WorkPackage.dto';
 import { AppStatusPanel, AppStatus } from '../components/utils';
-import { set } from 'date-fns';
+import { AxiosError } from 'axios';
 
 const ImportPage: React.FC = () => {
   const [flightFile, setFlightFile] = useState<File | null>(null);
@@ -48,11 +48,12 @@ const ImportPage: React.FC = () => {
         const items: FlightImportDto[] = json;
         const importedCount = await FlightService.importFlights(items);
         setStatus({ success: `Successfully imported ${importedCount} flights.` });
-      } catch (err: any) {
-        if (err.response?.status === 400) {
+      } catch (err: unknown) {
+        const error = err as AxiosError;
+        if (error.response?.status === 400) {
           setStatus({ error: 'Invalid data format. Please check the file and try again.' });
         } else {
-          setStatus({ error: err });
+          setStatus({ error });
         }
       }
     };
@@ -73,11 +74,12 @@ const ImportPage: React.FC = () => {
         const items: WorkPackageDto[] = json;
         const importedCount = await WorkPackageService.importWorkPackages(items);
         setStatus({ success: `Successfully imported ${importedCount} work packages.` });
-      } catch (err: any) {
-        if (err.response?.status === 400) {
+      } catch (err: unknown) {
+        const error = err as AxiosError;
+        if (error.response?.status === 400) {
           setStatus({ error: 'Invalid data format. Please check the file and try again.' });
         } else {
-          setStatus({ error: err });
+          setStatus({ error });
         }
       }
     };
