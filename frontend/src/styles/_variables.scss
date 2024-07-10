@@ -1,6 +1,5 @@
-// src/styles/_variables.scss
-$primary-color: rgba(0, 123, 255);
-$secondary-color: rgba(255, 87, 51);
+$primary-color: hsla(217, 100%, 44%, 1); // --chakra-colors-brand-500
+$secondary-color: hsla(14, 100%, 60%, 1); // --chakra-colors-secondary-500
 
 $primary-color-light: rgba($primary-color, 0.5);
 $secondary-color-light: rgba($secondary-color, 0.5);
