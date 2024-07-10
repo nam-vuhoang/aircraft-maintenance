@@ -1,10 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-// import { setupCache } from 'axios-cache-adapter';
 import logger from '../logger';
-
-// const cache = setupCache({
-//   maxAge: 5 * 60 * 1000, // 5 minutes
-// });
 
 const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -12,11 +7,11 @@ class CategoryService {
   private axiosInstance: AxiosInstance;
 
   constructor() {
+    logger.info(`API base URL: ${baseURL}`);
     if (!baseURL) {
       throw new Error('API base URL is not defined');
     }
     this.axiosInstance = axios.create({
-      // adapter: cache.adapter,
       baseURL,
       headers: {
         'Content-Type': 'application/json',
