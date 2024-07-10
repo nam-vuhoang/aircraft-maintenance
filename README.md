@@ -14,7 +14,17 @@ This project was assigned to me as a job-seeking challenge. This document descib
 
 ## Snapshots
 
+1. The dashboard page:
+   
 ![Website](docs/snapshots/website.png)
+
+2. The Gantt-chart-like timeline:
+
+![Timeline](docs/snapshots/page-dashboard-04.png)
+
+3. The time ruler format options:
+
+![Time ruler](docs/snapshots/page-dashboard-03.png)
 
 
 # License
