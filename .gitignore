@@ -85,9 +85,9 @@ snowpack/
 __sapper__/
 
 # Docker
-docker-compose.yml
-Dockerfile
-.docker/
+# docker-compose.yml
+# Dockerfile
+# .docker/
 
 # Backend specific ignores (Node.js + TypeScript + NestJS)
 backend/dist/
@@ -105,3 +105,4 @@ dist/
 build/
 vite-chakra/
 .vscode/
+.vscode/launch.json

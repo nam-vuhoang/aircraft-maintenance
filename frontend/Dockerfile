@@ -13,7 +13,7 @@ COPY . .
 
 # Build the application
 ARG VITE_API_BASE_URL
-ARG LOG_LEVEL
+ARG VITE_LOG_LEVEL
 RUN yarn build
 
 # Use a lightweight web server to serve the built files
