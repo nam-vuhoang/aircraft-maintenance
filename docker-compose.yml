@@ -26,7 +26,7 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_NAME=${DATABASE_NAME}
       - NODE_ENV=${NODE_ENV:-development}
-      - BACKEND_LOG_LEVEL=${BACKEND_LOG_LEVEL}
+      - LOG_LEVEL=${BACKEND_LOG_LEVEL}
       - FRONTEND_URL=http://localhost:${FRONTEND_PORT}
     networks:
       - app-network
