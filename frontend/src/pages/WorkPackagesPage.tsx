@@ -5,7 +5,7 @@ import { WorkPackage, WorkPackageFilter } from '../models';
 import { WorkPackageService } from '../services';
 import { AppStatus, AppStatusPanel } from '../components/utils';
 import { MdBuild } from 'react-icons/md';
-import WorkPackageTable from '../components/WorkPackageSearchForm/WorkPackageTable';
+import WorkPackageTable from '../components/WorkPackageTable';
 
 const WorkPackagePage: React.FC = () => {
   const [workPackages, setWorkPackages] = useState<WorkPackage[] | undefined>(undefined);

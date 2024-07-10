@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
-import { WorkPackage } from '../../models';
-import { WarningPanel } from '../utils';
+import { WorkPackage } from '../models';
+import { WarningPanel } from './utils';
 
 interface WorkPackageTableProps {
   workPackages: WorkPackage[];
