@@ -9,8 +9,8 @@ This project was assigned to me by **QOCO** as a job seeker challenge. This docu
 1. [**Installation instructions**](docs/installation.md)
 2. [**User instructions**](docs/usage.md)
 3. [**Requirement analysis and assumptions**](docs/requirements.md)
-4. [**Software design and implementation**](docs/implementation.md) 
-5. [**Software deployment and testing**](docs/testing.md) 
+4. [**Software design and implementation**](docs/implementation.md) (TBD)
+5. [**Software deployment and testing**](docs/testing.md) (TBD)
 
 
 ## Snapshots
