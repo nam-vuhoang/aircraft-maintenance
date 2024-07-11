@@ -3,7 +3,7 @@ import styles from './GanttChart.module.scss';
 import { TaskGroup } from '../../models/TaskGroup.entity';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import { getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
+import { getHumanTimeUnitName, getMillisecondsInTimeUnit, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
 import {
   ChakraProvider,
   Box,
@@ -189,40 +189,41 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
         <div className={styles.zoomControl}>
           <FormControl as={Flex} alignItems="center" justifyContent="space-between">
             <Box display="flex">
-            <Box display="flex" alignItems="center">
-              <FormLabel htmlFor="zoom" fontWeight="bold" whiteSpace="nowrap" mb="0">
-                Zoom:
-              </FormLabel>
-              <Select id="zoom" value={zoomLevelName} onChange={handleZoomChange} ml="2" mr="4" width="auto">
-                {zoomLevels.map((level, index) => (
-                  <option key={index} value={level.name}>
-                    {level.name}
-                  </option>
-                ))}
-              </Select>
-            </Box>
-            <Box display="flex" alignItems="center">
-              <FormLabel htmlFor="lowest-unit-width" fontWeight="bold" whiteSpace="nowrap" mb="0">
-                Unit Width:
-              </FormLabel>
-              <Checkbox isChecked={autoResize} onChange={handleAutoResizeChange} mr="2">
-                Auto
-              </Checkbox>
-              <NumberInput
-                id="lowest-unit-width"
-                value={lowestUnitWidth}
-                onChange={handleLowestUnitWidthChange}
-                step={5}
-                min={20}
-                ml="2"
-                isDisabled={autoResize}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
+              <Box display="flex" alignItems="center">
+                <FormLabel htmlFor="zoom" fontWeight="bold" whiteSpace="nowrap" mb="0">
+                  Zoom:
+                </FormLabel>
+                <Select id="zoom" value={zoomLevelName} onChange={handleZoomChange} ml="2" mr="4" width="auto">
+                  {zoomLevels.map((level, index) => (
+                    <option key={index} value={level.name}>
+                      {level.name}
+                    </option>
+                  ))}
+                </Select>
+              </Box>
+              <Box display="flex" alignItems="center">
+                <FormLabel htmlFor="lowest-unit-width" fontWeight="bold" whiteSpace="nowrap" mb="0">
+                  Unit Width:
+                </FormLabel>
+                <Checkbox isChecked={autoResize} onChange={handleAutoResizeChange} mr="2">
+                  Auto
+                </Checkbox>
+                <NumberInput
+                  id="lowest-unit-width"
+                  value={lowestUnitWidth}
+                  onChange={handleLowestUnitWidthChange}
+                  step={5}
+                  min={20}
+                  ml="2"
+                  isDisabled={autoResize}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+                <Box ml="2">px/{getHumanTimeUnitName(units[units.length - 1]).toLowerCase()}</Box>
               </Box>
             </Box>
             <Pagination
