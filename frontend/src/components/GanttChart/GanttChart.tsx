@@ -23,6 +23,7 @@ import InlineIcon from './InlineIcon';
 import TaskList from './TaskList';
 import Timeline from './Timeline';
 import TimeRuler from './TimeRuler';
+import useScrollByDragging from '../../hooks/useScrollByDragging';
 
 export interface GanttChartTypeInfo {
   typeIndex: number;
@@ -135,6 +136,8 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
       window.removeEventListener('resize', handleResize);
     };
   }, [taskGroups, zoomLevelName, lowestUnitWidth, autoResize]);
+
+  useScrollByDragging({ containerRef: rightPanelRef, scrollX: true });
 
   const handleTaskGroupToggle = (groupName: string) => {
     setExpandedGroups((prevState) => {
