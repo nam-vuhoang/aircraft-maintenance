@@ -24,6 +24,8 @@ import TaskList from './TaskList';
 import Timeline from './Timeline';
 import TimeRuler from './TimeRuler';
 import useScrollByDragging from '../../hooks/useScrollByDragging';
+import useScroll from '../../hooks/useScroll';
+import Pagination from '../utils/Pagination';
 
 export interface GanttChartTypeInfo {
   typeIndex: number;
@@ -139,6 +141,10 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
 
   useScrollByDragging({ containerRef: rightPanelRef, scrollX: true });
 
+  const { scrollToLeft, scrollToRight, scrollByAmount } = useScroll({
+    containerRef: rightPanelRef,
+  });
+
   const handleTaskGroupToggle = (groupName: string) => {
     setExpandedGroups((prevState) => {
       const newSet = new Set(prevState);
@@ -181,7 +187,8 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
     <ChakraProvider>
       <div className={styles.ganttChart}>
         <div className={styles.zoomControl}>
-          <FormControl as={Flex} alignItems="center" justifyContent="flex-end">
+          <FormControl as={Flex} alignItems="center" justifyContent="space-between">
+            <Box display="flex">
             <Box display="flex" alignItems="center">
               <FormLabel htmlFor="zoom" fontWeight="bold" whiteSpace="nowrap" mb="0">
                 Zoom:
@@ -216,7 +223,14 @@ const GanttChart: React.FC<GanttChartProps> = ({ taskGroups, taskGroupCaption, t
                   <NumberDecrementStepper />
                 </NumberInputStepper>
               </NumberInput>
+              </Box>
             </Box>
+            <Pagination
+              onFirstPage={scrollToLeft}
+              onPreviousPage={() => scrollByAmount({ x: -10 * lowestUnitWidth })}
+              onNextPage={() => scrollByAmount({ x: 10 * lowestUnitWidth })}
+              onLastPage={scrollToRight}
+            />
           </FormControl>
         </div>
         <div className={styles.mainContainer}>
