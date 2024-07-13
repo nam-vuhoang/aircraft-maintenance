@@ -62,6 +62,7 @@ const Timeline: React.FC<TimelineProps> = ({
                     tooltipPlacement="top"
                     tooltipLeft={taskStartX}
                     bgColor="green.500"
+                    fontSize="xs"
                   >
                     <Flex
                       as={Flex}
