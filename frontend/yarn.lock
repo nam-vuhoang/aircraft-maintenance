@@ -1291,13 +1291,20 @@
   dependencies:
     "@floating-ui/utils" "^0.2.4"
 
-"@floating-ui/dom@^1.0.1":
+"@floating-ui/dom@^1.0.0", "@floating-ui/dom@^1.0.1":
   version "1.6.7"
   resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.6.7.tgz#85d22f731fcc5b209db504478fb1df5116a83015"
   integrity sha512-wmVfPG5o2xnKDU4jx/m4w5qva9FWHcnZ8BvzEe90D/RpwsJaTAVYPEPdQ8sbr/N8zZTAHlZUTQdqg8ZUbzHmng==
   dependencies:
     "@floating-ui/core" "^1.6.0"
     "@floating-ui/utils" "^0.2.4"
+
+"@floating-ui/react-dom@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@floating-ui/react-dom/-/react-dom-2.1.1.tgz#cca58b6b04fc92b4c39288252e285e0422291fb0"
+  integrity sha512-4h84MJt3CHrtG18mGsXuLCHMrug49d7DFkU0RMIyshRveBeyV2hmV/pDaF2Uxtu8kgq5r46llp5E5FQiR0K2Yg==
+  dependencies:
+    "@floating-ui/dom" "^1.0.0"
 
 "@floating-ui/utils@^0.2.4":
   version "0.2.4"

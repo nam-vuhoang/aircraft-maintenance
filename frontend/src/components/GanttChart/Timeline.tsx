@@ -5,6 +5,7 @@ import { GanttChartTypeInfo } from '../GanttChart/GanttChart';
 import { Flex } from '@chakra-ui/react';
 import { emToPx, smallFontSizeInEm } from '../../utils/CssUtils';
 import InlineIcon from './InlineIcon';
+import FloatingTooltip from '../utils/FloatingTooltip';
 
 interface TimelineProps {
   taskGroups: TaskGroup[];
@@ -50,38 +51,34 @@ const Timeline: React.FC<TimelineProps> = ({
 
               const justifyContent = hasMultipleTexts ? 'space-between' : 'center';
 
-              const replacer = (key: string, value: unknown) => {
-                if (key === 'startTime' || key === 'endTime') {
-                  return undefined;
-                }
-                return value;
+              const jsonReplacer = (key: string, value: unknown) => {
+                return key !== 'typeIndex' && key !== 'name' ? value : undefined;
               };
-
-              const title = `${taskTypeInfo?.caption + ': '}${task.name}${
-                (task.startName && task.endName && '( ' + task.startName + '-' + task.endName + ')') || ''
-              }\nStart: ${task.startTime.toLocaleString()}\nEnd: ${task.endTime.toLocaleString()}\nDetails:\n${JSON.stringify(
-                task,
-                replacer,
-                2
-              )}`;
 
               return (
                 <React.Fragment key={task.id}>
-                  <Flex
-                    className={styles.taskBar}
-                    justifyContent={justifyContent}
-                    left={`${taskStartX}px`}
-                    width={`${taskWidth}px`}
-                    backgroundColor={taskColor}
-                    title={title}
+                  <FloatingTooltip
+                    tooltip={() => JSON.stringify(task, jsonReplacer, 2)}
+                    tooltipPlacement="top"
+                    tooltipLeft={taskStartX}
+                    bgColor="green.500"
                   >
-                    {hasMultipleTexts && task.startName}
-                    <span>
-                      {<InlineIcon>{taskTypeInfo?.icon}</InlineIcon>}
-                      {task.name}
-                    </span>
-                    {hasMultipleTexts && task.endName}
-                  </Flex>
+                    <Flex
+                      as={Flex}
+                      className={styles.taskBar}
+                      justifyContent={justifyContent}
+                      left={`${taskStartX}px`}
+                      width={`${taskWidth}px`}
+                      backgroundColor={taskColor}
+                    >
+                      {hasMultipleTexts && task.startName}
+                      <span>
+                        {<InlineIcon>{taskTypeInfo?.icon}</InlineIcon>}
+                        {task.name}
+                      </span>
+                      {hasMultipleTexts && task.endName}
+                    </Flex>
+                  </FloatingTooltip>
                   {isExpanded && <div className={styles.emptyRow}></div>}
                 </React.Fragment>
               );
