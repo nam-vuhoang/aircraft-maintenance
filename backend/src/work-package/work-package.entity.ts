@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn, Index } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { AircraftTask } from '../aircraft/aircraft-task.entity';
+import { AircraftTask } from '../aircraft-task/aircraft-task.entity';
 
 /**
  * The work package entity
