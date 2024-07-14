@@ -1,7 +1,7 @@
-import { Alert, AlertIcon, AlertTitle, Text, Stack, useColorModeValue, Flex } from '@chakra-ui/react';
+import { Alert, AlertIcon, AlertTitle, Text, Stack, useColorModeValue, Flex, AlertProps } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
-interface InfoPanelProps {
+interface InfoPanelProps extends AlertProps {
   message: ReactNode;
 }
 
@@ -10,7 +10,7 @@ interface InfoPanelProps {
  * @param param0
  * @returns
  */
-const InfoPanel: React.FC<InfoPanelProps> = ({ message }) => {
+const InfoPanel: React.FC<InfoPanelProps> = ({ message, ...alertProps }) => {
   // Use color mode to adapt to dark/light themes
   const bgColor = useColorModeValue('blue.50', 'blue.900');
   const borderColor = useColorModeValue('blue.200', 'blue.700');
@@ -26,6 +26,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ message }) => {
       borderColor={borderColor}
       boxShadow="lg"
       p={4}
+      {...alertProps}
     >
       <Stack spacing={3}>
         <Flex align="center">

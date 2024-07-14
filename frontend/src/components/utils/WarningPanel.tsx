@@ -1,7 +1,7 @@
-import { Alert, AlertIcon, AlertTitle, Text, Stack, useColorModeValue, Flex } from '@chakra-ui/react';
+import { Alert, AlertIcon, AlertTitle, Text, Stack, useColorModeValue, Flex, AlertProps } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
-interface WarningPanelProps {
+interface WarningPanelProps extends AlertProps {
   message: ReactNode;
 }
 
@@ -10,7 +10,7 @@ interface WarningPanelProps {
  * @param param0
  * @returns
  */
-const WarningPanel: React.FC<WarningPanelProps> = ({ message }) => {
+const WarningPanel: React.FC<WarningPanelProps> = ({ message, ...alertProps }) => {
   // Use color mode to adapt to dark/light themes
   const bgColor = useColorModeValue('yellow.50', 'yellow.800');
   const borderColor = useColorModeValue('yellow.300', 'yellow.600');
@@ -19,12 +19,13 @@ const WarningPanel: React.FC<WarningPanelProps> = ({ message }) => {
 
   return (
     <Alert
-      className='chakra-panel'
+      className="chakra-panel"
       status="warning"
       bg={bgColor}
       border="1px solid"
       borderColor={borderColor}
       p={4}
+      {...alertProps}
     >
       <Stack spacing={3}>
         <Flex align="center">

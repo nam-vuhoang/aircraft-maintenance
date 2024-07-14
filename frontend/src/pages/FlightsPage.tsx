@@ -47,11 +47,7 @@ const FlightsPage: React.FC = () => {
         </Box>
       )}
 
-      {status && (
-        <Box mt={4}>
-          <AppStatusPanel status={status} />
-        </Box>
-      )}
+      {status && <AppStatusPanel appStatus={status} mt={4} />}
     </Box>
   );
 };

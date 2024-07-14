@@ -15,9 +15,8 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { FaDatabase } from 'react-icons/fa';
-import { FlightImportDto } from '../models/FlightImport.dto';
+import { FlightImportDto, WorkPackageImportDto } from '../models';
 import { FlightService, WorkPackageService } from '../services';
-import { WorkPackageDto } from '../services/WorkPackage.dto';
 import { AppStatusPanel, AppStatus } from '../components/utils';
 import { AxiosError } from 'axios';
 
@@ -51,7 +50,52 @@ const ImportPage: React.FC = () => {
       } catch (err: unknown) {
         const error = err as AxiosError;
         if (error.response?.status === 400) {
-          setStatus({ error: 'Invalid data format. Please check the file and try again.' });
+          const sample: FlightImportDto[] = [
+            {
+              flightId: 'b9ee236a-7e95-4bfd-a5ec-29b1220b898f',
+              airline: 'QO',
+              registration: 'ABA',
+              aircraftType: 'AT7',
+              flightNum: '8923',
+              schedDepTime: '2024-04-16T16:55:00.000Z',
+              schedArrTime: '2024-04-16T18:05:00.000Z',
+              actualDepTime: '2024-04-16T17:08:00.000Z',
+              actualArrTime: '2024-04-16T18:14:00.000Z',
+              estimatedDepTime: '2024-04-16T17:05:00.000Z',
+              estimatedArrTime: '2024-04-16T18:14:00.000Z',
+              schedDepStation: 'HEL',
+              schedArrStation: 'RIX',
+              depStand: 'A2',
+              origDepStand: 'A4',
+            },
+            {
+              flightId: 'e49db842-f22e-4f8c-8450-72dbde0d7e15',
+              airline: 'QO',
+              registration: 'ABA',
+              aircraftType: 'AT7',
+              flightNum: '8922',
+              schedDepTime: '2024-04-16T18:35:00.000Z',
+              schedArrTime: '2024-04-16T19:45:00.000Z',
+              actualDepTime: '2024-04-16T18:36:00.000Z',
+              actualArrTime: '2024-04-16T19:45:00.000Z',
+              estimatedDepTime: '2024-04-16T18:45:00.000Z',
+              estimatedArrTime: '2024-04-16T19:47:00.000Z',
+              schedDepStation: 'RIX',
+              schedArrStation: 'HEL',
+              arrStand: 'B3',
+              origArrStand: 'A5',
+            },
+          ];
+          setStatus({
+            error: 'Invalid data format. Please check the file and try again.',
+            info: (
+              <pre>
+                Sample data:
+                <br />
+                {JSON.stringify(sample, null, 2)}
+              </pre>
+            ),
+          });
         } else {
           setStatus({ error });
         }
@@ -71,13 +115,44 @@ const ImportPage: React.FC = () => {
     reader.onload = async (e: ProgressEvent<FileReader>) => {
       try {
         const json = JSON.parse(e.target?.result as string);
-        const items: WorkPackageDto[] = json;
+        const items: WorkPackageImportDto[] = json;
         const importedCount = await WorkPackageService.importWorkPackages(items);
         setStatus({ success: `Successfully imported ${importedCount} work packages.` });
       } catch (err: unknown) {
         const error = err as AxiosError;
         if (error.response?.status === 400) {
-          setStatus({ error: 'Invalid data format. Please check the file and try again.' });
+          const sample: WorkPackageImportDto[] = [
+            {
+              workPackageId: '19392169122587',
+              name: 'ABA/A-20240416',
+              station: 'HEL',
+              status: 'OPEN',
+              area: 'APRON',
+              registration: 'ABA',
+              startDateTime: '2024-04-16T08:00:00.000Z',
+              endDateTime: '2024-04-16T09:30:00.000Z',
+            },
+            {
+              workPackageId: '39051305650578',
+              name: 'ABA/B-20240416',
+              station: 'HEL',
+              status: 'OPEN',
+              area: 'APRON',
+              registration: 'ABA',
+              startDateTime: '2024-04-16T12:30:00.000Z',
+              endDateTime: '2024-04-16T14:30:00.000Z',
+            },
+          ];
+
+          setStatus({
+            error: 'Invalid data format. Please check the file and try again.',
+            info: (
+              <pre>
+                Sample data:
+                <br /> {JSON.stringify(sample, null, 2)}
+              </pre>
+            ),
+          });
         } else {
           setStatus({ error });
         }
@@ -165,11 +240,7 @@ const ImportPage: React.FC = () => {
         </Tabs>
       </Box>
 
-      {status && (
-        <Box mt={4}>
-          <AppStatusPanel status={status} />
-        </Box>
-      )}
+      {status && <AppStatusPanel appStatus={status} mt={4} />}
     </Box>
   );
 };

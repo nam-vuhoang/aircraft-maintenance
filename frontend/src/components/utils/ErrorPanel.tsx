@@ -1,10 +1,10 @@
-import { Alert, AlertIcon, AlertTitle, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Alert, AlertIcon, AlertProps, AlertTitle, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import { serializeError } from 'serialize-error';
 import logger from '../../logger';
+import { ReactNode } from 'react';
 
-interface ErrorPanelProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  error: any;
+interface ErrorPanelProps extends AlertProps {
+  error: Error | ReactNode;
 }
 
 /**
@@ -12,7 +12,7 @@ interface ErrorPanelProps {
  * @param param0
  * @returns
  */
-const ErrorPanel: React.FC<ErrorPanelProps> = ({ error }) => {
+const ErrorPanel: React.FC<ErrorPanelProps> = ({ error, ...alertProps }) => {
   logger.error(JSON.stringify(serializeError(error)));
   // Use color mode to adapt to dark/light themes
   const bgColor = useColorModeValue('red.50', 'red.900');
@@ -27,6 +27,7 @@ const ErrorPanel: React.FC<ErrorPanelProps> = ({ error }) => {
       borderColor={borderColor}
       boxShadow="lg"
       p={4}
+      {...alertProps}
     >
       <Stack spacing={3}>
         <Flex align="center">

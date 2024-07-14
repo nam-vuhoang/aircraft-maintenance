@@ -1,7 +1,7 @@
-import { Alert, AlertIcon, AlertTitle, Text, Stack, useColorModeValue, Flex } from '@chakra-ui/react';
+import { Alert, AlertIcon, AlertTitle, Text, Stack, useColorModeValue, Flex, AlertProps } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
-interface SuccessPanelProps {
+interface SuccessPanelProps extends AlertProps {
   message: ReactNode;
 }
 
@@ -10,7 +10,7 @@ interface SuccessPanelProps {
  * @param param0
  * @returns
  */
-const SuccessPanel: React.FC<SuccessPanelProps> = ({ message }) => {
+const SuccessPanel: React.FC<SuccessPanelProps> = ({ message, ...alertProps }) => {
   // Use color mode to adapt to dark/light themes
   const bgColor = useColorModeValue('green.50', 'green.900');
   const borderColor = useColorModeValue('green.200', 'green.700');
@@ -19,13 +19,14 @@ const SuccessPanel: React.FC<SuccessPanelProps> = ({ message }) => {
 
   return (
     <Alert
-      className='chakra-panel'
+      className="chakra-panel"
       status="success"
       bg={bgColor}
       border="1px solid"
       borderColor={borderColor}
       boxShadow="lg"
       p={4}
+      {...alertProps}
     >
       <Stack spacing={3}>
         <Flex align="center">

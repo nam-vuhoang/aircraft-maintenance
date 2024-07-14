@@ -1,9 +1,27 @@
 import axios, { AxiosInstance } from 'axios';
 import logger from '../logger';
-import { WorkPackage, WorkPackageFilter } from '../models';
-import { WorkPackageDto, convertWorkPackgeDtoToWorkPackage } from './WorkPackage.dto';
+import { WorkPackage, WorkPackageFilter, WorkPackageImportDto } from '../models';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL as string;
+
+interface WorkPackageDto {
+  id: string;
+  registration: string;
+  name: string;
+  station: string;
+  status: string;
+  area: string;
+  startTime: string;
+  endTime: string;
+}
+
+const convertWorkPackgeDtoToWorkPackage = (json: WorkPackageDto): WorkPackage => {
+  return {
+    ...json,
+    startTime: new Date(json.startTime),
+    endTime: new Date(json.endTime),
+  };
+};
 
 class WorkPackageService {
   private axiosInstance: AxiosInstance;
@@ -97,7 +115,7 @@ class WorkPackageService {
     }
   }
 
-  async importWorkPackages(workPackages: WorkPackageDto[]): Promise<number> {
+  async importWorkPackages(workPackages: WorkPackageImportDto[]): Promise<number> {
     try {
       logger.debug('Importing work packages:', workPackages);
       const response = await this.axiosInstance.post<{ imported: number }>('/work-packages/import', workPackages);
