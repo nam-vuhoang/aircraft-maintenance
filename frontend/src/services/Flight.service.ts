@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
-import logger from '../logger';
 import { Flight, FlightFilter, FlightImportDto } from '../models';
+import { logger } from '../modules/common';
 
 /**
  * Flight DTO (Data Transfer Object) interface, used for retrieving flight data from the server.

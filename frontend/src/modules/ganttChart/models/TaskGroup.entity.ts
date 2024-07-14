@@ -1,26 +1,12 @@
-import { Task, TaskGroup } from ".";
+import { compareTasks, Task } from './Task.entity';
 
 /**
- * Compare two tasks by their start time, end time, and name.
- * @param a
- * @param b
- * @returns
+ * Task group entity, used for grouping tasks in the GanttChart.
  */
-export const compareTasks = (a: Task, b: Task): number => {
-  if (a.startTime < b.startTime) {
-    return -1;
-  } else if (a.startTime > b.startTime) {
-    return 1;
-  } else {
-    if (a.endTime < b.endTime) {
-      return -1;
-    } else if (a.endTime > b.endTime) {
-      return 1;
-    } else {
-      return a.name.localeCompare(b.name);
-    }
-  }
-};
+export interface TaskGroup {
+  name: string;
+  tasks: Task[];
+}
 
 /**
  * Compare two task groups by their name.

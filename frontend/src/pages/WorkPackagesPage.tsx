@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import WorkPackageSearchForm from '../components/WorkPackageSearchForm';
 import { WorkPackage, WorkPackageFilter } from '../models';
 import { WorkPackageService } from '../services';
-import { AppStatus, AppStatusPanel } from '../components/utils';
 import { MdBuild } from 'react-icons/md';
 import WorkPackageTable from '../components/WorkPackageTable';
+import { AppStatus, AppStatusPanel } from '../modules/common';
 
 const WorkPackagePage: React.FC = () => {
   const [workPackages, setWorkPackages] = useState<WorkPackage[] | undefined>(undefined);

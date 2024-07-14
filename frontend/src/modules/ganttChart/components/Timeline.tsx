@@ -1,11 +1,11 @@
 import React from 'react';
 import styles from './Timeline.module.scss';
-import { TaskGroup } from '../../models/TaskGroup.entity';
-import { GanttChartTypeInfo } from '../GanttChart/GanttChart';
 import { Flex } from '@chakra-ui/react';
-import { emToPx, smallFontSizeInEm } from '../../utils/CssUtils';
 import InlineIcon from './InlineIcon';
-import FloatingTooltip from '../utils/FloatingTooltip';
+import { emToPx, smallFontSizeInEm } from '../../common';
+import FloatingTooltip from '../../common/components/FloatingTooltip';
+import { TaskGroup } from '../models/TaskGroup.entity';
+import { GanttChartTypeInfo } from './GanttChart';
 
 interface TimelineProps {
   taskGroups: TaskGroup[];
@@ -17,7 +17,7 @@ interface TimelineProps {
 }
 
 const getDefaultTaskColor = (type: number) => {
-  return type % 2 === 1 ? styles.ganttChartTaskBarColor1 : styles.ganttChartTaskBarColor2;
+  return type % 2 === 1 ? 'red.500' : 'green.500';
 };
 
 const Timeline: React.FC<TimelineProps> = ({

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Box, Input, Button, VStack, HStack, FormControl, FormLabel, Select, Text } from '@chakra-ui/react';
 import CategoryService from '../services/Category.service';
 import { WorkPackageFilter } from '../models';
-import MultiSelect, { Option } from './utils/MultiSelect';
+import { SelectOption, MultiSelect } from '../modules/common';
 
 interface WorkPackageSearchFormProps {
   onSearch: (filter: WorkPackageFilter) => void;
@@ -63,7 +63,7 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
     }));
   };
 
-  const handleSelectChange = (name: string, value: Option[]) => {
+  const handleSelectChange = (name: string, value: SelectOption[]) => {
     setFormValues((prevValues) => ({
       ...prevValues,
       [name]: value,
@@ -85,11 +85,11 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
       endTime: formValues.endTime ? new Date(formValues.endTime) : undefined,
       registrations:
         formValues.registrations.length > 0
-          ? formValues.registrations.map((option: Option) => option.value)
+          ? formValues.registrations.map((option: SelectOption) => option.value)
           : undefined,
-      stations: formValues.stations.length > 0 ? formValues.stations.map((option: Option) => option.value) : undefined,
-      statuses: formValues.statuses.length > 0 ? formValues.statuses.map((option: Option) => option.value) : undefined,
-      areas: formValues.areas.length > 0 ? formValues.areas.map((option: Option) => option.value) : undefined,
+      stations: formValues.stations.length > 0 ? formValues.stations.map((option: SelectOption) => option.value) : undefined,
+      statuses: formValues.statuses.length > 0 ? formValues.statuses.map((option: SelectOption) => option.value) : undefined,
+      areas: formValues.areas.length > 0 ? formValues.areas.map((option: SelectOption) => option.value) : undefined,
       namePattern: formValues.namePattern || undefined,
       limit: formValues.limit === 'all' ? undefined : Number(formValues.limit),
     };
@@ -142,7 +142,7 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
               options={registrationOptions}
               placeholder="Select registrations..."
               value={formValues.registrations}
-              onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>
@@ -152,7 +152,7 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
               options={stationOptions}
               placeholder="Select stations..."
               value={formValues.stations}
-              onChange={(selectedOptions) => handleSelectChange('stations', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('stations', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>
@@ -162,7 +162,7 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
               options={statusOptions}
               placeholder="Select statuses..."
               value={formValues.statuses}
-              onChange={(selectedOptions) => handleSelectChange('statuses', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('statuses', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>
@@ -172,7 +172,7 @@ const WorkPackageSearchForm: React.FC<WorkPackageSearchFormProps> = ({ onSearch 
               options={areaOptions}
               placeholder="Select areas..."
               value={formValues.areas}
-              onChange={(selectedOptions) => handleSelectChange('areas', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('areas', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>

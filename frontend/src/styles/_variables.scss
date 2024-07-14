@@ -1,3 +1,5 @@
+@import '../modules/ganttChart/styles/variables.scss';
+
 $primary-color: hsla(217, 100%, 44%, 1); // --chakra-colors-brand-500
 $secondary-color: hsla(14, 100%, 60%, 1); // --chakra-colors-secondary-500
 
@@ -8,23 +10,12 @@ $border-color: #ccc;
 $background-color: #f2f2f2;
 $hover-background-color: #f5f5f5;
 
-$gantt-chart-header-height: 35px;
-$gantt-chart-row-height: 35px;
-$gantt-chart-task-bar-height: 25px;
-$gantt-chart-task-bar-margin-top: 5px;
-
 $gantt-chart-task-text-color-1: $primary-color;
 $gantt-chart-task-text-color-2: $secondary-color;
 $gantt-chart-task-bar-color-1: $primary-color-light;
 $gantt-chart-task-bar-color-2: $secondary-color-light;
 
 :export {
-  ganttChartHeaderHeight: $gantt-chart-header-height;
-  ganttChartRowHeight: $gantt-chart-row-height;
-
-  ganttChartTaskBarHeight: $gantt-chart-task-bar-height;
-  ganttChartTaskBarMarginTop: $gantt-chart-task-bar-margin-top;
-
   ganttChartTaskTextColor1: $gantt-chart-task-text-color-1;
   ganttChartTaskTextColor2: $gantt-chart-task-text-color-2;
 

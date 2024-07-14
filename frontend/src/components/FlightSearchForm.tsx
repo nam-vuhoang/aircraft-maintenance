@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Box, Input, Button, VStack, HStack, FormControl, FormLabel, Select, Text } from '@chakra-ui/react';
 import CategoryService from '../services/Category.service';
 import { FlightFilter } from '../models/FlightFilter.dto';
-import MultiSelect, { Option } from './utils/MultiSelect';
+import { MultiSelect, SelectOption } from '../modules/common';
 
 interface FlightSearchFormProps {
   onSearch: (filter: FlightFilter) => void;
@@ -67,7 +67,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
     }));
   };
 
-  const handleSelectChange = (name: string, value: Option[]) => {
+  const handleSelectChange = (name: string, value: SelectOption[]) => {
     setFormValues((prevValues) => ({
       ...prevValues,
       [name]: value,
@@ -88,22 +88,23 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
       startTime: formValues.startTime ? new Date(formValues.startTime) : undefined,
       endTime: formValues.endTime ? new Date(formValues.endTime) : undefined,
       flightNumbers: formValues.flightNumbers ? formValues.flightNumbers.split(',') : undefined,
-      airlines: formValues.airlines.length > 0 ? formValues.airlines.map((option: Option) => option.value) : undefined,
+      airlines:
+        formValues.airlines.length > 0 ? formValues.airlines.map((option: SelectOption) => option.value) : undefined,
       registrations:
         formValues.registrations.length > 0
-          ? formValues.registrations.map((option: Option) => option.value)
+          ? formValues.registrations.map((option: SelectOption) => option.value)
           : undefined,
       aircraftTypes:
         formValues.aircraftTypes.length > 0
-          ? formValues.aircraftTypes.map((option: Option) => option.value)
+          ? formValues.aircraftTypes.map((option: SelectOption) => option.value)
           : undefined,
       departureStations:
         formValues.departureStations.length > 0
-          ? formValues.departureStations.map((option: Option) => option.value)
+          ? formValues.departureStations.map((option: SelectOption) => option.value)
           : undefined,
       arrivalStations:
         formValues.arrivalStations.length > 0
-          ? formValues.arrivalStations.map((option: Option) => option.value)
+          ? formValues.arrivalStations.map((option: SelectOption) => option.value)
           : undefined,
       limit: formValues.limit === 'all' ? undefined : Number(formValues.limit),
     };
@@ -167,7 +168,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
               options={airlineOptions}
               placeholder="Select airlines..."
               value={formValues.airlines}
-              onChange={(selectedOptions) => handleSelectChange('airlines', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('airlines', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>
@@ -177,7 +178,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
               options={registrationOptions}
               placeholder="Select registrations..."
               value={formValues.registrations}
-              onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>
@@ -187,7 +188,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
               options={aircraftTypeOptions}
               placeholder="Select aircraft types..."
               value={formValues.aircraftTypes}
-              onChange={(selectedOptions) => handleSelectChange('aircraftTypes', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('aircraftTypes', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>
@@ -197,7 +198,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
               options={stationOptions}
               placeholder="Select departure stations..."
               value={formValues.departureStations}
-              onChange={(selectedOptions) => handleSelectChange('departureStations', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('departureStations', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>
@@ -207,7 +208,7 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ onSearch }) => {
               options={stationOptions}
               placeholder="Select arrival stations..."
               value={formValues.arrivalStations}
-              onChange={(selectedOptions) => handleSelectChange('arrivalStations', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('arrivalStations', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>

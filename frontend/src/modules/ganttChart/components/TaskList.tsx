@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 import styles from './TaskList.module.scss';
-import { TaskGroup } from '../../models/TaskGroup.entity';
-import { GanttChartTypeInfo } from '../GanttChart/GanttChart';
 import { Box } from '@chakra-ui/react';
 import InlineIcon from './InlineIcon';
+import { TaskGroup } from '../models/TaskGroup.entity';
+import { GanttChartTypeInfo } from './GanttChart';
 
 interface TaskListProps {
   taskGroups: TaskGroup[];

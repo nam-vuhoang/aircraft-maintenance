@@ -1,9 +1,10 @@
 import React from 'react';
-import { Flight, sortTaskGroups, Task, TaskGroup, WorkPackage } from '../../models';
-import GanttChart from '../GanttChart/GanttChart';
 import { FaPlane } from 'react-icons/fa';
 import { MdBuild, MdFlightTakeoff } from 'react-icons/md';
 import styles from './AircraftGanttChart.module.scss';
+import { Flight, WorkPackage } from '../models';
+import { Task, TaskGroup, sortTaskGroups } from '../modules/ganttChart';
+import { GanttChart } from '../modules/ganttChart/components';
 
 interface AircraftGanttChartProps {
   flights: Flight[];

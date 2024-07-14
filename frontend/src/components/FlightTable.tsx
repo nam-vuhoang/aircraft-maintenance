@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
 import { Flight } from '../models/Flight.entity';
-import { WarningPanel } from './utils';
+import { WarningPanel } from '../modules/common';
 
 interface FlightTableProps {
   flights: Flight[];

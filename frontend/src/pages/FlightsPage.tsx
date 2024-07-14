@@ -4,8 +4,8 @@ import FlightSearchForm from '../components/FlightSearchForm';
 import FlightTable from '../components/FlightTable';
 import { Flight, FlightFilter } from '../models';
 import { FlightService } from '../services';
-import { AppStatus, AppStatusPanel } from '../components/utils';
 import { MdFlightTakeoff } from 'react-icons/md';
+import { AppStatus, AppStatusPanel } from '../modules/common';
 
 const FlightsPage: React.FC = () => {
   const [flights, setFlights] = useState<Flight[] | undefined>(undefined);

@@ -1,4 +1,4 @@
-@import '../../styles/variables.scss';
+@import '../styles/variables.scss';
 
 .timeline {
   position: relative;
@@ -20,7 +20,7 @@
   text-overflow: ellipsis;
   text-align: center;
   vertical-align: top;
-  
+
   font-size: small; // ~ 0.875em
 }
 

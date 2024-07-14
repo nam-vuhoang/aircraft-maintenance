@@ -17,8 +17,8 @@ import {
 import { FaDatabase } from 'react-icons/fa';
 import { FlightImportDto, WorkPackageImportDto } from '../models';
 import { FlightService, WorkPackageService } from '../services';
-import { AppStatusPanel, AppStatus } from '../components/utils';
 import { AxiosError } from 'axios';
+import { AppStatus, AppStatusPanel } from '../modules/common';
 
 const ImportPage: React.FC = () => {
   const [flightFile, setFlightFile] = useState<File | null>(null);

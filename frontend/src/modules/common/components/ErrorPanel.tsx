@@ -1,7 +1,7 @@
 import { Alert, AlertIcon, AlertProps, AlertTitle, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import { serializeError } from 'serialize-error';
-import logger from '../../logger';
 import { ReactNode } from 'react';
+import logger from '../utils/logger';
 
 interface ErrorPanelProps extends AlertProps {
   error: Error | ReactNode;

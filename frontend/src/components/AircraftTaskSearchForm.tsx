@@ -2,8 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Box, Input, Button, VStack, HStack, FormControl, FormLabel, Select, Text } from '@chakra-ui/react';
 import CategoryService from '../services/Category.service';
 import { FlightFilter } from '../models/FlightFilter.dto';
-import MultiSelect, { Option } from './utils/MultiSelect';
 import { WorkPackageFilter } from '../models';
+import { MultiSelect, SelectOption } from '../modules/common';
 
 interface AircraftTaskSearchFormProps {
   onSearch: (filters: { flightFilter: FlightFilter; workPackageFilter: WorkPackageFilter }) => void;
@@ -56,7 +56,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
     }));
   };
 
-  const handleSelectChange = (name: string, value: Option[]) => {
+  const handleSelectChange = (name: string, value: SelectOption[]) => {
     setFormValues((prevValues) => ({
       ...prevValues,
       [name]: value,
@@ -71,9 +71,10 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
       endTime: formValues.endTime ? new Date(formValues.endTime) : undefined,
       registrations:
         formValues.registrations.length > 0
-          ? formValues.registrations.map((option: Option) => option.value)
+          ? formValues.registrations.map((option: SelectOption) => option.value)
           : undefined,
-      stations: formValues.stations.length > 0 ? formValues.stations.map((option: Option) => option.value) : undefined,
+      stations:
+        formValues.stations.length > 0 ? formValues.stations.map((option: SelectOption) => option.value) : undefined,
     };
 
     const workPackageFilter: WorkPackageFilter = {
@@ -133,7 +134,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
               options={registrationOptions}
               placeholder="Select registrations..."
               value={formValues.registrations}
-              onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('registrations', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <FormControl mb={0.5}>
@@ -143,7 +144,7 @@ const AircraftTaskSearchForm: React.FC<AircraftTaskSearchFormProps> = ({ onSearc
               options={stationOptions}
               placeholder="Select stations..."
               value={formValues.stations}
-              onChange={(selectedOptions) => handleSelectChange('stations', selectedOptions as Option[])}
+              onChange={(selectedOptions) => handleSelectChange('stations', selectedOptions as SelectOption[])}
             />
           </FormControl>
           <HStack spacing={4}>

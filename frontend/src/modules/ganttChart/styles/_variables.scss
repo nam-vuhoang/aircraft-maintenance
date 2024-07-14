@@ -1,0 +1,12 @@
+$gantt-chart-header-height: 35px;
+$gantt-chart-row-height: 35px;
+$gantt-chart-task-bar-height: 25px;
+$gantt-chart-task-bar-margin-top: 5px;
+
+:export {
+  ganttChartHeaderHeight: $gantt-chart-header-height;
+  ganttChartRowHeight: $gantt-chart-row-height;
+
+  ganttChartTaskBarHeight: $gantt-chart-task-bar-height;
+  ganttChartTaskBarMarginTop: $gantt-chart-task-bar-margin-top;
+}

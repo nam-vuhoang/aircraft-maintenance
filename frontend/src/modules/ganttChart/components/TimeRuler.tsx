@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import styles from './TimeRuler.module.scss';
-import { getMillisecondsInTimeUnit, getTimeMarksOfInterval, roundDown, roundUp, TimeUnit } from '../../utils/TimeUtils';
+import { getMillisecondsInTimeUnit, getTimeMarksOfInterval, roundDown, roundUp, TimeUnit } from '../../common';
 import moment from 'moment';
 
 interface TimeRulerProps {

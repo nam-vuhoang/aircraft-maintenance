@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import logger from '../logger';
+import { logger } from '../modules/common';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 

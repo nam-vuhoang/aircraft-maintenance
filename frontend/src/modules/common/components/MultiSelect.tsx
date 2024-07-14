@@ -1,29 +1,28 @@
-// src/MultiSelect.tsx
 import React from 'react';
 import Select from 'react-select';
 
-export interface Option {
+export interface SelectOption {
   label: string;
   value: string;
 }
 
 interface MultiSelectProps {
   name: string;
-  options: Option[];
+  options: SelectOption[];
   placeholder: string;
-  value: Option[];
-  onChange: (selectedOptions: Option[]) => void;
+  value: SelectOption[];
+  onChange: (selectedOptions: SelectOption[]) => void;
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({ name, options, placeholder, value, onChange }) => {
   return (
-    <Select<Option, true>
+    <Select<SelectOption, true>
       isMulti
       name={name}
       options={options}
       placeholder={placeholder}
       value={value}
-      onChange={(selected) => onChange(selected as Option[])}
+      onChange={(selected) => onChange(selected as SelectOption[])}
     />
   );
 };

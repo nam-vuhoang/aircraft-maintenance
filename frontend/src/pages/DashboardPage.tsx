@@ -2,10 +2,9 @@ import { Box, Heading, HStack, Icon } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { Flight, FlightFilter, WorkPackage, WorkPackageFilter } from '../models';
 import { FlightService, WorkPackageService } from '../services';
-import { AppStatus, AppStatusPanel } from '../components/utils';
 import { MdDashboard } from 'react-icons/md'; // Change the icon to MdDashboard
-import AircraftTaskSearchForm from '../components/AircraftTaskSearchForm';
-import AircraftGanttChart from '../components/AircraftGanttChart/AircraftGanttChart';
+import { AppStatus, AppStatusPanel } from '../modules/common';
+import { AircraftGanttChart, AircraftTaskSearchForm } from '../components';
 
 const DashboardPage: React.FC = () => {
   const [flights, setFlights] = useState<Flight[] | undefined>(undefined);
