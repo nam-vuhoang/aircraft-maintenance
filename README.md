@@ -11,6 +11,7 @@ This project was assigned to me by **QOCO** as a job seeker challenge. This docu
 3. [**Requirement analysis and assumptions**](docs/requirements.md)
 4. [**Software design and implementation**](docs/implementation.md) (TBD)
 5. [**Software deployment and testing**](docs/testing.md) (TBD)
+6. **Self-assessment**
 
 
 ## Snapshots
