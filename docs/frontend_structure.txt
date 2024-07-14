@@ -1,0 +1,96 @@
+../../frontend
+├── Dockerfile
+├── README.md
+├── index.html
+├── package.json
+├── public
+│   └── vite.svg
+├── src
+│   ├── @types
+│   │   └── missing-types.d.ts
+│   ├── App.css
+│   ├── App.tsx
+│   ├── assets
+│   │   └── react.svg
+│   ├── components
+│   │   ├── AircraftGanttChart.module.scss
+│   │   ├── AircraftGanttChart.tsx
+│   │   ├── AircraftTaskSearchForm.tsx
+│   │   ├── FlightSearchForm.tsx
+│   │   ├── FlightTable.tsx
+│   │   ├── WorkPackageSearchForm.tsx
+│   │   ├── WorkPackageTable.tsx
+│   │   └── index.ts
+│   ├── index.scss
+│   ├── main.tsx
+│   ├── models
+│   │   ├── Flight.entity.ts
+│   │   ├── FlightFilter.dto.ts
+│   │   ├── FlightImport.dto.ts
+│   │   ├── WorkPackage.entity.ts
+│   │   ├── WorkPackageFilter.dto.ts
+│   │   ├── WorkPackageImport.dto.ts
+│   │   └── index.ts
+│   ├── modules
+│   │   ├── common
+│   │   │   ├── components
+│   │   │   │   ├── AppStatusPanel.tsx
+│   │   │   │   ├── ErrorPanel.tsx
+│   │   │   │   ├── FloatingTooltip.tsx
+│   │   │   │   ├── InfoPanel.tsx
+│   │   │   │   ├── MultiSelect.tsx
+│   │   │   │   ├── Pagination.tsx
+│   │   │   │   ├── SuccessPanel.tsx
+│   │   │   │   ├── WarningPanel.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── hooks
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── useScroll.tsx
+│   │   │   │   └── useScrollByDragging.tsx
+│   │   │   ├── index.ts
+│   │   │   └── utils
+│   │   │       ├── CssUtils.ts
+│   │   │       ├── TimeUtils.ts
+│   │   │       ├── index.ts
+│   │   │       └── logger.ts
+│   │   └── ganttChart
+│   │       ├── components
+│   │       │   ├── GanttChart.module.scss
+│   │       │   ├── GanttChart.tsx
+│   │       │   ├── InlineIcon.module.scss
+│   │       │   ├── InlineIcon.tsx
+│   │       │   ├── TaskList.module.scss
+│   │       │   ├── TaskList.tsx
+│   │       │   ├── TimeRuler.module.scss
+│   │       │   ├── TimeRuler.tsx
+│   │       │   ├── Timeline.module.scss
+│   │       │   ├── Timeline.tsx
+│   │       │   └── index.ts
+│   │       ├── index.ts
+│   │       ├── models
+│   │       │   ├── Task.entity.ts
+│   │       │   └── TaskGroup.entity.ts
+│   │       └── styles
+│   │           └── _variables.scss
+│   ├── pages
+│   │   ├── DashboardPage.tsx
+│   │   ├── FlightsPage.tsx
+│   │   ├── ImportPage.tsx
+│   │   └── WorkPackagesPage.tsx
+│   ├── services
+│   │   ├── Category.service.ts
+│   │   ├── Flight.service.ts
+│   │   ├── WorkPackage.service.ts
+│   │   └── index.ts
+│   ├── styles
+│   │   └── _variables.scss
+│   ├── theme.ts
+│   └── vite-env.d.ts
+├── structure.txt
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+└── yarn.lock
+
+19 directories, 75 files

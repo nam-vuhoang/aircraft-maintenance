@@ -1,0 +1,44 @@
+../../backend
+├── Dockerfile
+├── README.md
+├── nest-cli.json
+├── package.json
+├── scripts
+│   └── create-db.txt
+├── src
+│   ├── aircraft-task
+│   │   └── aircraft-task.entity.ts
+│   ├── app.module.ts
+│   ├── config
+│   │   ├── data-source.config.ts
+│   │   ├── data-source.ts
+│   │   └── typeorm.config.ts
+│   ├── flight
+│   │   ├── flight-filter.dto.ts
+│   │   ├── flight-import.dto.ts
+│   │   ├── flight.controller.spec.ts
+│   │   ├── flight.controller.ts
+│   │   ├── flight.entity.ts
+│   │   ├── flight.module.ts
+│   │   ├── flight.service.spec.ts
+│   │   └── flight.service.ts
+│   ├── main.ts
+│   ├── migration
+│   │   ├── 1719696725304-CreateFlightsView.ts
+│   │   └── 1720026998694-AddIndexesToFlightsAndWorkPackages.ts
+│   └── work-package
+│       ├── work-package-filter.dto.ts
+│       ├── work-package-import.dto.ts
+│       ├── work-package.controller.spec.ts
+│       ├── work-package.controller.ts
+│       ├── work-package.entity.ts
+│       ├── work-package.module.ts
+│       ├── work-package.service.spec.ts
+│       └── work-package.service.ts
+├── test
+│   └── jest-e2e.json
+├── tsconfig.build.json
+├── tsconfig.json
+└── yarn.lock
+
+9 directories, 33 files

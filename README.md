@@ -9,15 +9,13 @@ This project was assigned to me by **QOCO** as a job seeker challenge. This docu
 1. [**Installation instructions**](docs/installation.md)
 2. [**User instructions**](docs/usage.md)
 3. [**Requirement analysis and assumptions**](docs/requirements.md)
-4. [**Software design and implementation**](docs/implementation.md) (TBD)
-5. [**Software deployment and testing**](docs/testing.md) (TBD)
-6. **Self-assessment**
-
+4. [**Software design and implementation**](docs/design.md)
+5. [**Software deployment and testing**](docs/deployment.md)
 
 ## Snapshots
 
 1. The dashboard page:
-   
+
 ![Website](docs/snapshots/website.png)
 
 2. The Gantt-chart-like timeline:
@@ -28,6 +26,6 @@ This project was assigned to me by **QOCO** as a job seeker challenge. This docu
 
 ![Time ruler](docs/snapshots/page-dashboard-03.png)
 
-
 # License
+
 This project is licensed under the MIT License.

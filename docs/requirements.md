@@ -36,6 +36,11 @@ To enhance the functionality of the application, the following features have bee
    - These pages enable users to view and verify data in a table format.
    - They are implemented separately because flights and work packages have different data fields.
 
+### Self-defined Additional Requirements
+
+1. **Reusable Frontend Modules**
+   - Common React components and utility classes that are not specific to this application, such as the `Gantt Chart` component without aircraft-specific details, should be defined in separate modules. This allows these components and utilities to be reused in other applications.
+
 ### Constraints and Assumptions
 
 1. **Data Definitions**:
