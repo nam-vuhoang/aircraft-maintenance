@@ -20,11 +20,11 @@ This project was assigned to me by **QOCO** as a job seeker challenge. This docu
 
 2. The Gantt-chart-like timeline:
 
-![Timeline](docs/snapshots/page-dashboard-04.png)
+![Timeline](docs/snapshots/page-dashboard-02.png)
 
-3. The time ruler format options:
+3. The timeline tooltips:
 
-![Time ruler](docs/snapshots/page-dashboard-03.png)
+![Time ruler](docs/snapshots/page-dashboard-05.png)
 
 # License
 
