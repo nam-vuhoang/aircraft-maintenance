@@ -57,23 +57,30 @@ cd aircraft-maintenance
 
 5. Additional commands
 
-    Stopping the services:
+   Stopping the services:
 
-    ```sh
-    docker-compose down
-    ```
+   ```sh
+   docker-compose down
+   ```
 
-    Rebuilding the services:
+   Stopping the services and deleting the data volume:
 
-    ```sh
-    docker-compose up --build
-    ```
+   ```sh
+   docker-compose down -v
 
-    Viewing logs:
-    ```sh
-    docker-compose logs -f
-    ```
+   ```
 
+   Rebuilding the services:
+
+   ```sh
+   docker-compose up --build
+   ```
+
+   Viewing logs:
+
+   ```sh
+   docker-compose logs -f
+   ```
 
 ### Option 2. Installation with yarn (for debugging)
 
@@ -160,4 +167,4 @@ cd aircraft-maintenance
    yarn dev
    ```
 
-    By default, the frontend will be started at http://localhost:5173.
+   By default, the frontend will be started at http://localhost:5173.
