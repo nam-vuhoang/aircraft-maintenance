@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateFlightsView1719696725304 implements MigrationInterface {
-  name = 'CreateFlightsView1625671234567';
-
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
         CREATE VIEW flights_view AS

@@ -12,6 +12,6 @@ export const dataSourceOptions: DataSourceOptions = {
   database: process.env.DATABASE_NAME,
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../migration/*{.ts,.js}'],
-  synchronize: true, // Disable synchronize in production
+  synchronize: false, // Disable synchronize in production
   logging: true,
 };
