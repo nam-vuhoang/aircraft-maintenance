@@ -106,3 +106,4 @@ build/
 vite-chakra/
 .vscode/
 .vscode/launch.json
+tests/
